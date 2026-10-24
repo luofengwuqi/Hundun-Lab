@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hundunlab.site.module.user.mapper.AdminMapper">
+    <update id="updateUserByIdForAdmin">
+        update users
+        <set>
+            <if test="username != null and username != ''">
+                username = #{username},
+            </if>
+            <if test=" nickname != null and nickname != ''">
+                nickname = #{nickname},
+            </if>
+            <if test="password != null and password != ''">
+                password_hash = #{password},
+            </if>
+            <if test="phone != null and phone != ''">
+                phone = #{phone},
+            </if>
+            <if test="email != null and email != ''">
+                email = #{email},
+            </if>
+            <if test="updatedAt != null">
+                updated_at = #{updatedAt},
+            </if>
+        </set>
+        where id = #{oldId}
+    </update>
+
+    <select id="getUsers" resultType="com.hundunlab.site.module.user.pojo.Entity.User">
+       select
+           id,
+           username,
+           email,
+           nickname,
+           avatar_url as avatarUrl,
+           phone,
+           status,
+           created_at as createdAt,
+           updated_at as updatedAt,
+           last_login_at as lastLoginAt
+       from users
+       <where>
+           <if test="name!=null and name!=''">
+               username like concat('%',#{name},'%')
+           </if>
+           <if test="status!=null">
+               and status=#{status}
+           </if>
+           <if test="beginTime != null">
+               and created_at >= #{beginTime}
+           </if>
+           <if test="endTime != null">
+               <![CDATA[ and created_at <= #{endTime} ]]>
+           </if>
+           <if test="loginDays != null and loginDays > 0">
+               <![CDATA[ and DATEDIFF(NOW(),last_login_at) >= #{loginDays}]]>
+           </if>
+       </where>
+   </select>
+    <select id="getLogs" parameterType="com.hundunlab.site.module.user.pojo.DTO.GetLogsDTO" resultType="com.hundunlab.site.module.user.pojo.Entity.OperateLog">
+        select
+        id,
+        operate_user_id as operateUserId,
+        operate_user_name as operateUserName,
+        operate_type as operateType,
+        module_name as moduleName,
+        operate_function_name as operateFunctionName,
+        ip_address as ipAddress,
+        operate_at as operateAt,
+        operate_time as operateTime,
+        operate_status as operateStatus
+        from operation_log
+        <where>
+            <!-- 1. 操作人姓名：兼容空字符串（前端传""时不拼接条件） -->
+            <if test="operateUserName != null and operateUserName.trim() != ''">
+                operate_user_name like concat('%', #{operateUserName}, '%')
+            </if>
+            <!-- 2. 操作类型：兼容空字符串 -->
+            <if test="operateType != null and operateType.trim() != ''">
+                AND operate_type = #{operateType}
+            </if>
+            <!-- 3. 操作时长：修复逻辑（可选改为>=，并兼容非ms格式） -->
+            <if test="operateTime != null and operateTime.trim() != ''">
+                <!-- 先提取数字，再比较，兼容"100ms"/"100"/" 200ms "等格式 -->
+                AND CAST(REGEXP_REPLACE(operate_time, '[^0-9]', '') AS UNSIGNED) >= CAST(REGEXP_REPLACE(#{operateTime}, '[^0-9]', '') AS UNSIGNED)
+            </if>
+            <!-- 4. 操作状态：兼容数字/字符串，且允许传0 -->
+            <if test="operateStatus != null and operateStatus!=''">
+                AND operate_status = #{operateStatus}
+            </if>
+            <!-- 5. 模块名称：兼容空字符串，trim去空格 -->
+            <if test="moduleName != null and moduleName.trim() != ''">
+                AND module_name like concat('%', #{moduleName}, '%')
+            </if>
+            <!-- 6. 操作方法名：兼容空字符串，trim去空格 -->
+            <if test="operateFunctionName != null and operateFunctionName.trim() != ''">
+                AND operate_function_name like concat('%', #{operateFunctionName}, '%')
+            </if>
+            <!-- 7. 通用状态：Integer类型，只需判断非null -->
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+            <!-- 8. 时间范围：用CDATA兼容>=/<=，避免XML转义问题 -->
+            <if test="beginTime != null">
+                <![CDATA[ AND operate_at >= #{beginTime} ]]>
+            </if>
+            <if test="endTime != null">
+                <![CDATA[ AND operate_at <= #{endTime} ]]>
+            </if>
+        </where>
+        order by operate_at desc
+    </select>
+
+</mapper>

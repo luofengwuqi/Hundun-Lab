@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hundunlab.site.module.user.mapper.FeedbackMapper">
+
+    <delete id="deleteFeedbackByIds">
+        DELETE FROM feedback
+        <where>
+            <if test="ids != null and ids.size() > 0">
+                id IN
+                <foreach collection="ids"
+                         item="id"
+                         index="index"
+                         open="("
+                         close=")"
+                         separator=",">
+                    #{id}
+                </foreach>
+            </if>
+            <if test="ids == null or ids.size() == 0">
+                1 = 0
+            </if>
+        </where>
+    </delete>
+
+</mapper>

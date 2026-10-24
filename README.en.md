@@ -57,8 +57,8 @@ Fifteen Hundun is a feature-complete full-stack application offering user manage
 
 ```
 15-hundun/
-├── back-end/fifteen-hundun/          # Spring Boot backend
-│   └── src/main/java/com/createpen/fifteenhundun/
+├── back-end/hundun-lab/          # Spring Boot backend
+│   └── src/main/java/com/hundunlab/site/
 │       ├── common/                   # Common components
 │       │   ├── anno/                 # Custom annotations
 │       │   ├── config/               # Configuration classes
@@ -100,14 +100,14 @@ Fifteen Hundun is a feature-complete full-stack application offering user manage
 
 1. Create a database and import `file/hundun.sql`
 
-2. Modify the configuration file: `back-end/fifteen-hundun/src/main/resources/application.yml`
+2. Modify the configuration file: `back-end/hundun-lab/src/main/resources/application.yml`
 
 3. Configure Alibaba Cloud OSS (optional)
 
 4. Run the project:
 
 ```bash
-cd back-end/fifteen-hundun
+cd back-end/hundun-lab
 mvn spring-boot:run
 ```
 

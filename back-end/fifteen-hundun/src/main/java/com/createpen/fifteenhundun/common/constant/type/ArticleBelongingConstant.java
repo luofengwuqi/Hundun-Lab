@@ -1,5 +1,0 @@
-package com.createpen.fifteenhundun.common.constant.type;
-
-public class ArticleBelongingConstant {
-    public static final Integer HELP_ARTICLE = 1;
-}

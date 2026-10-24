@@ -51,8 +51,8 @@
 
 ```
 15-hundun/
-├── back-end/fifteen-hundun/          # Spring Boot 后端
-│   └── src/main/java/com/createpen/fifteenhundun/
+├── back-end/hundun-lab/          # Spring Boot 后端
+│   └── src/main/java/com/hundunlab/site/
 │       ├── common/                   # 公共组件
 │       │   ├── anno/                 # 自定义注解
 │       │   ├── config/               # 配置类
@@ -94,14 +94,14 @@
 
 1. 创建数据库并导入 `file/hundun.sql`
 
-2. 修改配置文件 `back-end/fifteen-hundun/src/main/resources/application.yml`
+2. 修改配置文件 `back-end/hundun-lab/src/main/resources/application.yml`
 
 3. 配置阿里云 OSS（可选）
 
 4. 运行项目：
 
 ```bash
-cd back-end/fifteen-hundun
+cd back-end/hundun-lab
 mvn spring-boot:run
 ```
 

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hundunlab.site.module.user.mapper.UserMapper">
+    <insert id="insertUser" parameterType="com.hundunlab.site.module.user.pojo.Entity.User">
+    INSERT INTO users
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+        <if test="id != null">id,</if>
+        <if test="username != null">username,</if>
+        <if test="email != null">email,</if>
+        <if test="passwordHash != null">password_hash,</if>
+        <if test="nickname != null">nickname,</if>
+        <if test="avatarUrl != null">avatar_url,</if>
+        <if test="phone != null">phone,</if>
+        <if test="status != null">status,</if>
+        <if test="createdAt != null">created_at,</if>
+        <if test="updatedAt != null">updated_at,</if>
+        <if test="lastLoginAt != null">last_login_at,</if>
+        <if test="inviteCode != null">invite_code,</if>
+    </trim>
+    <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+        <if test="id != null">#{id},</if>
+        <if test="username != null">#{username},</if>
+        <if test="email != null">#{email},</if>
+        <if test="passwordHash != null">#{passwordHash},</if>
+        <if test="nickname != null">#{nickname},</if>
+        <if test="avatarUrl != null">#{avatarUrl},</if>
+        <if test="phone != null">#{phone},</if>
+        <if test="status != null">#{status},</if>
+        <if test="createdAt != null">#{createdAt},</if>
+        <if test="updatedAt != null">#{updatedAt},</if>
+        <if test="lastLoginAt != null">#{lastLoginAt},</if>
+        <if test="inviteCode != null">#{inviteCode},</if>
+    </trim>
+</insert>
+
+<update id="updateUserByUserName" parameterType="com.hundunlab.site.module.user.pojo.Entity.User">
+    UPDATE users
+    <set>
+        <if test="email != null and email != ''">email = #{email,jdbcType=VARCHAR},</if>
+        <if test="passwordHash != null and passwordHash != ''">password_hash = #{passwordHash,jdbcType=VARCHAR},</if>
+        <if test="nickname != null and nickname != ''">nickname = #{nickname,jdbcType=VARCHAR},</if>
+        <if test="avatarUrl != null and avatarUrl != ''">avatar_url = #{avatarUrl,jdbcType=VARCHAR},</if>
+        <if test="phone != null and phone != ''">phone = #{phone,jdbcType=VARCHAR},</if>
+        <if test="lastLoginAt != null">last_login_at = #{lastLoginAt,jdbcType=TIMESTAMP},</if>
+        <if test="status != null">status = #{status,jdbcType=TINYINT},</if>
+        <if test="updatedAt != null">updated_at = #{updatedAt,jdbcType=TIMESTAMP},</if>
+        <if test="inviteCode != null and inviteCode != ''">invite_code = #{inviteCode,jdbcType=VARCHAR}</if>
+    </set>
+    WHERE username = #{username,jdbcType=VARCHAR}
+</update>
+    <delete id="deleteUserByUserNameList">
+        DELETE FROM users
+        <where>
+            <if test="userNameList != null and userNameList.size() > 0">
+                username IN
+                <foreach collection="userNameList"
+                         item="username"
+                         index="index"
+                         open="("
+                         close=")"
+                         separator=",">
+                    #{username}
+                </foreach>
+            </if>
+            <if test="userNameList == null or userNameList.size() == 0">
+                1 = 0
+            </if>
+        </where>
+    </delete>
+
+
+    <select id="getUserByUserName" resultType="com.hundunlab.site.module.user.pojo.Entity.User">
+        SELECT
+            id,
+            username,
+            email,
+            password_hash AS passwordHash,
+            nickname,
+            avatar_url AS avatarUrl,
+            phone,
+            status,
+            created_at AS createdAt,
+            updated_at AS updatedAt,
+            last_login_at AS lastLoginAt
+        FROM users
+        WHERE username = #{username}
+    </select>
+    <select id="selectByUserNameList" resultType="com.hundunlab.site.module.user.pojo.Entity.User">
+        SELECT
+        id,
+        username,
+        email,
+        password_hash AS passwordHash,
+        nickname,
+        avatar_url AS avatarUrl,
+        phone,
+        status,
+        created_at AS createdAt,
+        updated_at AS updatedAt,
+        last_login_at AS lastLoginAt
+        FROM users
+        <where>
+            <if test="userNameList != null and userNameList.size() > 0">
+                username IN
+                <foreach collection="userNameList"
+                    item="username"
+                    index="index"
+                    open="("
+                    close=")"
+                    separator=",">
+                    #{username}
+                </foreach>
+            </if>
+        </where>
+    </select>
+    <select id="checkUserNotExists" resultType="java.lang.Integer">
+        SELECT COUNT(*) AS count
+        FROM users
+        <where>
+            <if test="username != null">
+                username = #{username}
+            </if>
+            <if test="email != null">
+                OR email = #{email}
+            </if>
+            <if test="phone != null">
+                OR phone = #{phone}
+            </if>
+        </where>
+    </select>
+
+</mapper>
