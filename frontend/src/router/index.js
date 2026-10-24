@@ -1,56 +1,45 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { useUserStore } from '@/stores/user.js'
-import { ElMessage } from 'element-plus'
+import SiteLayout from '@/layouts/SiteLayout.vue'
 
+/**
+ * 前台路由。全部匿名可访问，登录只影响「下载」这个动作，
+ * 所以这里不写任何全局跳转守卫——守卫会把匿名用户挡在首页外面。
+ * 管理后台会在阶段 3 以独立布局挂在 /admin 下，单独加守卫。
+ */
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    { path:'/',redirect:'/login'},
-    { path:'/login', component:()=>import('@/views/login/Login.vue')},
-    { path:'/help', component:()=>import('@/views/help/Help.vue')},
-    { path:'/admin',component:()=>import('@/views/admin/AdminLayout.vue')},
     {
-      path:'/user',
-      component:()=>import('@/views/user/UserHome.vue'),
-      children:[
-        { path:'info', component:()=>import('@/views/user/component/Info/Info.vue')},
-      ]
+      path: '/',
+      component: SiteLayout,
+      children: [
+        { path: '', name: 'home', component: () => import('@/views/site/HomePage.vue') },
+        {
+          path: 'software',
+          name: 'software-list',
+          component: () => import('@/views/site/SoftwareListPage.vue'),
+        },
+        {
+          path: 'software/:slug',
+          name: 'software-detail',
+          component: () => import('@/views/site/SoftwarePage.vue'),
+        },
+        { path: 'plugins', name: 'plugins', component: () => import('@/views/site/PluginsPage.vue') },
+        { path: 'login', name: 'login', component: () => import('@/views/site/LoginPage.vue') },
+      ],
     },
+    { path: '/:pathMatch(.*)*', redirect: '/' },
   ],
+  scrollBehavior(to, from, savedPosition) {
+    return savedPosition || { top: 0 }
+  },
 })
 
-router.beforeEach(async (to) => {
-  const userStore = useUserStore()
-
-  // 未登录的情况
-  if (!userStore.token) {
-    // 如果访问的是 login 或 help 页面，直接放行
-    if (to.path === '/login' || to.path === '/help') {
-      return true
-    }
-    // 其他页面重定向到登录页
-    return '/login'
+router.afterEach((to) => {
+  // 详情页拿到数据后会自己覆盖标题，这里只处理静态页
+  if (to.name !== 'software-detail') {
+    document.title = 'Hundun Lab'
   }
-
-  // 已登录的情况
-  // 如果访问登录页，那就把pinia清空
-  if (to.path === '/login') {
-    userStore.setUserInfo({})
-    userStore.setToken('')
-    return true
-  }
-
-  if(to.path === '/admin'){
-    if(Number(userStore.userInfo.status) < 2){
-      ElMessage.error("您无权访问这里...请您离开...")
-      userStore.setUserInfo({})
-      userStore.setToken('')
-      return '/login'
-    }
-  }
-
-  // 放行
-  return true
 })
 
 export default router
