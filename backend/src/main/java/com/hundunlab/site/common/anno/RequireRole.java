@@ -8,9 +8,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 角色校验注解
- * 标注在 Controller 类或方法上，由 RoleCheckAspect 统一校验当前登录用户的角色
- * 方法上的注解优先于类上的注解
+ * 角色校验注解。
+ * 标注在 Controller 类或方法上，由 AccessControlInterceptor 统一校验当前登录用户的角色。
+ * 方法上的注解优先于类上的注解。
+ * <p>
+ * 只应在 Controller 层使用：写在 Service 实现类上会依赖 AOP 代理类型，切到 JDK 动态代理时会静默失效。
  */
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)

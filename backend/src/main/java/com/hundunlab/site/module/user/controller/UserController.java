@@ -1,5 +1,6 @@
 package com.hundunlab.site.module.user.controller;
 
+import com.hundunlab.site.common.anno.PublicApi;
 import com.hundunlab.site.common.anno.RateLimit;
 import com.hundunlab.site.common.context.BaseContext;
 import com.hundunlab.site.common.response.Result;
@@ -26,6 +27,7 @@ public class UserController {
         this.userService = userService;
     }
 
+    @PublicApi
     @RateLimit(count = 5, time = 60, key = "register:user")
     @PostMapping("/register")
     public Result<RegisterVO> register(@Valid @RequestBody RegisterDTO dto)

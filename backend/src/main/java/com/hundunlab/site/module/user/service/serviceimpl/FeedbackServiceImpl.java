@@ -1,8 +1,9 @@
 package com.hundunlab.site.module.user.service.serviceimpl;
 
-import com.hundunlab.site.common.anno.RequireRole;
 import com.hundunlab.site.common.context.BaseContext;
 import com.hundunlab.site.common.exception.MyException.InsufficientPermissionsException;
+import com.hundunlab.site.common.exception.MyException.LoginException;
+import com.hundunlab.site.common.exception.MyException.UserNotFoundException;
 import com.hundunlab.site.module.user.cache.FeedbackRedisService;
 import com.hundunlab.site.module.user.cache.UserRedisService;
 import com.hundunlab.site.common.util.email.SendEmailService;
@@ -51,10 +52,9 @@ public class FeedbackServiceImpl implements FeedbackService {
         this.sendEmailService = sendEmailService;
     }
 
-    //权限统一收敛到 @RequireRole 切面：直接查库校验，不再走 user:data 缓存（旧方案最长30分钟权限时差）
     @Override
-    @RequireRole({STATUS_ADMIN, STATUS_SUPER_ADMIN})
     public List<Feedback> selectAllFeedback(int page, int size) {
+        assertAdmin();
         //1 分页查询，避免一次性加载全部反馈导致内存溢出
         PageHelper.startPage(page, size);
         List<Feedback> feedbacks = feedbackMapper.selectAllFeedback();
@@ -64,8 +64,8 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    @RequireRole({STATUS_ADMIN, STATUS_SUPER_ADMIN})
     public void updateFeedbackStatus(UpdateFeedbackStatusDTO dto) {
+        assertAdmin();
         // 1. 先校验状态合法性，非法状态不落库
         boolean finished = Objects.equals(dto.getStatus(), FEEDBACK_STATUS_FINISH);
         boolean baned = Objects.equals(dto.getStatus(), FEEDBACK_STATUS_BAN);
@@ -99,16 +99,20 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     @Override
     public void addFeedback(AddFeedbackDTO dto) {
+        // 提交反馈必须登录：下面要用当前用户 id 与邮箱，匿名会拿到 null
+        Long currentId = requireLogin();
         //1 dto->entity
         Feedback feedback = new Feedback();
         feedback.setType(dto.getType());
         feedback.setText(dto.getText());
         feedback.setCreatedAt(LocalDateTime.now());
-        Long currentId = BaseContext.getCurrentId();
         User user= userRedisService.getUserInRedis(currentId);
         if(user == null){
             user = userMapper.selectUserById(currentId);
             userRedisService.saveUserInRedis(user);
+        }
+        if (user == null) {
+            throw new UserNotFoundException("用户不存在");
         }
         feedback.setUserId(Math.toIntExact(user.getId()));
         feedback.setUsername(user.getUsername());
@@ -124,8 +128,8 @@ public class FeedbackServiceImpl implements FeedbackService {
     }
 
     @Override
-    @RequireRole({STATUS_ADMIN, STATUS_SUPER_ADMIN})
     public void deleteHandledFeedback() {
+        assertAdmin();
         //查询已处理的反馈id 收集到列表
         List<Integer> handledIds = feedbackMapper.selectAllFeedback().stream()
             .filter(feedback -> Objects.equals(feedback.getStatus(), FEEDBACK_STATUS_FINISH ) || Objects.equals(feedback.getStatus(), FEEDBACK_STATUS_BAN))
@@ -142,6 +146,27 @@ public class FeedbackServiceImpl implements FeedbackService {
 
         //缓存移除
         feedbackRedisService.clearFeedbacksCache();
+    }
+
+    /**
+     * 服务层二次断言：即使拦截器被绕过（内部调用、配置错误），也不允许匿名写入
+     */
+    private Long requireLogin() {
+        Long currentId = BaseContext.getCurrentId();
+        if (currentId == null) {
+            throw new LoginException("未登录");
+        }
+        return currentId;
+    }
+
+    /**
+     * 服务层二次断言：管理员身份以线程上下文中的真实状态为准
+     */
+    private void assertAdmin() {
+        Integer status = BaseContext.getCurrentStatus();
+        if (status == null || (status != STATUS_ADMIN && status != STATUS_SUPER_ADMIN)) {
+            throw new InsufficientPermissionsException("权限不足");
+        }
     }
 
     /**

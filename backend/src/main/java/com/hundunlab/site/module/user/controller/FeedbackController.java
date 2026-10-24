@@ -1,5 +1,6 @@
 package com.hundunlab.site.module.user.controller;
 
+import com.hundunlab.site.common.anno.RequireRole;
 import com.hundunlab.site.common.response.Result;
 import com.hundunlab.site.module.user.pojo.DTO.AddFeedbackDTO;
 import com.hundunlab.site.module.user.pojo.DTO.UpdateFeedbackStatusDTO;
@@ -15,6 +16,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.hundunlab.site.common.constant.status.UserStatusConstant.STATUS_ADMIN;
+import static com.hundunlab.site.common.constant.status.UserStatusConstant.STATUS_SUPER_ADMIN;
+
 @Slf4j
 @RestController
 @RequestMapping("/feedback")
@@ -28,7 +32,8 @@ public class FeedbackController {
     }
 
 
-    //获取所有的反馈
+    //获取所有的反馈（管理员）
+    @RequireRole({STATUS_ADMIN, STATUS_SUPER_ADMIN})
     @GetMapping
     public Result<List<Feedback>> selectAllFeedback(
             @RequestParam(defaultValue = "1") @Min(1) int page,
@@ -37,7 +42,8 @@ public class FeedbackController {
         return Result.success(feedbackService.selectAllFeedback(page, size));
     }
     
-    //更新反馈状态
+    //更新反馈状态（管理员）
+    @RequireRole({STATUS_ADMIN, STATUS_SUPER_ADMIN})
     @PutMapping("/status")
     public Result<Void> updateFeedbackStatus(@Valid @RequestBody UpdateFeedbackStatusDTO dto){
         log.info("更新反馈状态，反馈ID：{}，新状态：{},处理人:{}", dto.getId(), dto.getStatus(),dto.getHandleUserId());
@@ -51,6 +57,8 @@ public class FeedbackController {
         feedbackService.addFeedback(dto);
         return Result.success();
     }
+    //删除已处理的反馈（管理员）
+    @RequireRole({STATUS_ADMIN, STATUS_SUPER_ADMIN})
     @DeleteMapping("/handled")
     public Result<Void> deleteHandledFeedback(){
         log.info("删除已处理的反馈");

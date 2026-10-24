@@ -1,5 +1,6 @@
 package com.hundunlab.site.module.admin.controller;
 
+import com.hundunlab.site.common.anno.PublicApi;
 import com.hundunlab.site.common.anno.RateLimit;
 import com.hundunlab.site.common.response.Result;
 import com.hundunlab.site.module.admin.pojo.DTO.AddAdminDTO;
@@ -24,6 +25,7 @@ public class AdminRegisterController {
         this.adminService = adminService;
     }
 
+    @PublicApi
     @RateLimit(count = 5, time = 60, key = "register:admin")
     @PostMapping("/user/register/admin")
     public Result<Void> registerByInviteCode(@Valid @RequestBody AddAdminDTO dto) {
