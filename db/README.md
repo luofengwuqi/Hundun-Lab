@@ -38,5 +38,6 @@ mysql -u<user> -p hundun_lab < db/02_seed.sql
 
 - `release_asset` 与 `software_screenshot` 故意为空：安装包与截图必须由管理后台上传到 OSS 后入库，
   仓库里不放二进制。
-- 管理员账号不通过 SQL 创建：首次启动时用 `ADMIN_BOOTSTRAP_USERNAME` / `ADMIN_BOOTSTRAP_PASSWORD`
-  环境变量引导创建（幂等，库中已有管理员则跳过）。
+- 管理员账号不通过 SQL 创建。当前代码**还没有**引导逻辑：`/user/register` 只创建 `status = 1` 的普通用户，
+  需要管理员权限时手工把该行的 `status` 改为 `2` / `3`。阶段 3 落地后台后再改成
+  `ADMIN_BOOTSTRAP_USERNAME` / `ADMIN_BOOTSTRAP_PASSWORD` 首启幂等创建。

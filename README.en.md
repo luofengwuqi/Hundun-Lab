@@ -10,16 +10,17 @@ The official site for the Hundun software family — project introductions, inst
 [![License](https://img.shields.io/badge/License-MulanPSL--2.0-red?style=flat-square)](LICENSE)
 
 Nothing about a product is hard-coded: software, features, supported platforms, releases and installers all come from the database.
-Shipping a new version means entering data in the admin console, not editing code and redeploying.
+The design goal is that a new version is just data entered in the admin console, not a code change and redeploy
+(the console itself is not built yet).
 
-The site currently features **HundunDesktop**, a desktop card app built with Electron 28 and Vue 3.
+The site currently features **HundunDesktop**, a retro handheld-style desktop tool built with Electron 28 and Vue 3.
 
 ## Status
 
 | Phase | Scope | Status |
 | --- | --- | --- |
 | 1 | Public site: home, software list & detail, sign-in, login-gated downloads | Done |
-| 1 | Admin console: software & release entry, installer upload, download stats | In progress |
+| 1 | Admin console: software & release entry, installer upload, download stats | Not started (no software/release management API yet) |
 | 2 | Plugin community: listing & detail, manifest validation on upload, review, stable download URL | Not started (placeholder page) |
 | 3 | User center, feedback handling, admin permission hardening | Not started |
 
@@ -45,8 +46,8 @@ chaos-lab/
 │           ├── auth/             # Sign-in methods and email codes
 │           ├── software/         # Software, features, platforms, releases, assets
 │           ├── download/         # Download tickets and records
-│           ├── user/             # Profile and feedback
-│           └── admin/            # User management, admin invitations
+│           ├── user/             # Profile, avatar upload, feedback, generic uploads
+│           └── admin/            # User management, admin invitations (to be rebuilt in phase 3)
 ├── frontend/                     # Public site
 │   └── src/
 │       ├── views/site/           # Home, list, detail, sign-in, plugins
@@ -57,6 +58,10 @@ chaos-lab/
 ├── db/                           # Idempotent schema and seed scripts
 └── docs/                         # Skeleton review report (Chinese)
 ```
+
+> [!NOTE]
+> `frontend/src/views/{admin,login,user,help}` and `api/{admin,user,feedback,article}.js` are legacy pages carried over
+> from the base project. They are not routed and are not referenced by the build; phase 3 will replace or delete them.
 
 ## Getting started
 
@@ -85,12 +90,19 @@ All secrets are supplied through environment variables (or a local `backend/src/
 | `JWT_SECRET` | Yes | — | At least 32 bytes; the app refuses to start otherwise |
 | `DB_URL` | No | local `hundun_lab` | JDBC URL |
 | `DB_USERNAME` / `DB_PASSWORD` | Yes | `root` / — | No default password on purpose |
-| `REDIS_HOST` / `REDIS_PORT` / `REDIS_PASSWORD` | No | `localhost` / `6379` / empty | Token revocation, email codes, cache |
-| `OSS_ENDPOINT` / `OSS_BUCKET` / `OSS_DOMAIN` | For downloads | empty | Private bucket used to sign URLs |
+| `REDIS_HOST` / `REDIS_PORT` / `REDIS_PASSWORD` / `REDIS_DATABASE` | No | `localhost` / `6379` / empty / `0` | Token revocation, email codes, cache |
+| `OSS_ENDPOINT` / `OSS_BUCKET` / `OSS_DOMAIN` | For downloads | `oss-cn-beijing.aliyuncs.com` / empty | Private bucket used to sign URLs |
 | `ALIYUN_ACCESS_KEY_ID` / `ALIYUN_ACCESS_KEY_SECRET` | For downloads | empty | App still starts; downloads return 503 |
-| `MAIL_SMTP_HOST` / `MAIL_FROM` / `MAIL_AUTH_CODE` | No | `smtp.qq.com` / empty | Sending is skipped when unset |
-| `CORS_ALLOWED_ORIGINS` | No | `http://localhost:5577` | Leave empty for same-origin deployment |
+| `MAIL_SMTP_HOST` / `MAIL_SMTP_PORT` / `MAIL_FROM` / `MAIL_AUTH_CODE` | No | `smtp.qq.com` / `587` / empty | Sending is skipped when unset |
+| `UPLOAD_MAX_FILE_SIZE` / `UPLOAD_MAX_REQUEST_SIZE` | No | `20MB` / `25MB` | Upload quota for plugin `.zip`; installers go straight to OSS |
+| `CORS_ALLOWED_ORIGINS` | No | `http://localhost:5577` | Frontend origin when deployed separately; leave empty for same-origin |
+| `TRUST_PROXY_HEADERS` | No | `false` | Only enable behind a trusted reverse proxy, otherwise `X-Forwarded-For` is spoofable |
 | `SERVER_PORT` | No | `5757` | |
+| `SPRING_PROFILES_ACTIVE` | No | `dev` | Only `dev` loads `application-dev.yml` and the local secret file |
+| `JWT_EXPIRATION_MILLIS` | No | `86400000` | Token lifetime, 24 hours by default |
+
+Apart from `JWT_SECRET` and the database password, the defaults are enough to browse and sign in with a password;
+email-code sign-in needs SMTP, and handing out installers needs OSS.
 
 ```bash
 cd backend
@@ -106,6 +118,19 @@ pnpm dev              # http://localhost:5577
 ```
 
 The dev server proxies `/api` to `http://localhost:5757`, so no CORS setup is needed.
+
+### 4. About accounts
+
+`POST /user/register` always creates a normal user (`users.status = 1`). The repository ships no admin account
+and no bootstrap logic — to call `/admin/**`, register an account and manually set its `status` to `2` (admin)
+or `3` (super admin). Phase 3 replaces this with account management in the admin console.
+
+### Deployment prerequisites
+
+The frontend hard-codes `/api` as its base URL (`baseURL` in `src/api/http.js`). In production either deploy it
+same-origin and have Nginx reverse-proxy `/api` to port 5757, or register the frontend origin in
+`CORS_ALLOWED_ORIGINS` and point the frontend at the API domain. No code change is required either way.
+Nothing is deployed yet.
 
 ## Design notes
 
@@ -137,39 +162,77 @@ for the `/admin` prefix and `@RequireRole`. Anonymous requests get `null` from `
 
 ## API overview
 
+Every response uses `{ code, errorCode, message, data }`. HTTP status conveys the category; business failures are identified by `errorCode`.
+
+### Core site flow
+
 | Method | Path | Auth | Purpose |
 | --- | --- | --- | --- |
 | GET | `/software` | Public | Software list with latest release, platforms, download count |
 | GET | `/software/{slug}` | Public | Software detail: features, screenshots, releases, assets |
-| POST | `/download/ticket` | Signed in | Exchange for an installer download URL |
-| GET | `/download/mine` | Signed in | My download history |
-| POST | `/user/register` | Public | Register |
-| POST | `/user/login/username-password` | Public | Password sign-in |
-| POST | `/user/login/email-code` / `/email-code/send` | Public | Email-code sign-in / send code |
-| POST | `/user/login/logout` | Signed in | Sign out and revoke the token |
-| GET | `/user/info` | Signed in | Current profile |
-| POST | `/feedback` | Signed in | Submit feedback |
-| GET | `/feedback`, `PUT /feedback/status` | Admin | List and handle feedback |
+| POST | `/download/ticket` | Signed in | Exchange for a download URL (5 min, 30 requests/min) |
+| GET | `/download/mine` | Signed in | My download history (`limit` defaults to 20, max 100) |
 
-Every response uses `{ code, errorCode, message, data }`. HTTP status conveys the category; business failures are identified by `errorCode`.
+### Accounts
+
+| Method | Path | Auth | Purpose |
+| --- | --- | --- | --- |
+| POST | `/user/register` | Public | Register, 5 requests/min |
+| POST | `/user/register/admin` | Public | Register an admin with an invite code, 5 requests/min |
+| POST | `/user/login/username-password` | Public | Username and password |
+| POST | `/user/login/email-password` | Public | Email and password |
+| POST | `/user/login/phone-password` | Public | Phone and password |
+| POST | `/user/login/email-code/send` | Public | Send an email code (rate-limited) |
+| POST | `/user/login/email-code` | Public | Email-code sign-in |
+| POST | `/user/login/logout` | Signed in | Sign out and revoke the current token |
+| GET | `/user/info` | Signed in | Current profile |
+| PUT | `/user/nickname`, `/email`, `/phone`, `/password` | Signed in | Update profile; password changes are limited to 5/min |
+| PUT | `/user/avatar` | Signed in | Avatar upload (`multipart`, 10MB per file) |
+| DELETE | `/user` | Signed in | Normal users delete themselves with their password; admins can delete in bulk |
+| POST | `/files` | Signed in | Generic file upload, 10 requests/min |
+
+### Feedback
+
+| Method | Path | Auth | Purpose |
+| --- | --- | --- | --- |
+| POST | `/feedback` | Signed in | Submit feedback |
+| GET | `/feedback` | Admin | Paginated feedback list |
+| PUT | `/feedback/status` | Admin | Update handling status |
+| DELETE | `/feedback/handled` | Admin | Clear handled feedback |
+
+### Admin (not wired to the UI yet)
+
+`/admin/**` still has 9 endpoints inherited from the base project: create admin (super admin only), generate invite code,
+paginated user list and detail, change status, delete user, operation logs, user count. They are protected by `@RequireRole`,
+with the `/admin` path prefix acting as a second role check in the interceptor. The public site has no entry points to them;
+phase 3 redesigns them before exposing anything.
 
 ## Data and content
 
 - `db/01_schema.sql` is DDL only; `db/02_seed.sql` holds the launch content. Both are idempotent;
 - No installers, screenshots, or user rows are committed to the repository;
-- New software and releases are entered through the admin console (in progress) — no code change needed;
+- New software and releases are meant to be entered through the admin console (not built yet) — data only, no code change;
 - Schema changes go into numbered `1x_*.sql` scripts without altering existing column semantics. See [db/README.md](db/README.md).
+
+> [!NOTE]
+> The seed holds exactly one software (HundunDesktop), 5 features, 2 platforms and 1 release (`26.2.1024`),
+> with no assets and no screenshots. A fresh clone therefore shows **no primary download button** and the
+> "no downloadable installer for this release" hint — that is missing data, not a broken page.
 
 ## Test and build
 
 ```bash
-cd backend  && mvn test        # 23 cases covering access control, token parsing, rate limiting
+cd backend  && mvn test        # 23 cases: 10 access control, 6 token parsing, 7 rate limiting
 cd frontend && pnpm build      # outputs dist/
+cd frontend && pnpm lint       # oxlint + eslint
 ```
+
+The backend tests are plain unit tests with no Spring context, so they need neither MySQL, Redis, nor `JWT_SECRET` —
+CI can run them as-is.
 
 ## Roadmap
 
-- **Phase 1 (in progress)**: public site done; admin console for software/release entry, OSS installer upload, download stats.
+- **Phase 1 (in progress)**: public site done; remaining is the admin console — software and release entry, OSS installer upload, download stats.
 - **Phase 2**: plugin community — cards and detail pages, `.zip` upload with manifest validation, review queue, one stable URL per plugin.
 - **Phase 3**: user center, feedback handling, admin permission hardening.
 
@@ -180,6 +243,8 @@ cd frontend && pnpm build      # outputs dist/
 > "storage unavailable" beats handing out a link that 404s.
 
 - **App fails on startup**: `JWT_SECRET` is missing or shorter than 32 bytes — a hard security requirement, no fallback.
+- **`/admin/**` returns 403 (`AUTH_FORBIDDEN`)**: the current account's `status` is not 2 or 3; see "About accounts".
+- **Download returns 401 (`AUTH_NOT_LOGGED_IN`)**: the ticket endpoint is not public — sign in first.
 - **Vite cannot find rollup after `pnpm install`**: the lockfile is v9 format; use pnpm 9/10. pnpm 12 produces incomplete links.
 - **Edits seem ignored**: Vite occasionally caches the old SFC; restart the dev server.
 
@@ -187,6 +252,6 @@ cd frontend && pnpm build      # outputs dist/
 
 - [docs/00-骨架评审报告.md](docs/00-骨架评审报告.md) — skeleton review, change list, and design decisions (Chinese)
 - [db/README.md](db/README.md) — script order and hard rules (Chinese)
-- [frontend/README.md](frontend/README.md) — frontend project notes
+- [frontend/README.md](frontend/README.md) — frontend project notes (Chinese)
 
 Released under the [Mulan Permissive Software License v2](LICENSE).
