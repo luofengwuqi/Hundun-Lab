@@ -62,6 +62,6 @@ INSERT IGNORE INTO `software_release`
 (`id`, `software_id`, `version`, `channel`, `notes_zh`, `notes_en`, `published_at`, `status`)
 VALUES
 (1, 1, '26.2.1024', 'stable',
- '首个公开版本。（此条为占位说明，请在管理后台补充正式更新日志）',
- 'First public release. (Placeholder text — replace it with the real changelog from the admin console.)',
+ '首个公开版本：内置计算器、文本管理器、任务清单、脚本管理器四张卡带，支持从 .zip 安装第三方插件。',
+ 'First public release: ships four built-in cartridges (calculator, text manager, task list, script runner) and supports installing third-party plugins from a .zip file.',
  NOW(), 1);
