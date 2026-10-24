@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hundunlab.site.module.software.mapper.SoftwareMapper">
+
+    <sql id="softwareColumns">
+        id, slug, name_zh, name_en, tagline_zh, tagline_en, intro_zh, intro_en,
+        tech_stack, repo_url, license, cover_url, theme_color, status, sort_order,
+        created_at, updated_at
+    </sql>
+
+    <select id="selectPublished" resultType="com.hundunlab.site.module.software.pojo.Entity.Software">
+        SELECT <include refid="softwareColumns"/>
+        FROM software
+        WHERE status = 1
+        ORDER BY sort_order ASC, id ASC
+    </select>
+
+    <select id="selectPublishedBySlug" resultType="com.hundunlab.site.module.software.pojo.Entity.Software">
+        SELECT <include refid="softwareColumns"/>
+        FROM software
+        WHERE slug = #{slug} AND status = 1
+        LIMIT 1
+    </select>
+
+    <select id="selectPublishedById" resultType="com.hundunlab.site.module.software.pojo.Entity.Software">
+        SELECT <include refid="softwareColumns"/>
+        FROM software
+        WHERE id = #{id} AND status = 1
+        LIMIT 1
+    </select>
+
+    <select id="selectFeatures" resultType="com.hundunlab.site.module.software.pojo.Entity.SoftwareFeature">
+        SELECT id, software_id, icon, title_zh, title_en, desc_zh, desc_en, sort_order
+        FROM software_feature
+        WHERE software_id = #{softwareId}
+        ORDER BY sort_order ASC, id ASC
+    </select>
+
+    <select id="selectScreenshots" resultType="com.hundunlab.site.module.software.pojo.Entity.SoftwareScreenshot">
+        SELECT id, software_id, image_url, caption_zh, caption_en, sort_order
+        FROM software_screenshot
+        WHERE software_id = #{softwareId}
+        ORDER BY sort_order ASC, id ASC
+    </select>
+
+    <select id="selectPlatforms" resultType="com.hundunlab.site.module.software.pojo.Entity.SoftwarePlatform">
+        SELECT id, software_id, platform, note_zh, note_en, sort_order
+        FROM software_platform
+        WHERE software_id = #{softwareId}
+        ORDER BY sort_order ASC, id ASC
+    </select>
+
+    <select id="selectPlatformsBySoftwareIds"
+            resultType="com.hundunlab.site.module.software.pojo.Entity.SoftwarePlatform">
+        SELECT id, software_id, platform, note_zh, note_en, sort_order
+        FROM software_platform
+        WHERE software_id IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+        ORDER BY software_id ASC, sort_order ASC
+    </select>
+
+</mapper>

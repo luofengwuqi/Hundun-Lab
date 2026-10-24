@@ -1,8 +1,11 @@
 package com.hundunlab.site.common.util;
 
+import com.aliyun.oss.HttpMethod;
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
+import com.aliyun.oss.model.GeneratePresignedUrlRequest;
 import com.aliyun.oss.model.PutObjectRequest;
+import com.aliyun.oss.model.ResponseHeaderOverrides;
 import com.hundunlab.site.common.exception.MyException.OSSException;
 import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +16,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -118,6 +123,35 @@ public class AliOSSUtil {
         } catch (Exception e) {
             log.error("文件删除OSS失败", e);
             throw new OSSException("文件删除失败");
+        }
+    }
+
+    /**
+     * 为私有桶对象生成临时下载地址。
+     * <p>
+     * 安装包存放在私有读的桶里，任何直链都会被拒绝；这里签发一个短时效的预签名 URL，
+     * 让浏览器直接从 OSS/CDN 拉取，不经过应用服务器中转。
+     *
+     * @param objectKey 对象键
+     * @param seconds   有效期（秒），建议 300 左右，够用户点开另存即可
+     * @param fileName  浏览器另存时显示的文件名，为空则用对象键
+     * @return 预签名下载地址
+     */
+    public String presignedDownloadUrl(String objectKey, int seconds, String fileName) {
+        requireEnabled();
+        try {
+            GeneratePresignedUrlRequest request =
+                    new GeneratePresignedUrlRequest(bucketName, objectKey, HttpMethod.GET);
+            request.setExpiration(new Date(System.currentTimeMillis() + seconds * 1000L));
+            String dispositionName = StringUtils.hasText(fileName) ? fileName : objectKey;
+            ResponseHeaderOverrides headers = new ResponseHeaderOverrides();
+            headers.setContentDisposition("attachment; filename=\"" + dispositionName + "\"");
+            request.setResponseHeaders(headers);
+            URL url = ossClient.generatePresignedUrl(request);
+            return url.toString();
+        } catch (Exception e) {
+            log.error("生成 OSS 预签名地址失败：{}", objectKey, e);
+            throw new OSSException("下载地址生成失败");
         }
     }
 

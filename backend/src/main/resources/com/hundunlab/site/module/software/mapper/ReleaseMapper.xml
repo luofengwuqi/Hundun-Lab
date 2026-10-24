@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hundunlab.site.module.software.mapper.ReleaseMapper">
+
+    <sql id="releaseColumns">
+        r.id, r.software_id, r.version, r.channel, r.notes_zh, r.notes_en,
+        r.published_at, r.status, r.created_at
+    </sql>
+
+    <sql id="assetColumns">
+        a.id, a.release_id, a.platform, a.arch, a.package_type, a.file_name,
+        a.object_key, a.file_size, a.sha256, a.download_count, a.created_at
+    </sql>
+
+    <select id="selectPublishedBySoftwareId"
+            resultType="com.hundunlab.site.module.software.pojo.Entity.SoftwareRelease">
+        SELECT <include refid="releaseColumns"/>
+        FROM software_release r
+        WHERE r.software_id = #{softwareId}
+          AND r.status = 1
+        ORDER BY r.published_at DESC, r.id DESC
+    </select>
+
+    <select id="selectLatestPublished"
+            resultType="com.hundunlab.site.module.software.pojo.Entity.SoftwareRelease">
+        SELECT <include refid="releaseColumns"/>
+        FROM software_release r
+        WHERE r.software_id = #{softwareId}
+          AND r.status = 1
+        ORDER BY r.published_at DESC, r.id DESC
+        LIMIT 1
+    </select>
+
+    <select id="selectAssetsByReleaseIds"
+            resultType="com.hundunlab.site.module.software.pojo.Entity.ReleaseAsset">
+        SELECT <include refid="assetColumns"/>
+        FROM release_asset a
+        WHERE a.release_id IN
+        <foreach collection="releaseIds" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+        ORDER BY a.release_id ASC, a.platform ASC, a.package_type ASC
+    </select>
+
+    <select id="selectAssetsByReleaseId"
+            resultType="com.hundunlab.site.module.software.pojo.Entity.ReleaseAsset">
+        SELECT <include refid="assetColumns"/>
+        FROM release_asset a
+        WHERE a.release_id = #{releaseId}
+        ORDER BY a.platform ASC, a.package_type ASC
+    </select>
+
+    <select id="selectDownloadableAsset"
+            resultType="com.hundunlab.site.module.software.pojo.Entity.ReleaseAsset">
+        SELECT a.id, a.release_id, a.platform, a.arch, a.package_type, a.file_name,
+               a.object_key, a.file_size, a.sha256, a.download_count, a.created_at,
+               r.software_id
+        FROM release_asset a
+                 INNER JOIN software_release r ON r.id = a.release_id
+                 INNER JOIN software s ON s.id = r.software_id
+        WHERE a.id = #{assetId}
+          AND r.status = 1
+          AND s.status = 1
+        LIMIT 1
+    </select>
+
+    <select id="selectLatestPublishedBySoftwareIds"
+            resultType="com.hundunlab.site.module.software.pojo.Entity.SoftwareRelease">
+        SELECT t.id, t.software_id, t.version, t.channel, t.notes_zh, t.notes_en,
+               t.published_at, t.status, t.created_at
+        FROM (
+            SELECT r.id, r.software_id, r.version, r.channel, r.notes_zh, r.notes_en,
+                   r.published_at, r.status, r.created_at,
+                   ROW_NUMBER() OVER (PARTITION BY r.software_id
+                                      ORDER BY r.published_at DESC, r.id DESC) AS rn
+            FROM software_release r
+            WHERE r.status = 1
+              AND r.software_id IN
+            <foreach collection="softwareIds" item="id" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+        ) t
+        WHERE t.rn = 1
+    </select>
+
+    <select id="selectDownloadTotals"
+            resultType="com.hundunlab.site.module.software.pojo.VO.SoftwareDownloadStat">
+        SELECT s.id AS software_id, COALESCE(SUM(a.download_count), 0) AS total
+        FROM software s
+                 LEFT JOIN software_release r ON r.software_id = s.id AND r.status = 1
+                 LEFT JOIN release_asset a ON a.release_id = r.id
+        WHERE s.id IN
+        <foreach collection="softwareIds" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+        GROUP BY s.id
+    </select>
+
+</mapper>

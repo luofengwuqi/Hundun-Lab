@@ -36,7 +36,15 @@ public enum ErrorCode {
     USER_PASSWORD_WRONG(400, "密码不正确"),
     USER_EMAIL_CODE_EXPIRED(400, "验证码已过期"),
     USER_EMAIL_CODE_WRONG(400, "验证码不正确"),
-    USER_EMAIL_SEND_FAILED(500, "验证码发送失败，请稍后再试");
+    USER_EMAIL_SEND_FAILED(500, "验证码发送失败，请稍后再试"),
+
+    // ==================== 软件与版本 ====================
+    SOFTWARE_NOT_FOUND(404, "软件不存在或尚未发布"),
+
+    // ==================== 下载 ====================
+    DOWNLOAD_ASSET_NOT_FOUND(404, "安装包不存在或尚未发布"),
+    DOWNLOAD_STORAGE_UNAVAILABLE(503, "下载服务暂不可用"),
+    DOWNLOAD_FILE_MISSING(404, "安装包文件缺失");
 
     private final int httpStatus;
     private final String defaultMessage;
