@@ -4,6 +4,7 @@ import com.hundunlab.site.common.anno.RateLimit;
 import com.hundunlab.site.common.exception.MyException.RateLimitException;
 import com.hundunlab.site.module.auth.controller.LoginController;
 import com.hundunlab.site.module.auth.pojo.dto.LoginUsernamePasswordRequestDTO;
+import com.hundunlab.site.module.auth.pojo.dto.SendEmailCodeDTO;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -99,19 +100,21 @@ class RateLimitAspectTest {
 
     @Test
     void sendCodeBlocksByEmailEvenAcrossDifferentIps() throws Throwable {
-        Method method = LoginController.class.getMethod("sendEmailCode", String.class);
+        Method method = LoginController.class.getMethod("sendEmailCode", SendEmailCodeDTO.class);
 
         for (int i = 0; i < 3; i++) {
-            assertEquals("OK", call("1.1.1.1", null, method, "victim@example.com"));
+            assertEquals("OK", call("1.1.1.1", null, method, new SendEmailCodeDTO("victim@example.com")));
         }
         //第 4 次同 IP 同邮箱 被拒
-        assertThrows(RateLimitException.class, () -> call("1.1.1.1", null, method, "victim@example.com"));
+        assertThrows(RateLimitException.class,
+                () -> call("1.1.1.1", null, method, new SendEmailCodeDTO("victim@example.com")));
 
         //换 IP 攻击同一邮箱 依然被拒(账号维度兜底)
-        assertThrows(RateLimitException.class, () -> call("2.2.2.2", null, method, "victim@example.com"));
+        assertThrows(RateLimitException.class,
+                () -> call("2.2.2.2", null, method, new SendEmailCodeDTO("victim@example.com")));
 
         //同 IP 换别的邮箱 不受影响(维度隔离)
-        assertEquals("OK", call("2.2.2.2", null, method, "other@example.com"));
+        assertEquals("OK", call("2.2.2.2", null, method, new SendEmailCodeDTO("other@example.com")));
     }
 
     @Test
@@ -150,7 +153,26 @@ class RateLimitAspectTest {
     }
 
     @Test
-    void usesFirstIpFromForwardedForHeader() throws Throwable {
+    void ignoresForwardedForWhenProxyHeadersUntrusted() throws Throwable {
+        Method method = LoginController.class.getMethod("loginUsernamePassword", LoginUsernamePasswordRequestDTO.class);
+        LoginUsernamePasswordRequestDTO dto = new LoginUsernamePasswordRequestDTO();
+        dto.setUsername("u");
+        dto.setPassword("password1");
+
+        // 默认不信任代理头：伪造的 X-Forwarded-For 不能改写限流维度，否则换头即可绕过
+        call("127.0.0.1", "9.9.9.9, 10.0.0.1", method, dto);
+
+        assertTrue(template.hasKey("ratelimit:login:username-password:ip:127.0.0.1"),
+                "未开启信任时应使用 TCP 对端地址");
+        assertFalse(template.hasKey("ratelimit:login:username-password:ip:9.9.9.9"),
+                "未开启信任时不应采信 X-Forwarded-For");
+    }
+
+    @Test
+    void usesFirstIpFromForwardedForWhenTrusted() throws Throwable {
+        // 部署在可信反向代理后面时才允许读代理头，此时取链条里第一个真实客户端 IP
+        aspect = new RateLimitAspect(template, new com.hundunlab.site.common.util.IpUtil(true));
+
         Method method = LoginController.class.getMethod("loginUsernamePassword", LoginUsernamePasswordRequestDTO.class);
         LoginUsernamePasswordRequestDTO dto = new LoginUsernamePasswordRequestDTO();
         dto.setUsername("u");
