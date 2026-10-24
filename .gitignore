@@ -1,22 +1,52 @@
-# 默认忽略的文件
-/shelf/
-/workspace.xml
-# 基于编辑器的 HTTP 客户端请求
-/httpRequests/
-# Datasource local storage ignored files
+# ---------- 构建产物 ----------
+target/
+dist/
+dist-ssr/
+node_modules/
+*.class
+*.jar
+!.mvn/wrapper/maven-wrapper.jar
+
+# ---------- 依赖与构建缓存 ----------
+.oxlintcache
+.eslintcache
+*.tsbuildinfo
+.vite/
+__screenshots__/
+*.timestamp-*-*.mjs
+
+# ---------- IDE ----------
+.idea/
+*.iml
+.vscode/*
+!.vscode/extensions.json
+workspace.xml
 /dataSources/
 /dataSources.local.xml
-# 忽略瞎写的txt文件
-nihao.txt
-*.txt
-# 忽略IDE配置文件（IntelliJ系列）
-.idea/
-misc.xml
-modules.xml
-vcs.xml
-# 敏感配置（阿里云 AK/SK 等，勿提交）
+/httpRequests/
+/shelf/
+.suo
+*.njsproj
+*.sln
+*.sw?
+
+# ---------- 日志与临时文件 ----------
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.local
+coverage/
+
+# ---------- 敏感配置（任何密钥都不得入库） ----------
 application-secret.yml
 **/application-secret.yml
 *.local.yml
 .env
 .env.*
+!.env.example
+
+# ---------- 本机工具数据 ----------
+.workbuddy/

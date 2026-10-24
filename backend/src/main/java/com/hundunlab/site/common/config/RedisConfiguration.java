@@ -51,7 +51,7 @@ public class RedisConfiguration {
         // 旧缓存中存在已删除字段时不要报错，直接忽略
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         
-        // 启用默认类型信息，确保反序列化时能识别具体类型（解决 List<Article> 等泛型问题）
+        // 启用默认类型信息，确保反序列化时能识别具体类型（解决 List<User> 等泛型问题）
         // 使用白名单校验器，禁止反序列化任意类型，避免恶意序列化数据触发 RCE
         PolymorphicTypeValidator typeValidator = BasicPolymorphicTypeValidator.builder()
                 .allowIfSubType("com.hundunlab.site.")

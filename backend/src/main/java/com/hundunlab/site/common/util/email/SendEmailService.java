@@ -36,7 +36,7 @@ public class SendEmailService {
     @Async("emailExecutor")
     public CompletableFuture<Boolean> sendFeedbackFinishedMsgToUser(Long userId) {
         String feedbackMakerEmail = getEmail(userId);
-        boolean success = sendMsgUtil.sendSingleEmail(feedbackMakerEmail, FEEDBACK_FINISHED_MSG_TO_USER);
+        boolean success = sendMsgUtil.send(feedbackMakerEmail, FEEDBACK_FINISHED_SUBJECT, FEEDBACK_FINISHED_MSG_TO_USER);
         if (success) {
             log.info("反馈完成通知发送完成，userId={}", userId);
         } else {
@@ -47,7 +47,7 @@ public class SendEmailService {
     @Async("emailExecutor")
     public CompletableFuture<Boolean> sendFeedbackBanedMsgToUser(Long userId) {
         String feedbackMakerEmail = getEmail(userId);
-        boolean success = sendMsgUtil.sendSingleEmail(feedbackMakerEmail, FEEDBACK_BANED_MSG_TO_USER);
+        boolean success = sendMsgUtil.send(feedbackMakerEmail, FEEDBACK_BANED_SUBJECT, FEEDBACK_BANED_MSG_TO_USER);
         if (success) {
             log.info("反馈否决通知发送完成，userId={}", userId);
         } else {
@@ -104,7 +104,7 @@ public class SendEmailService {
                 log.warn("没有找到任何管理员邮箱，无法发送反馈添加通知");
                 return CompletableFuture.completedFuture(false);
             }
-            int successCount = sendMsgUtil.sendEmailToEmailList(emailList, FEEDBACK_ADDED_MSG_TO_ADMIN);
+            int successCount = sendMsgUtil.sendBatch(emailList, FEEDBACK_ADDED_SUBJECT, FEEDBACK_ADDED_MSG_TO_ADMIN);
             log.info("反馈添加通知发送完成，目标管理员数量：{}，成功发送：{}", emailList.size(), successCount);
             return CompletableFuture.completedFuture(successCount > 0);
         } catch (Exception e) {

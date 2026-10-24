@@ -1,23 +1,26 @@
 package com.hundunlab.site.common.util;
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Map;
 
 /**
  * JWT 工具类
- * 密钥只从外部配置读取（环境变量 JWT_SECRET 或本地 application-secret.yml），不再硬编码
+ * 密钥只从外部配置读取（环境变量 JWT_SECRET 或本地 application-secret.yml），不硬编码
  */
 @Component
 public class JwtUtil {
 
     private static final int MIN_SECRET_BYTES = 32;
 
-    private final byte[] secretKey;
+    private final SecretKey secretKey;
     private final long expirationMillis;
 
     public JwtUtil(@Value("${app.jwt.secret:}") String secret,
@@ -29,15 +32,20 @@ public class JwtUtil {
         if (keyBytes.length < MIN_SECRET_BYTES) {
             throw new IllegalStateException("JWT 密钥强度不足，至少需要 " + MIN_SECRET_BYTES + " 字节");
         }
-        this.secretKey = keyBytes;
+        this.secretKey = Keys.hmacShaKeyFor(keyBytes);
         this.expirationMillis = expirationMillis;
     }
 
-    //生成令牌
+    /**
+     * 生成令牌
+     */
     public String makeToken(Map<String, Object> claims) {
-        return Jwts.builder().signWith(SignatureAlgorithm.HS256, secretKey)
-                .addClaims(claims)
-                .setExpiration(new Date(System.currentTimeMillis() + expirationMillis))
+        long now = System.currentTimeMillis();
+        return Jwts.builder()
+                .claims(claims)
+                .issuedAt(new Date(now))
+                .expiration(new Date(now + expirationMillis))
+                .signWith(secretKey, Jwts.SIG.HS256)
                 .compact();
     }
 
@@ -45,10 +53,14 @@ public class JwtUtil {
         return makeToken(Map.of("id", id, "username", username));
     }
 
-    //解析令牌
-    public Claims solveToken(String token) throws ExpiredJwtException, MalformedJwtException {
-        return Jwts.parser().setSigningKey(secretKey)
-                .parseClaimsJws(token)
-                .getBody();
+    /**
+     * 解析令牌，签名错误/格式错误/过期均抛 io.jsonwebtoken.JwtException 子类
+     */
+    public Claims solveToken(String token) {
+        return Jwts.parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
     }
 }

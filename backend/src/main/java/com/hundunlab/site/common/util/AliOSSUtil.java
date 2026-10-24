@@ -8,6 +8,7 @@ import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -31,13 +32,27 @@ public class AliOSSUtil {
                       @Value("${aliyun.access-key-secret}") String accessKeySecret,
                       @Value("${aliyun.bucket-name}") String bucketName,
                       @Value("${aliyun.domain}") String domain) {
-        if (accessKeyId == null || accessKeyId.isBlank()
-                || accessKeySecret == null || accessKeySecret.isBlank()) {
-            throw new IllegalStateException("OSS AccessKey 未配置，请设置 ALIYUN_ACCESS_KEY_ID / ALIYUN_ACCESS_KEY_SECRET");
-        }
         this.bucketName = bucketName;
         this.domain = domain;
-        this.ossClient = new OSSClientBuilder().build(endpoint, accessKeyId, accessKeySecret);
+        boolean configured = StringUtils.hasText(endpoint)
+                && StringUtils.hasText(accessKeyId)
+                && StringUtils.hasText(accessKeySecret)
+                && StringUtils.hasText(bucketName);
+        if (configured) {
+            this.ossClient = new OSSClientBuilder().build(endpoint, accessKeyId, accessKeySecret);
+        } else {
+            // 缺少 OSS 配置时不让应用启动失败：本地开发 / CI 不需要对象存储也能跑
+            this.ossClient = null;
+            log.warn("OSS 未配置（OSS_ENDPOINT / ALIYUN_ACCESS_KEY_ID / ALIYUN_ACCESS_KEY_SECRET / OSS_BUCKET），"
+                    + "对象存储相关能力将不可用");
+        }
+    }
+
+    /**
+     * 对象存储是否可用
+     */
+    public boolean isEnabled() {
+        return ossClient != null;
     }
 
     @PreDestroy
@@ -70,6 +85,7 @@ public class AliOSSUtil {
      * @return 文件访问URL
      */
     public String upload(MultipartFile file, String objectName) throws IOException {
+        requireEnabled();
         try (InputStream inputStream = file.getInputStream()) {
             ossClient.putObject(new PutObjectRequest(bucketName, objectName, inputStream));
             log.info("文件上传OSS成功：{}", objectName);
@@ -85,6 +101,7 @@ public class AliOSSUtil {
      * @param fileUrl 文件访问URL或objectName
      */
     public void delete(String fileUrl) {
+        requireEnabled();
         String objectName = fileUrl;
         if (fileUrl.startsWith(domain + "/")) {
             objectName = fileUrl.replace(domain + "/", "");
@@ -101,6 +118,12 @@ public class AliOSSUtil {
         } catch (Exception e) {
             log.error("文件删除OSS失败", e);
             throw new OSSException("文件删除失败");
+        }
+    }
+
+    private void requireEnabled() {
+        if (ossClient == null) {
+            throw new OSSException("对象存储未配置，请联系管理员");
         }
     }
 }

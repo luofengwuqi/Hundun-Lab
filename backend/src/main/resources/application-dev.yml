@@ -1,23 +1,23 @@
-# 敏感配置（阿里云 AK/SK 等）从本地文件加载，该文件已被 .gitignore 忽略
+# 本地开发配置。
+# 敏感项（OSS AK/SK、JWT 密钥、邮箱授权码）统一放在 application-secret.yml，该文件已被 .gitignore 忽略。
 spring:
   config:
     import: optional:classpath:application-secret.yml
 
-# 自定义配置
 hundun-lab:
   mysql:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/hundun_lab?useUnicode=true&characterEncoding=utf-8&useSSL=false
-    username: root
-    password: ${DB_PASSWORD:123456}
+    url: ${DB_URL:jdbc:mysql://localhost:3306/hundun_lab?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true}
+    username: ${DB_USERNAME:root}
+    # 不提供默认口令，缺失时由连接失败暴露问题，避免弱口令被带进任何环境
+    password: ${DB_PASSWORD:}
   alioss:
-    endpoint: oss-cn-beijing.aliyuncs.com
-    bucket-name: hundun-lab
-    domain: http://hundun-lab.oss-cn-beijing.aliyuncs.com
-  #redis配置
+    endpoint: ${OSS_ENDPOINT:oss-cn-beijing.aliyuncs.com}
+    bucket-name: ${OSS_BUCKET:}
+    domain: ${OSS_DOMAIN:}
   redis:
     host: ${REDIS_HOST:localhost}
     port: ${REDIS_PORT:6379}
     password: ${REDIS_PASSWORD:}
-    database: 0
-    timeout: 10
+    database: ${REDIS_DATABASE:0}
+    timeout: ${REDIS_TIMEOUT:10}
