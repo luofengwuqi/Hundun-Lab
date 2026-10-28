@@ -250,7 +250,11 @@ CI can run them as-is.
 
 ## Documentation
 
-- [docs/00-骨架评审报告.md](docs/00-骨架评审报告.md) — skeleton review, change list, and design decisions (Chinese)
+Internal documents are written in Chinese and are **not** mirrored in this README.
+
+- [CHANGELOG.md](CHANGELOG.md) — change log (Chinese)
+- [docs/01-项目计划书.md](docs/01-项目计划书.md) — the project plan: milestones M0–M3, scope, and decision log (Chinese, **authoritative**)
+- [docs/00-骨架评审报告.md](docs/00-骨架评审报告.md) — skeleton review, change list, and design decisions (Chinese, frozen)
 - [db/README.md](db/README.md) — script order and hard rules (Chinese)
 - [frontend/README.md](frontend/README.md) — frontend project notes (Chinese)
 
