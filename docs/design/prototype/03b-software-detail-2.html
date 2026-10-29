@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>HundunDesktop · 功能与版本</title>
+    <link rel="stylesheet" href="assets/proto.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="brand" href="01-home.html">
+          <span class="brand__mark"><i></i><i></i><i></i><i></i></span>
+          <span class="brand__text">HUNDUN<em>LAB</em></span>
+        </a>
+        <nav class="site-nav">
+          <a href="01-home.html">首页</a>
+          <a class="is-active" href="02-software-list.html">软件</a>
+          <a href="04-plugins.html">插件</a>
+        </nav>
+        <div class="header-actions">
+          <button class="icon-btn" type="button" title="深色主题（延后实现）" aria-label="切换主题">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="8" />
+              <path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor" stroke="none" />
+            </svg>
+          </button>
+          <span class="lang"><b>中</b><span>/</span>EN</span>
+          <button class="user-chip" type="button">
+            <span class="avatar"><i></i><i></i><i></i><i></i></span>
+            hundun_dev
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="page-section" style="padding-top: 34px">
+        <div class="section-head">
+          <span class="bullet"></span>
+          <span class="section-title">功能特性</span>
+          <span class="section-note" style="margin-left: auto">v26.2 当前版本</span>
+        </div>
+        <div class="grid-5">
+          <div class="panel" style="padding: 18px 16px">
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#c3272b" stroke-width="2">
+              <rect x="3" y="4" width="9" height="20" />
+              <rect x="15" y="4" width="10" height="9" />
+              <rect x="15" y="16" width="10" height="8" />
+            </svg>
+            <h3 style="margin: 12px 0 4px; font-size: 14px">多桌面切换</h3>
+            <p style="font-size: 12px; color: var(--ink-soft)">虚拟桌面分组与快速迁移</p>
+          </div>
+          <div class="panel" style="padding: 18px 16px">
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#c3272b" stroke-width="2">
+              <circle cx="12" cy="12" r="7" />
+              <path d="M17.5 17.5 24 24" />
+            </svg>
+            <h3 style="margin: 12px 0 4px; font-size: 14px">全局搜索</h3>
+            <p style="font-size: 12px; color: var(--ink-soft)">毫秒级应用与文件索引</p>
+          </div>
+          <div class="panel" style="padding: 18px 16px">
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#c3272b" stroke-width="2">
+              <rect x="3" y="5" width="11" height="8" />
+              <rect x="14" y="15" width="11" height="8" />
+              <path d="M8 13v7h6" />
+            </svg>
+            <h3 style="margin: 12px 0 4px; font-size: 14px">窗口平铺</h3>
+            <p style="font-size: 12px; color: var(--ink-soft)">拖拽自动吸附与布局记忆</p>
+          </div>
+          <div class="panel" style="padding: 18px 16px">
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#c3272b" stroke-width="2">
+              <circle cx="14" cy="14" r="8" />
+              <path d="M14 6a8 8 0 0 0 0 16z" fill="#c3272b" stroke="none" />
+            </svg>
+            <h3 style="margin: 12px 0 4px; font-size: 14px">深色模式</h3>
+            <p style="font-size: 12px; color: var(--ink-soft)">跟随系统的双主题</p>
+          </div>
+          <div class="panel" style="padding: 18px 16px">
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="#c3272b" stroke-width="2">
+              <path d="M3 20 9 12l5 5 4-6 7 9" />
+              <path d="M3 24h22" />
+            </svg>
+            <h3 style="margin: 12px 0 4px; font-size: 14px">低占用</h3>
+            <p style="font-size: 12px; color: var(--ink-soft)">常驻内存小于 80 MB</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="page-section">
+        <div class="section-head">
+          <span class="bullet"></span>
+          <span class="section-title">界面截图</span>
+        </div>
+        <div class="grid-3">
+          <figure style="margin: 0">
+            <div class="shot">
+              <div class="shot__bar"><i></i><i></i><i></i></div>
+              <div class="shot__body" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px">
+                <div style="background: var(--card); border: 1.5px solid var(--line-strong); border-radius: 3px"></div>
+                <div style="display: grid; grid-template-rows: 1fr 1fr; gap: 8px">
+                  <div style="background: var(--card); border: 1.5px solid var(--red); border-radius: 3px"></div>
+                  <div style="background: var(--card); border: 1.5px solid var(--line-strong); border-radius: 3px"></div>
+                </div>
+              </div>
+            </div>
+            <figcaption class="shot__caption">主界面</figcaption>
+          </figure>
+
+          <figure style="margin: 0">
+            <div class="shot">
+              <div class="shot__bar"><i></i><i></i><i></i></div>
+              <div class="shot__body" style="display: grid; place-items: center">
+                <div
+                  style="
+                    width: 68%;
+                    background: var(--card);
+                    border: 2px solid var(--red);
+                    border-radius: 4px;
+                    box-shadow: 4px 4px 0 rgba(150, 60, 40, 0.2);
+                    padding: 8px 10px;
+                  "
+                >
+                  <div style="height: 7px; background: var(--line); border-radius: 2px; margin-bottom: 6px"></div>
+                  <div style="height: 7px; background: var(--line); border-radius: 2px; width: 70%"></div>
+                </div>
+              </div>
+            </div>
+            <figcaption class="shot__caption">全局搜索</figcaption>
+          </figure>
+
+          <figure style="margin: 0">
+            <div class="shot">
+              <div class="shot__bar"><i></i><i></i><i></i></div>
+              <div class="shot__body" style="display: grid; grid-template-columns: 92px 1fr; gap: 10px">
+                <div
+                  style="
+                    background: var(--card);
+                    border: 1.5px solid var(--line-strong);
+                    border-radius: 3px;
+                    padding: 8px;
+                    display: grid;
+                    gap: 6px;
+                    align-content: start;
+                  "
+                >
+                  <div style="height: 6px; background: var(--red); border-radius: 2px"></div>
+                  <div style="height: 6px; background: var(--line); border-radius: 2px"></div>
+                  <div style="height: 6px; background: var(--line); border-radius: 2px"></div>
+                </div>
+                <div style="background: var(--card); border: 1.5px solid var(--line-strong); border-radius: 3px"></div>
+              </div>
+            </div>
+            <figcaption class="shot__caption">偏好设置</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="page-section">
+        <div class="section-head">
+          <span class="bullet"></span>
+          <span class="section-title">版本记录</span>
+          <span class="section-note" style="margin-left: auto">含 1 个预发布版本</span>
+        </div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>版本</th>
+              <th>渠道</th>
+              <th>发布日期</th>
+              <th>安装包</th>
+              <th>大小</th>
+              <th>SHA256</th>
+              <th style="text-align: right">下载</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="cell-name">v26.2.1024</td>
+              <td>stable</td>
+              <td>2026-10-24</td>
+              <td>HundunDesktop-26.2.1024-win-x64.exe</td>
+              <td>24.8 MB</td>
+              <td>3f9a1c2e</td>
+              <td style="text-align: right"><a class="btn btn--primary btn--sm" href="#">下载</a></td>
+            </tr>
+            <tr>
+              <td class="cell-name">v26.1.809</td>
+              <td>stable</td>
+              <td>2026-09-18</td>
+              <td>HundunDesktop-26.1.809-win-x64.exe</td>
+              <td>24.1 MB</td>
+              <td>8b2d7f41</td>
+              <td style="text-align: right"><a class="btn btn--ghost btn--sm" href="#">下载</a></td>
+            </tr>
+            <tr>
+              <td class="cell-name">v26.0.713</td>
+              <td>stable</td>
+              <td>2026-07-13</td>
+              <td>HundunDesktop-26.0.713-win-x64.exe</td>
+              <td>23.6 MB</td>
+              <td>c51e90ab</td>
+              <td style="text-align: right"><a class="btn btn--ghost btn--sm" href="#">下载</a></td>
+            </tr>
+            <tr>
+              <td class="cell-name">v27.0.44</td>
+              <td><span class="badge badge--pending">beta</span></td>
+              <td>2026-10-28</td>
+              <td>HundunDesktop-27.0.44-win-x64.exe</td>
+              <td>25.2 MB</td>
+              <td>77aa03d9</td>
+              <td style="text-align: right"><a class="btn btn--ghost btn--sm" href="#">下载</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </main>
+
+    <footer class="site-footer">© HUNDUNLAB · 独立软件工作室</footer>
+  </body>
+</html>

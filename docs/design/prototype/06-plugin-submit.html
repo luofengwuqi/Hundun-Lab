@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>上传插件 · Hundun Lab</title>
+    <link rel="stylesheet" href="assets/proto.css" />
+    <style>
+      /* 上传页信息密度高，单独压缩纵向间距，尽量一屏放下 */
+      .page-head {
+        padding: 26px 0 12px;
+      }
+      .side-panel {
+        padding: 16px 20px;
+      }
+      .dropzone {
+        padding: 24px 20px;
+      }
+      .check-row {
+        padding: 7px 0;
+      }
+      .field {
+        margin-bottom: 10px !important;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="brand" href="01-home.html">
+          <span class="brand__mark"><i></i><i></i><i></i><i></i></span>
+          <span class="brand__text">HUNDUN<em>LAB</em></span>
+        </a>
+        <nav class="site-nav">
+          <a href="01-home.html">首页</a>
+          <a href="02-software-list.html">软件</a>
+          <a class="is-active" href="04-plugins.html">插件</a>
+        </nav>
+        <div class="header-actions">
+          <button class="icon-btn" type="button" title="深色主题（延后实现）" aria-label="切换主题">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="8" />
+              <path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor" stroke="none" />
+            </svg>
+          </button>
+          <span class="lang"><b>中</b><span>/</span>EN</span>
+          <button class="user-chip" type="button">
+            <span class="avatar"><i></i><i></i><i></i><i></i></span>
+            hundun_dev
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="container">
+      <div class="page-head" style="padding-bottom: 16px">
+        <div>
+          <h1 class="page-title" style="font-size: 38px">
+            <span class="bullet" style="width: 14px; height: 14px"></span>上传插件
+          </h1>
+          <p class="page-sub">提交后进入人工审核，通常 1–3 个工作日</p>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 380px 1fr; gap: 26px; align-items: start; padding-top: 10px">
+        <div class="stack-16">
+          <div class="side-panel">
+            <h3>上传要求</h3>
+            <div class="check-row"><span class="check-mark">·</span>仅支持 .zip，体积不超过 20 MB</div>
+            <div class="check-row"><span class="check-mark">·</span>根目录必须包含 plugin.json</div>
+            <div class="check-row"><span class="check-mark">·</span>图标为 128×128 PNG</div>
+            <div class="check-row"><span class="check-mark">·</span>所有权限需在 manifest 中声明</div>
+            <div class="check-row"><span class="check-mark">·</span>禁止任何形式的联网回传</div>
+          </div>
+
+          <div class="side-panel">
+            <h3>manifest 示例</h3>
+            <pre class="code" style="margin: 0">{
+  "name": "PixelRuler",
+  "version": "1.2.0",
+  "entry": "index.js",
+  "permissions": ["screen"]
+}</pre>
+          </div>
+        </div>
+
+        <div class="stack-16">
+          <div class="dropzone">
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3" />
+              <path d="M12 16V4" />
+              <path d="M8 8l4-4 4 4" />
+            </svg>
+            <div class="dropzone__main">拖拽 zip 到这里，或点击选择文件</div>
+            <div class="dropzone__file">已选择：pixelruler-1.2.0.zip · 1.2 MB</div>
+          </div>
+
+          <div class="side-panel">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px">
+              <h3 style="margin: 0">预检结果</h3>
+              <span class="badge badge--ok" style="margin-left: auto">可提交</span>
+            </div>
+            <div class="check-row"><span class="check-mark">✓</span>manifest 校验通过</div>
+            <div class="check-row"><span class="check-mark">✓</span>权限声明完整（2 项）</div>
+            <div class="check-row"><span class="check-mark">✓</span>图标尺寸符合要求</div>
+          </div>
+
+          <div class="side-panel">
+            <h3>插件信息</h3>
+
+            <div class="field" style="margin-bottom: 14px">
+              <span class="field__label">插件名称</span>
+              <input class="input" value="PixelRuler" />
+            </div>
+
+            <div style="display: grid; grid-template-columns: 92px 1fr 92px 1fr; gap: 16px; align-items: center; margin-bottom: 14px">
+              <span class="field__label">版本号</span>
+              <input class="input" value="1.2.0" />
+              <span class="field__label">适配版本</span>
+              <input class="input" value="≥ 26.0" />
+            </div>
+
+            <div class="field--stack" style="margin-bottom: 14px">
+              <div class="field__label" style="margin-bottom: 8px">一句话简介</div>
+              <textarea class="textarea">屏幕取色与像素测量工具，常驻菜单栏。</textarea>
+            </div>
+
+            <div class="field--stack" style="margin-bottom: 18px">
+              <div class="field__label" style="margin-bottom: 8px">申请权限</div>
+              <div style="display: flex; gap: 22px; flex-wrap: wrap">
+                <label class="checkbox"><input type="checkbox" checked />读取屏幕内容</label>
+                <label class="checkbox"><input type="checkbox" checked />全局快捷键</label>
+                <label class="checkbox"><input type="checkbox" />读写剪贴板</label>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 12px; justify-content: flex-end">
+              <a class="btn btn--ghost btn--sm" href="04-plugins.html">存为草稿</a>
+              <a class="btn btn--primary btn--sm" href="04-plugins.html">提交审核</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="site-footer">© HUNDUNLAB · 独立软件工作室</footer>
+  </body>
+</html>

@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Hundun Lab · 插件</title>
+    <link rel="stylesheet" href="assets/proto.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="brand" href="01-home.html">
+          <span class="brand__mark"><i></i><i></i><i></i><i></i></span>
+          <span class="brand__text">HUNDUN<em>LAB</em></span>
+        </a>
+        <nav class="site-nav">
+          <a href="01-home.html">首页</a>
+          <a href="02-software-list.html">软件</a>
+          <a class="is-active" href="04-plugins.html">插件</a>
+        </nav>
+        <div class="header-actions">
+          <button class="icon-btn" type="button" title="深色主题（延后实现）" aria-label="切换主题">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="8" />
+              <path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor" stroke="none" />
+            </svg>
+          </button>
+          <span class="lang"><b>中</b><span>/</span>EN</span>
+          <button class="user-chip" type="button">
+            <span class="avatar"><i></i><i></i><i></i><i></i></span>
+            hundun_dev
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="container">
+      <div class="page-head">
+        <div>
+          <h1 class="page-title"><span class="bullet" style="width: 14px; height: 14px"></span>插件</h1>
+          <p class="page-sub">社区为 HundunDesktop 贡献的扩展</p>
+        </div>
+        <a class="btn btn--primary" href="06-plugin-submit.html">上传插件</a>
+      </div>
+
+      <div class="filter-row">
+        <div class="search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="7" />
+            <path d="M16.5 16.5 21 21" />
+          </svg>
+          搜索插件
+        </div>
+        <div class="seg seg--sm">
+          <button type="button">最新</button>
+          <button class="is-on" type="button">最热</button>
+        </div>
+      </div>
+
+      <section class="page-section" style="padding-top: 26px">
+        <div class="grid-4">
+          <article class="plugin-card">
+            <div class="plugin-card__top">
+              <span class="plugin-card__icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="4" />
+                  <path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1" />
+                </svg>
+              </span>
+            </div>
+            <div class="plugin-card__name">HundunDock</div>
+            <div class="plugin-card__author">@ashimmer</div>
+            <p class="plugin-card__desc">桌面底部快捷启动坞</p>
+            <div class="plugin-card__foot"><span>2,314 次下载</span><a href="05-plugin-detail.html">详情 →</a></div>
+          </article>
+
+          <article class="plugin-card">
+            <div class="plugin-card__top">
+              <span class="plugin-card__icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M7 17a4 4 0 0 1 .5-8 5 5 0 0 1 9.5 1.5A3.5 3.5 0 0 1 17 17z" />
+                </svg>
+              </span>
+              <span class="plugin-card__badge badge badge--pending">审核中</span>
+            </div>
+            <div class="plugin-card__name">ClipSync</div>
+            <div class="plugin-card__author">@nightowl</div>
+            <p class="plugin-card__desc">剪贴板跨设备同步</p>
+            <div class="plugin-card__foot"><span>1,908 次下载</span><a href="05-plugin-detail.html">详情 →</a></div>
+          </article>
+
+          <article class="plugin-card">
+            <div class="plugin-card__top">
+              <span class="plugin-card__icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 14a8 8 0 1 1-10-10 7 7 0 0 0 10 10z" />
+                </svg>
+              </span>
+            </div>
+            <div class="plugin-card__name">NightShift</div>
+            <div class="plugin-card__author">@kazami</div>
+            <p class="plugin-card__desc">按日出日落自动切换主题</p>
+            <div class="plugin-card__foot"><span>3,557 次下载</span><a href="05-plugin-detail.html">详情 →</a></div>
+          </article>
+
+          <article class="plugin-card">
+            <div class="plugin-card__top">
+              <span class="plugin-card__icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="4" y="5" width="16" height="15" rx="2" />
+                  <path d="M4 10h16M8 3v4M16 3v4" />
+                </svg>
+              </span>
+            </div>
+            <div class="plugin-card__name">CalMini</div>
+            <div class="plugin-card__author">@baicai</div>
+            <p class="plugin-card__desc">菜单栏迷你日历</p>
+            <div class="plugin-card__foot"><span>986 次下载</span><a href="05-plugin-detail.html">详情 →</a></div>
+          </article>
+
+          <article class="plugin-card">
+            <div class="plugin-card__top">
+              <span class="plugin-card__icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="5" y="10" width="14" height="10" rx="2" />
+                  <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+                </svg>
+              </span>
+            </div>
+            <div class="plugin-card__name">VaultKey</div>
+            <div class="plugin-card__author">@heze</div>
+            <p class="plugin-card__desc">本地密码保险箱</p>
+            <div class="plugin-card__foot"><span>1,240 次下载</span><a href="05-plugin-detail.html">详情 →</a></div>
+          </article>
+
+          <article class="plugin-card">
+            <div class="plugin-card__top">
+              <span class="plugin-card__icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="7" width="18" height="10" rx="1" />
+                  <path d="M7 7v3M11 7v2M15 7v3M19 7v2" />
+                </svg>
+              </span>
+            </div>
+            <div class="plugin-card__name">PixelRuler</div>
+            <div class="plugin-card__author">@homo</div>
+            <p class="plugin-card__desc">屏幕取色与像素测量</p>
+            <div class="plugin-card__foot"><span>4,021 次下载</span><a href="05-plugin-detail.html">详情 →</a></div>
+          </article>
+
+          <article class="plugin-card">
+            <div class="plugin-card__top">
+              <span class="plugin-card__icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M18 9a6 6 0 1 0-12 0c0 6-2 7-2 7h16s-2-1-2-7" />
+                  <path d="M10 20a2 2 0 0 0 4 0" />
+                </svg>
+              </span>
+              <span class="plugin-card__badge badge badge--rejected">已驳回</span>
+            </div>
+            <div class="plugin-card__name">FocusBell</div>
+            <div class="plugin-card__author">@laobai</div>
+            <p class="plugin-card__desc">番茄钟与勿扰联动</p>
+            <p class="plugin-card__reason">驳回原因：申请了未声明的通知权限</p>
+            <div class="plugin-card__foot"><span>765 次下载</span><a href="05-plugin-detail.html">详情 →</a></div>
+          </article>
+
+          <article class="plugin-card">
+            <div class="plugin-card__top">
+              <span class="plugin-card__icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="8" cy="17" r="3" />
+                  <circle cx="17" cy="15" r="3" />
+                  <path d="M11 17V6l9-2v11" />
+                </svg>
+              </span>
+            </div>
+            <div class="plugin-card__name">SounBar</div>
+            <div class="plugin-card__author">@chitose</div>
+            <p class="plugin-card__desc">可视化音量条</p>
+            <div class="plugin-card__foot"><span>2,870 次下载</span><a href="05-plugin-detail.html">详情 →</a></div>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">© HUNDUNLAB · 独立软件工作室</footer>
+  </body>
+</html>

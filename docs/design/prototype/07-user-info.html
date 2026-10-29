@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>个人信息 · Hundun Lab</title>
+    <link rel="stylesheet" href="assets/proto.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="brand" href="01-home.html">
+          <span class="brand__mark"><i></i><i></i><i></i><i></i></span>
+          <span class="brand__text">HUNDUN<em>LAB</em></span>
+        </a>
+        <nav class="site-nav">
+          <a href="01-home.html">首页</a>
+          <a href="02-software-list.html">软件</a>
+          <a href="04-plugins.html">插件</a>
+        </nav>
+        <div class="header-actions">
+          <button class="icon-btn" type="button" title="深色主题（延后实现）" aria-label="切换主题">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="8" />
+              <path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor" stroke="none" />
+            </svg>
+          </button>
+          <span class="lang"><b>中</b><span>/</span>EN</span>
+          <button class="user-chip" type="button">
+            <span class="avatar"><i></i><i></i><i></i><i></i></span>
+            hundun_dev
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="container">
+      <div class="profile">
+        <aside class="panel profile-card">
+          <svg
+            class="avatar--lg"
+            viewBox="0 0 8 8"
+            width="96"
+            height="96"
+            shape-rendering="crispEdges"
+            role="img"
+            aria-label="像素头像"
+          >
+            <rect width="8" height="8" fill="#fff8e8" />
+            <rect x="2" y="0" width="4" height="1" fill="#c3272b" />
+            <rect x="1" y="1" width="6" height="5" fill="#e8a33d" />
+            <rect x="2" y="2" width="1" height="1" fill="#3b2e2b" />
+            <rect x="5" y="2" width="1" height="1" fill="#3b2e2b" />
+            <rect x="3" y="4" width="2" height="1" fill="#c3272b" />
+            <rect x="1" y="6" width="6" height="2" fill="#3b2e2b" />
+            <rect x="3" y="6" width="2" height="1" fill="#fff8e8" />
+          </svg>
+          <div class="profile-name">hundun_dev</div>
+          <div class="profile-since">注册于 2026-03-02</div>
+          <nav class="vert-nav">
+            <a class="is-active" href="07-user-info.html">资料</a>
+            <a href="07-user-info.html">我的插件</a>
+            <a href="07-user-info.html">安全设置</a>
+          </nav>
+        </aside>
+
+        <div class="stack-24">
+          <section class="side-panel">
+            <h3 style="font-size: 17px; margin-bottom: 18px">基本资料</h3>
+
+            <div class="field" style="margin-bottom: 16px">
+              <span class="field__label">昵称</span>
+              <input class="input" value="馄饨开发者" />
+            </div>
+            <div class="field" style="margin-bottom: 16px">
+              <span class="field__label">邮箱</span>
+              <input class="input" value="hundun_dev@hundunlab.dev" />
+            </div>
+            <div class="field" style="margin-bottom: 16px">
+              <span class="field__label">个人主页</span>
+              <input class="input" value="https://hundunlab.dev/u/hundun_dev" />
+            </div>
+            <div class="field" style="align-items: start; margin-bottom: 18px">
+              <span class="field__label" style="padding-top: 10px">个人简介</span>
+              <textarea class="textarea">做点小工具，喝碗热馄饨。</textarea>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end">
+              <button class="btn btn--primary btn--sm" type="button">保存修改</button>
+            </div>
+          </section>
+
+          <section class="side-panel">
+            <h3 style="font-size: 17px; margin-bottom: 6px">我的插件</h3>
+
+            <div class="plugin-row">
+              <span class="plugin-card__icon" style="width: 38px; height: 38px">
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+                  <rect x="3" y="7" width="18" height="10" rx="1" />
+                  <path d="M7 7v3M11 7v2M15 7v3M19 7v2" />
+                </svg>
+              </span>
+              <div class="plugin-row__meta">
+                <div class="plugin-row__name">PixelRuler</div>
+                <div class="plugin-row__ver">v1.2.0</div>
+              </div>
+              <div class="plugin-row__col">
+                <span class="badge badge--ok">已通过</span>
+                <a href="05-plugin-detail.html">管理 →</a>
+              </div>
+            </div>
+
+            <div class="plugin-row">
+              <span class="plugin-card__icon" style="width: 38px; height: 38px">
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+                  <path d="M7 17a4 4 0 0 1 .5-8 5 5 0 0 1 9.5 1.5A3.5 3.5 0 0 1 17 17z" />
+                </svg>
+              </span>
+              <div class="plugin-row__meta">
+                <div class="plugin-row__name">ClipSync</div>
+                <div class="plugin-row__ver">v0.9.0</div>
+              </div>
+              <div class="plugin-row__col">
+                <span class="badge badge--pending">审核中</span>
+                <a href="05-plugin-detail.html">管理 →</a>
+              </div>
+            </div>
+
+            <div class="plugin-row">
+              <span class="plugin-card__icon" style="width: 38px; height: 38px">
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+                  <path d="M18 9a6 6 0 1 0-12 0c0 6-2 7-2 7h16s-2-1-2-7" />
+                  <path d="M10 20a2 2 0 0 0 4 0" />
+                </svg>
+              </span>
+              <div class="plugin-row__meta">
+                <div class="plugin-row__name">FocusBell</div>
+                <div class="plugin-row__ver">v0.4.1</div>
+                <div class="plugin-row__reason">驳回原因：申请了未声明的通知权限</div>
+              </div>
+              <div class="plugin-row__col">
+                <span class="badge badge--rejected">已驳回</span>
+                <a href="05-plugin-detail.html">管理 →</a>
+              </div>
+            </div>
+
+            <div class="plugin-row">
+              <span class="plugin-card__icon" style="width: 38px; height: 38px">
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+                  <circle cx="12" cy="13" r="8" />
+                  <path d="M12 9v4l3 2" />
+                </svg>
+              </span>
+              <div class="plugin-row__meta">
+                <div class="plugin-row__name">PomoDock</div>
+                <div class="plugin-row__ver">v0.1.3</div>
+              </div>
+              <div class="plugin-row__col">
+                <span class="badge badge--draft">草稿</span>
+                <a href="05-plugin-detail.html">管理 →</a>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+
+    <footer class="site-footer">© HUNDUNLAB · 独立软件工作室</footer>
+  </body>
+</html>

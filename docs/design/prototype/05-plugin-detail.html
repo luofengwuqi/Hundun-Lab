@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PixelRuler · 插件详情</title>
+    <link rel="stylesheet" href="assets/proto.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="brand" href="01-home.html">
+          <span class="brand__mark"><i></i><i></i><i></i><i></i></span>
+          <span class="brand__text">HUNDUN<em>LAB</em></span>
+        </a>
+        <nav class="site-nav">
+          <a href="01-home.html">首页</a>
+          <a href="02-software-list.html">软件</a>
+          <a class="is-active" href="04-plugins.html">插件</a>
+        </nav>
+        <div class="header-actions">
+          <button class="icon-btn" type="button" title="深色主题（延后实现）" aria-label="切换主题">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="8" />
+              <path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor" stroke="none" />
+            </svg>
+          </button>
+          <span class="lang"><b>中</b><span>/</span>EN</span>
+          <button class="user-chip" type="button">
+            <span class="avatar"><i></i><i></i><i></i><i></i></span>
+            hundun_dev
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="container">
+      <p class="mono" style="padding: 22px 0 12px; font-size: 12px; color: var(--ink-soft)">
+        <a href="04-plugins.html" style="color: var(--ink-soft)">插件</a> / PixelRuler
+      </p>
+
+      <section class="panel detail-hero">
+        <div style="display: flex; gap: 22px; align-items: center">
+          <span class="plugin-icon" style="width: 92px; height: 92px">
+            <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="#c3272b" stroke-width="1.6">
+              <rect x="3" y="7" width="18" height="10" rx="1" />
+              <path d="M7 7v3M11 7v2M15 7v3M19 7v2" />
+              <path d="M8 17v-3M12 17v-2M16 17v-3" stroke="#e8a33d" />
+            </svg>
+          </span>
+          <div>
+            <div style="display: flex; align-items: center; gap: 12px">
+              <h1 style="margin: 0; font-size: 30px; font-weight: 900; letter-spacing: 0.02em">PixelRuler</h1>
+              <span class="tag--version" style="height: 22px; font-size: 11px; padding: 0 9px">v1.2.0</span>
+            </div>
+            <div class="mono" style="margin-top: 6px; font-size: 12px; color: var(--ink-soft)">@homo</div>
+            <p style="margin-top: 8px; font-size: 14px; color: var(--ink-soft)">屏幕取色与像素测量工具</p>
+            <div class="mono" style="margin-top: 10px; font-size: 11px; color: var(--ink-soft)">
+              4,021 次下载 · 2026-10-20 更新 · MIT 协议
+            </div>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 10px; align-items: stretch">
+          <a class="btn btn--primary" href="#">下载插件</a>
+          <a class="btn btn--ghost btn--sm" href="#">查看源码</a>
+        </div>
+      </section>
+
+      <div class="detail-body page-section" style="padding-top: 26px">
+        <div class="stack-24">
+          <section>
+            <div class="section-head">
+              <span class="bullet"></span>
+              <span class="section-title" style="font-size: 20px">界面预览</span>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px">
+              <figure style="margin: 0">
+                <div class="shot">
+                  <div class="shot__bar"><i></i><i></i><i></i></div>
+                  <div class="shot__body" style="display: grid; place-items: center">
+                    <div
+                      style="
+                        width: 46px;
+                        height: 46px;
+                        border-radius: 50%;
+                        border: 2px solid var(--red);
+                        background: conic-gradient(from 0deg, #c3272b, #e8a33d, #4f8a7b, #c3272b);
+                      "
+                    ></div>
+                  </div>
+                </div>
+                <figcaption class="shot__caption">取色放大镜</figcaption>
+              </figure>
+              <figure style="margin: 0">
+                <div class="shot">
+                  <div class="shot__bar"><i></i><i></i><i></i></div>
+                  <div class="shot__body" style="display: grid; place-items: center">
+                    <div style="position: relative; width: 70%; height: 60%">
+                      <div style="position: absolute; inset: 0; border: 1.5px dashed var(--red)"></div>
+                      <div
+                        style="
+                          position: absolute;
+                          left: 40%;
+                          top: 30%;
+                          width: 26%;
+                          height: 34%;
+                          border: 2px solid var(--red);
+                          background: rgba(232, 163, 61, 0.25);
+                        "
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+                <figcaption class="shot__caption">像素测量</figcaption>
+              </figure>
+            </div>
+          </section>
+
+          <section>
+            <div class="section-head">
+              <span class="bullet"></span>
+              <span class="section-title" style="font-size: 20px">版本历史</span>
+            </div>
+            <div class="dashed-list">
+              <div class="news-row">
+                <span class="mono" style="font-size: 13px; font-weight: 700; color: var(--ink); width: 82px">v1.2.0</span>
+                <span class="news-row__date">2026-10-20</span>
+                <span style="font-size: 13px">新增放大镜取色</span>
+              </div>
+              <div class="news-row">
+                <span class="mono" style="font-size: 13px; font-weight: 700; color: var(--ink); width: 82px">v1.1.0</span>
+                <span class="news-row__date">2026-08-02</span>
+                <span style="font-size: 13px">支持多屏测量</span>
+              </div>
+              <div class="news-row">
+                <span class="mono" style="font-size: 13px; font-weight: 700; color: var(--ink); width: 82px">v1.0.0</span>
+                <span class="news-row__date">2026-05-19</span>
+                <span style="font-size: 13px">首个公开版本</span>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <div class="section-head">
+              <span class="bullet"></span>
+              <span class="section-title" style="font-size: 20px">README</span>
+            </div>
+            <div class="readme">
+              <h4># PixelRuler</h4>
+              <p>轻量级的屏幕取色与像素测量插件，常驻菜单栏。</p>
+              <ul style="margin: 10px 0 0; padding-left: 18px">
+                <li>全局快捷键唤起取色器</li>
+                <li>测量任意两点间像素距离</li>
+                <li>测量结果一键复制为 CSS 变量</li>
+              </ul>
+            </div>
+          </section>
+        </div>
+
+        <aside class="stack-16">
+          <div class="side-panel">
+            <h3>权限声明</h3>
+            <div class="perm-row">
+              <span class="perm-row__icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="5" width="18" height="12" rx="2" />
+                  <path d="M8 21h8" />
+                </svg>
+              </span>
+              <div>
+                <div class="perm-row__name">读取屏幕内容</div>
+                <div class="perm-row__desc">用于取色与测量</div>
+              </div>
+            </div>
+            <div class="perm-row">
+              <span class="perm-row__icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="7" width="18" height="10" rx="2" />
+                  <path d="M7 11h2M11 11h2M15 11h2" />
+                </svg>
+              </span>
+              <div>
+                <div class="perm-row__name">全局快捷键</div>
+                <div class="perm-row__desc">唤起取色器</div>
+              </div>
+            </div>
+            <div class="perm-row">
+              <span class="perm-row__icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="8" y="3" width="8" height="18" rx="2" />
+                  <path d="M12 8v8" />
+                </svg>
+              </span>
+              <div>
+                <div class="perm-row__name">读写剪贴板</div>
+                <div class="perm-row__desc">复制颜色值</div>
+              </div>
+            </div>
+            <div class="perm-row">
+              <span class="perm-row__icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="9" />
+                  <path d="M5.6 5.6l12.8 12.8" />
+                </svg>
+              </span>
+              <div>
+                <div class="perm-row__name">不访问网络</div>
+                <div class="perm-row__desc">全部数据本地处理</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="side-panel">
+            <h3>信息</h3>
+            <div class="kv"><span>版本</span><span>v1.2.0</span></div>
+            <div class="kv"><span>大小</span><span>1.2 MB</span></div>
+            <div class="kv"><span>适配</span><span>HundunDesktop ≥ 26.0</span></div>
+            <div class="kv"><span>作者</span><span>@homo</span></div>
+          </div>
+        </aside>
+      </div>
+    </main>
+
+    <footer class="site-footer">© HUNDUNLAB · 独立软件工作室</footer>
+  </body>
+</html>
