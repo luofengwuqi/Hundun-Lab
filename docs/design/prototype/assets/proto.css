@@ -59,8 +59,14 @@ body {
   padding: 0;
 }
 
+html {
+  height: 100%;
+}
+
 body {
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   background-color: var(--paper);
   background-image:
     radial-gradient(rgba(180, 150, 110, 0.16) 1px, transparent 1px),
@@ -109,6 +115,13 @@ svg {
 .container {
   width: min(var(--container), calc(100% - 96px));
   margin: 0 auto;
+}
+
+/* 主体吃掉「头部与页脚之间」的全部高度：窗口多高，页面就多高，不滚也不留白 */
+main {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
 }
 
 /* ---------- 页头 ---------- */
@@ -905,7 +918,7 @@ svg {
 .grid-3 {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 46px;
+  gap: 28px 44px;
 }
 
 .grid-4 {
@@ -1680,4 +1693,214 @@ svg {
   font-size: 12px;
   color: var(--ink-soft);
   line-height: 1.7;
+}
+
+/* ---------- 一屏伸缩：把剩余高度分给「能长高的那一块」 ---------- */
+
+/* 01 / 03 分栏带：面板填满，左栏卡片等高，右栏动态行均分 */
+.band--fill {
+  flex: 1 1 auto;
+}
+.band--fill .band__col {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.band--fill .band__col > *:last-child {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+.band--fill .cart {
+  height: 100%;
+}
+
+.band--fill .cart__body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.band--fill .dashed-list {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* 02 / 04 列表页：栅格吃掉剩余高度，两行卡片等高 */
+.section--fill {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.section--fill > .grid-3,
+.section--fill > .grid-4 {
+  flex: 1 1 auto;
+  align-content: stretch;
+}
+
+/* 03b 版本表随剩余高度拉伸 */
+.section--fill > .table {
+  flex: 1 1 auto;
+}
+
+/* 05 插件详情：左栏 README 长高，右侧信息面板长高 */
+.body--fill {
+  flex: 1 1 auto;
+  align-items: stretch;
+}
+.body--fill > .stack-24,
+.body--fill > .stack-16 {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.body--fill > .stack-24 > *:last-child {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.body--fill > .stack-16 {
+  justify-content: space-between;
+}
+.body--fill .readme {
+  flex: 1 1 auto;
+}
+/* 06 上传：右栏表单面板长高，按钮行贴底 */
+.submit--fill {
+  flex: 1 1 auto;
+  align-items: stretch;
+}
+.submit--fill > * {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.submit--fill > *:last-child > *:last-child {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 左栏两块面板贴顶排布（与设计图一致），剩余高度留在栏底，不把面板拉开 */
+.submit--fill > *:first-child {
+  justify-content: flex-start;
+}
+.submit--fill .side-panel > *:last-child {
+  margin-top: auto;
+}
+
+/* 07 个人信息：右栏「我的插件」长高，四行均分 */
+.profile--fill {
+  flex: 1 1 auto;
+  align-items: stretch;
+}
+
+.profile--fill > .profile-card {
+  align-self: start;
+}
+.profile--fill > .stack-24 {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.profile--fill > .stack-24 > *:last-child {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
+.profile--fill .rows {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* ---------- 一屏适配 ----------
+   窗口比设计稿（1024）矮时，整页等比缩放，页脚仍然贴底。
+   只作用于带站点页头的页面——登录页是 100vh 满屏设计，不缩放。
+   zoom 下 100vh 会跟着缩小，所以 min-height 要除以缩放比补回来。 */
+@media (min-height: 982px) and (max-height: 1013px) {
+  body:has(.site-header) {
+    zoom: 0.96;
+    min-height: calc(100vh / 0.96);
+  }
+}
+
+@media (min-height: 950px) and (max-height: 981px) {
+  body:has(.site-header) {
+    zoom: 0.92;
+    min-height: calc(100vh / 0.92);
+  }
+}
+
+@media (min-height: 918px) and (max-height: 949px) {
+  body:has(.site-header) {
+    zoom: 0.89;
+    min-height: calc(100vh / 0.89);
+  }
+}
+
+@media (min-height: 886px) and (max-height: 917px) {
+  body:has(.site-header) {
+    zoom: 0.86;
+    min-height: calc(100vh / 0.86);
+  }
+}
+
+@media (min-height: 854px) and (max-height: 885px) {
+  body:has(.site-header) {
+    zoom: 0.83;
+    min-height: calc(100vh / 0.83);
+  }
+}
+
+@media (min-height: 822px) and (max-height: 853px) {
+  body:has(.site-header) {
+    zoom: 0.80;
+    min-height: calc(100vh / 0.80);
+  }
+}
+
+@media (min-height: 790px) and (max-height: 821px) {
+  body:has(.site-header) {
+    zoom: 0.77;
+    min-height: calc(100vh / 0.77);
+  }
+}
+
+@media (min-height: 758px) and (max-height: 789px) {
+  body:has(.site-header) {
+    zoom: 0.73;
+    min-height: calc(100vh / 0.73);
+  }
+}
+
+@media (min-height: 726px) and (max-height: 757px) {
+  body:has(.site-header) {
+    zoom: 0.70;
+    min-height: calc(100vh / 0.70);
+  }
+}
+
+@media (min-height: 694px) and (max-height: 725px) {
+  body:has(.site-header) {
+    zoom: 0.67;
+    min-height: calc(100vh / 0.67);
+  }
+}
+
+@media (min-height: 662px) and (max-height: 693px) {
+  body:has(.site-header) {
+    zoom: 0.64;
+    min-height: calc(100vh / 0.64);
+  }
+}
+
+@media (max-height: 661px) {
+  body:has(.site-header) {
+    zoom: 0.55;
+    min-height: calc(100vh / 0.55);
+  }
 }

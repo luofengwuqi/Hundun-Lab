@@ -35,7 +35,7 @@
     </header>
 
     <main class="container">
-      <div class="profile">
+      <div class="profile profile--fill">
         <aside class="panel profile-card">
           <svg
             class="avatar--lg"
@@ -93,73 +93,75 @@
           <section class="side-panel">
             <h3 style="font-size: 17px; margin-bottom: 6px">我的插件</h3>
 
-            <div class="plugin-row">
-              <span class="plugin-card__icon" style="width: 38px; height: 38px">
-                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
-                  <rect x="3" y="7" width="18" height="10" rx="1" />
-                  <path d="M7 7v3M11 7v2M15 7v3M19 7v2" />
-                </svg>
-              </span>
-              <div class="plugin-row__meta">
-                <div class="plugin-row__name">PixelRuler</div>
-                <div class="plugin-row__ver">v1.2.0</div>
+            <div class="rows">
+              <div class="plugin-row">
+                <span class="plugin-card__icon" style="width: 38px; height: 38px">
+                  <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+                    <rect x="3" y="7" width="18" height="10" rx="1" />
+                    <path d="M7 7v3M11 7v2M15 7v3M19 7v2" />
+                  </svg>
+                </span>
+                <div class="plugin-row__meta">
+                  <div class="plugin-row__name">PixelRuler</div>
+                  <div class="plugin-row__ver">v1.2.0</div>
+                </div>
+                <div class="plugin-row__col">
+                  <span class="badge badge--ok">已通过</span>
+                  <a href="05-plugin-detail.html">管理 →</a>
+                </div>
               </div>
-              <div class="plugin-row__col">
-                <span class="badge badge--ok">已通过</span>
-                <a href="05-plugin-detail.html">管理 →</a>
+  
+              <div class="plugin-row">
+                <span class="plugin-card__icon" style="width: 38px; height: 38px">
+                  <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+                    <path d="M7 17a4 4 0 0 1 .5-8 5 5 0 0 1 9.5 1.5A3.5 3.5 0 0 1 17 17z" />
+                  </svg>
+                </span>
+                <div class="plugin-row__meta">
+                  <div class="plugin-row__name">ClipSync</div>
+                  <div class="plugin-row__ver">v0.9.0</div>
+                </div>
+                <div class="plugin-row__col">
+                  <span class="badge badge--pending">审核中</span>
+                  <a href="05-plugin-detail.html">管理 →</a>
+                </div>
               </div>
-            </div>
-
-            <div class="plugin-row">
-              <span class="plugin-card__icon" style="width: 38px; height: 38px">
-                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
-                  <path d="M7 17a4 4 0 0 1 .5-8 5 5 0 0 1 9.5 1.5A3.5 3.5 0 0 1 17 17z" />
-                </svg>
-              </span>
-              <div class="plugin-row__meta">
-                <div class="plugin-row__name">ClipSync</div>
-                <div class="plugin-row__ver">v0.9.0</div>
+  
+              <div class="plugin-row">
+                <span class="plugin-card__icon" style="width: 38px; height: 38px">
+                  <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+                    <path d="M18 9a6 6 0 1 0-12 0c0 6-2 7-2 7h16s-2-1-2-7" />
+                    <path d="M10 20a2 2 0 0 0 4 0" />
+                  </svg>
+                </span>
+                <div class="plugin-row__meta">
+                  <div class="plugin-row__name">FocusBell</div>
+                  <div class="plugin-row__ver">v0.4.1</div>
+                  <div class="plugin-row__reason">驳回原因：申请了未声明的通知权限</div>
+                </div>
+                <div class="plugin-row__col">
+                  <span class="badge badge--rejected">已驳回</span>
+                  <a href="05-plugin-detail.html">管理 →</a>
+                </div>
               </div>
-              <div class="plugin-row__col">
-                <span class="badge badge--pending">审核中</span>
-                <a href="05-plugin-detail.html">管理 →</a>
+  
+              <div class="plugin-row">
+                <span class="plugin-card__icon" style="width: 38px; height: 38px">
+                  <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+                    <circle cx="12" cy="13" r="8" />
+                    <path d="M12 9v4l3 2" />
+                  </svg>
+                </span>
+                <div class="plugin-row__meta">
+                  <div class="plugin-row__name">PomoDock</div>
+                  <div class="plugin-row__ver">v0.1.3</div>
+                </div>
+                <div class="plugin-row__col">
+                  <span class="badge badge--draft">草稿</span>
+                  <a href="05-plugin-detail.html">管理 →</a>
+                </div>
               </div>
-            </div>
-
-            <div class="plugin-row">
-              <span class="plugin-card__icon" style="width: 38px; height: 38px">
-                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
-                  <path d="M18 9a6 6 0 1 0-12 0c0 6-2 7-2 7h16s-2-1-2-7" />
-                  <path d="M10 20a2 2 0 0 0 4 0" />
-                </svg>
-              </span>
-              <div class="plugin-row__meta">
-                <div class="plugin-row__name">FocusBell</div>
-                <div class="plugin-row__ver">v0.4.1</div>
-                <div class="plugin-row__reason">驳回原因：申请了未声明的通知权限</div>
               </div>
-              <div class="plugin-row__col">
-                <span class="badge badge--rejected">已驳回</span>
-                <a href="05-plugin-detail.html">管理 →</a>
-              </div>
-            </div>
-
-            <div class="plugin-row">
-              <span class="plugin-card__icon" style="width: 38px; height: 38px">
-                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
-                  <circle cx="12" cy="13" r="8" />
-                  <path d="M12 9v4l3 2" />
-                </svg>
-              </span>
-              <div class="plugin-row__meta">
-                <div class="plugin-row__name">PomoDock</div>
-                <div class="plugin-row__ver">v0.1.3</div>
-              </div>
-              <div class="plugin-row__col">
-                <span class="badge badge--draft">草稿</span>
-                <a href="05-plugin-detail.html">管理 →</a>
-              </div>
-            </div>
           </section>
         </div>
       </div>
