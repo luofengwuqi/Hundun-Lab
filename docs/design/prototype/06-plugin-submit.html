@@ -85,34 +85,25 @@
               <path d="M12 10v6" />
               <path d="M9.5 13.5 12 16l2.5-2.5" />
             </svg>
-            <div class="dropzone__main" style="color: var(--red)">拖拽 zip 到这里，或点击选择文件</div>
+            <div class="dropzone__main text-accent">拖拽 zip 到这里，或点击选择文件</div>
             <div class="dropzone__file">已选择：pixelruler-1.2.0.zip · 1.2 MB</div>
           </div>
 
           <div class="side-panel" style="display: flex; align-items: center; gap: 18px">
             <div style="flex: 1; display: grid; gap: 6px">
               <div style="display: flex; align-items: center; gap: 10px; font-size: 13px">
-                <span class="check-mark" style="background: var(--red); color: var(--paper); border-color: var(--red)">✓</span>manifest 校验通过
+                <span class="check-mark check-mark--on">✓</span>manifest 校验通过
               </div>
               <div style="display: flex; align-items: center; gap: 10px; font-size: 13px">
-                <span class="check-mark" style="background: var(--red); color: var(--paper); border-color: var(--red)">✓</span>权限声明完整（2 项）
+                <span class="check-mark check-mark--on">✓</span>权限声明完整（2 项）
               </div>
             </div>
             <div style="flex: 1; display: grid; gap: 6px">
               <div style="display: flex; align-items: center; gap: 10px; font-size: 13px">
-                <span class="check-mark" style="background: var(--red); color: var(--paper); border-color: var(--red)">✓</span>图标尺寸符合要求
+                <span class="check-mark check-mark--on">✓</span>图标尺寸符合要求
               </div>
             </div>
-            <span
-              class="badge"
-              style="
-                background: var(--teal);
-                color: var(--paper);
-                border: 2px solid var(--teal);
-                height: 34px;
-                padding: 0 16px;
-                font-size: 14px;
-              "
+            <span class="badge badge--ready" style="height: 34px; padding: 0 16px; font-size: 14px"
               >可提交</span
             >
           </div>
@@ -122,15 +113,15 @@
 
             <div style="display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 18px; margin-bottom: 14px">
               <div>
-                <div class="field__label" style="margin-bottom: 6px; color: var(--red)">扩展名称</div>
+                <div class="field__label text-accent" style="margin-bottom: 6px">扩展名称</div>
                 <input class="input" style="height: 44px" value="PixelRuler" />
               </div>
               <div>
-                <div class="field__label" style="margin-bottom: 6px; color: var(--red)">版本号</div>
+                <div class="field__label text-accent" style="margin-bottom: 6px">版本号</div>
                 <input class="input" style="height: 44px" value="1.2.0" />
               </div>
               <div>
-                <div class="field__label" style="margin-bottom: 6px; color: var(--red)">适配版本</div>
+                <div class="field__label text-accent" style="margin-bottom: 6px">适配版本</div>
                 <input class="input" style="height: 44px" value="≥ 26.0" />
               </div>
             </div>
@@ -141,7 +132,7 @@
             </div>
 
             <div class="field--stack" style="margin-bottom: 16px">
-              <div class="field__label" style="margin-bottom: 8px; color: var(--red)">申请权限</div>
+              <div class="field__label text-accent" style="margin-bottom: 8px">申请权限</div>
               <div style="display: flex; gap: 26px; flex-wrap: wrap">
                 <label class="checkbox" style="font-weight: 700"><input type="checkbox" checked />读取屏幕内容</label>
                 <label class="checkbox" style="font-weight: 700"><input type="checkbox" checked />全局快捷键</label>

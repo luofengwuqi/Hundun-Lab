@@ -36,6 +36,8 @@
   --ink-a22: rgba(59, 46, 43, 0.22);
   --ink-a28: rgba(59, 46, 43, 0.28);
   --ink-a30: rgba(59, 46, 43, 0.3);
+  /* 文字强调色：浅色下与主色同色；深色下改白（D087，绿色只做描边） */
+  --accent-text: var(--red);
   --sheen: rgba(255, 255, 255, 0.18);
   --sheen-strong: rgba(255, 255, 255, 0.28);
   --teal-a22: rgba(63, 107, 79, 0.22);
@@ -100,7 +102,7 @@ body {
 }
 
 a {
-  color: var(--red);
+  color: var(--accent-text);
   text-decoration: none;
 }
 
@@ -165,7 +167,7 @@ main {
   align-items: center;
   gap: 14px;
   flex: none;
-  color: var(--red);
+  color: var(--accent-text);
   text-decoration: none;
 }
 
@@ -176,7 +178,7 @@ main {
   width: 54px;
   height: 54px;
   flex: none;
-  color: var(--red);
+  color: var(--accent-text);
 }
 
 .brand__mark svg {
@@ -200,7 +202,7 @@ main {
 
 .brand__text em {
   font-style: normal;
-  color: var(--red);
+  color: var(--accent-text);
 }
 
 .site-nav {
@@ -212,7 +214,7 @@ main {
 .site-nav a {
   padding: 9px 22px;
   border-radius: 999px;
-  color: var(--red);
+  color: var(--accent-text);
   font-size: 17px;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -225,7 +227,7 @@ main {
 }
 
 .site-nav a:not(.is-active):hover {
-  background: rgba(195, 39, 43, 0.08);
+  background: color-mix(in srgb, var(--red) 8%, transparent);
   text-decoration: none;
 }
 
@@ -245,13 +247,13 @@ main {
   border: var(--border) solid var(--red);
   border-radius: 999px;
   background: transparent;
-  color: var(--red);
+  color: var(--accent-text);
   cursor: pointer;
   padding: 0;
 }
 
 .icon-btn:hover {
-  background: rgba(195, 39, 43, 0.08);
+  background: color-mix(in srgb, var(--red) 8%, transparent);
 }
 
 .icon-btn svg {
@@ -269,7 +271,7 @@ main {
   border-radius: 999px;
   font-family: var(--font-mono);
   font-size: 15px;
-  color: var(--red);
+  color: var(--accent-text);
 }
 
 .lang b {
@@ -297,7 +299,7 @@ main {
 }
 
 .user-chip:hover {
-  background: rgba(195, 39, 43, 0.06);
+  background: color-mix(in srgb, var(--red) 6%, transparent);
 }
 
 .avatar {
@@ -347,7 +349,7 @@ main {
   border: var(--border) solid var(--red);
   border-radius: 8px;
   background: transparent;
-  color: var(--red);
+  color: var(--accent-text);
   font-family: var(--font-ui);
   font-size: 17px;
   font-weight: 700;
@@ -372,7 +374,7 @@ main {
 }
 
 .btn--ghost:hover {
-  background: rgba(195, 39, 43, 0.08);
+  background: color-mix(in srgb, var(--red) 8%, transparent);
 }
 
 .btn--sm {
@@ -410,7 +412,7 @@ main {
   font-family: var(--font-mono);
   font-size: 13px;
   letter-spacing: 0.16em;
-  color: var(--red);
+  color: var(--accent-text);
   opacity: 0.8;
   text-transform: uppercase;
 }
@@ -421,7 +423,7 @@ main {
   font-size: 96px;
   line-height: 1.06;
   letter-spacing: 0;
-  color: var(--red);
+  color: var(--accent-text);
   font-weight: 400;
   text-shadow: 4px 4px 0 rgba(163, 28, 31, 0.18);
 }
@@ -443,7 +445,7 @@ main {
 .rule-dashed {
   margin: 30px 0 0;
   border: 0;
-  border-top: 2px dashed rgba(195, 39, 43, 0.55);
+  border-top: 2px dashed color-mix(in srgb, var(--red) 55%, transparent);
 }
 
 .stats {
@@ -457,7 +459,7 @@ main {
   font-family: var(--font-mono);
   font-size: 44px;
   line-height: 1.1;
-  color: var(--red);
+  color: var(--accent-text);
   font-weight: 700;
 }
 
@@ -471,7 +473,7 @@ main {
 .stat-divider {
   width: 2px;
   height: 56px;
-  background: rgba(195, 39, 43, 0.35);
+  background: color-mix(in srgb, var(--red) 35%, transparent);
   align-self: center;
 }
 
@@ -542,7 +544,7 @@ main {
   font-size: 40px;
   font-weight: 400;
   letter-spacing: 0;
-  color: var(--red);
+  color: var(--accent-text);
 }
 
 .section-note {
@@ -724,7 +726,7 @@ main {
   justify-content: space-between;
   gap: 12px;
   padding: 14px 22px;
-  border-top: 2px dotted rgba(195, 39, 43, 0.4);
+  border-top: 2px dotted color-mix(in srgb, var(--red) 40%, transparent);
   font-family: var(--font-mono);
   font-size: 14px;
   font-weight: 700;
@@ -741,7 +743,7 @@ main {
   font-family: var(--font-mono);
   font-size: 12px;
   letter-spacing: 0.06em;
-  color: var(--red);
+  color: var(--accent-text);
 }
 
 .cart__ext::before {
@@ -764,7 +766,7 @@ main {
 }
 
 .risk-note b {
-  color: var(--red);
+  color: var(--accent-text);
 }
 
 /* 已下架：侧面与纸面一起转灰，仍保留卡带轮廓 */
@@ -814,7 +816,7 @@ main {
   font-family: var(--font-mono);
   font-size: 16px;
   font-weight: 700;
-  color: var(--red);
+  color: var(--accent-text);
 }
 
 .ver-row__date {
@@ -841,11 +843,11 @@ main {
   align-items: center;
   height: 26px;
   padding: 0 12px;
-  border: 1.5px solid rgba(195, 39, 43, 0.55);
+  border: 1.5px solid color-mix(in srgb, var(--red) 55%, transparent);
   border-radius: 999px;
   font-family: var(--font-mono);
   font-size: 12px;
-  color: var(--red);
+  color: var(--accent-text);
 }
 
 .tag--grey {
@@ -933,7 +935,7 @@ main {
   border: 2px solid var(--red);
   border-radius: 8px;
   background: var(--paper-deep);
-  color: var(--red);
+  color: var(--accent-text);
 }
 
 .plugin-card__badge {
@@ -1067,7 +1069,7 @@ main {
   border: 2px solid var(--red);
   border-radius: 8px;
   background: var(--paper-deep);
-  color: var(--red);
+  color: var(--accent-text);
 }
 
 .ext-card__badge {
@@ -1133,7 +1135,7 @@ main {
 
 .ext__more[open] > summary {
   border-color: var(--red);
-  color: var(--red);
+  color: var(--accent-text);
 }
 
 .ext__more[open] > summary .ext__more-hint::after {
@@ -1171,7 +1173,7 @@ main {
   font-size: 64px;
   font-weight: 400;
   letter-spacing: 0;
-  color: var(--red);
+  color: var(--accent-text);
   margin: 0;
 }
 
@@ -1218,7 +1220,7 @@ main {
   border: var(--border) solid var(--red);
   border-radius: 999px;
   background: transparent;
-  color: var(--red);
+  color: var(--accent-text);
   font-family: var(--font-ui);
   font-size: 15px;
   font-weight: 700;
@@ -1254,7 +1256,7 @@ main {
 .search svg {
   width: 15px;
   height: 15px;
-  color: var(--red);
+  color: var(--accent-text);
 }
 
 /* 卡带栅格：两列等宽等高；行高跟随容器（grid-auto-rows: 1fr），
@@ -1368,7 +1370,7 @@ main {
 }
 
 .dashed-list > * + * {
-  border-top: 1px dashed rgba(195, 39, 43, 0.28);
+  border-top: 1px dashed color-mix(in srgb, var(--red) 28%, transparent);
 }
 
 .news-row {
@@ -1408,7 +1410,7 @@ main {
 .more-link {
   font-family: var(--font-mono);
   font-size: 12px;
-  color: var(--red);
+  color: var(--accent-text);
 }
 
 /* ---------- 表格 ---------- */
@@ -1557,6 +1559,17 @@ main {
   flex: none;
 }
 
+/* 扩展图标底板：浅色实心朱红，深色按 D087 降为绿描边 */
+.plugin-icon--plate {
+  background: var(--red);
+  box-shadow: 4px 4px 0 color-mix(in srgb, var(--red) 30%, transparent);
+}
+
+[data-theme="dark"] .plugin-icon--plate {
+  background: transparent;
+  box-shadow: none;
+}
+
 .detail-body {
   display: grid;
   grid-template-columns: 1fr 340px;
@@ -1592,7 +1605,7 @@ main {
   flex: none;
   display: grid;
   place-items: center;
-  color: var(--red);
+  color: var(--accent-text);
 }
 
 .perm-row__name {
@@ -1612,7 +1625,7 @@ main {
   justify-content: space-between;
   gap: 12px;
   padding: 8px 0;
-  border-top: 1px dashed rgba(195, 39, 43, 0.22);
+  border-top: 1px dashed color-mix(in srgb, var(--red) 22%, transparent);
   font-family: var(--font-mono);
   font-size: 12px;
 }
@@ -1658,14 +1671,14 @@ main {
 .dropzone {
   border: 2px dashed var(--red);
   border-radius: var(--radius);
-  background: rgba(255, 254, 251, 0.6);
+  background: color-mix(in srgb, var(--card) 60%, transparent);
   padding: 14px 20px;
   text-align: center;
 }
 
 .dropzone svg {
   margin: 0 auto 12px;
-  color: var(--red);
+  color: var(--accent-text);
 }
 
 .dropzone__main {
@@ -1686,7 +1699,7 @@ main {
   align-items: center;
   gap: 10px;
   padding: 6px 0;
-  border-top: 1px dashed rgba(195, 39, 43, 0.22);
+  border-top: 1px dashed color-mix(in srgb, var(--red) 22%, transparent);
   font-size: 13px;
 }
 
@@ -1699,7 +1712,7 @@ main {
   height: 18px;
   border: 1.5px solid var(--red);
   border-radius: 3px;
-  color: var(--red);
+  color: var(--accent-text);
   display: grid;
   place-items: center;
   font-size: 11px;
@@ -1742,7 +1755,7 @@ main {
   display: block;
   padding: 10px 16px;
   border-radius: var(--radius-sm);
-  color: var(--red);
+  color: var(--accent-text);
   font-size: 13px;
   font-weight: 700;
   text-align: left;
@@ -1755,7 +1768,7 @@ main {
 }
 
 .vert-nav a:not(.is-active):hover {
-  background: rgba(195, 39, 43, 0.08);
+  background: color-mix(in srgb, var(--red) 8%, transparent);
 }
 
 .plugin-row {
@@ -1766,7 +1779,7 @@ main {
 }
 
 .plugin-row + .plugin-row {
-  border-top: 1px dashed rgba(195, 39, 43, 0.25);
+  border-top: 1px dashed color-mix(in srgb, var(--red) 25%, transparent);
 }
 
 .plugin-row__meta {
@@ -1852,7 +1865,7 @@ main {
   padding: 0;
   border: 0;
   background: transparent;
-  color: var(--red);
+  color: var(--accent-text);
   font-size: 13px;
   font-weight: 700;
   line-height: 1.4;
@@ -1877,7 +1890,7 @@ main {
 }
 
 .login-tab.is-on {
-  color: var(--red);
+  color: var(--accent-text);
 }
 
 .login-main {
@@ -1908,7 +1921,7 @@ main {
 
 .login-card__brand em {
   font-style: normal;
-  color: var(--red);
+  color: var(--accent-text);
 }
 
 .login-card__tag {
@@ -1934,7 +1947,7 @@ main {
   border: 2px solid var(--red);
   border-radius: 999px;
   background: var(--card);
-  color: var(--red);
+  color: var(--accent-text);
 }
 
 .input-icon .input {
@@ -1956,7 +1969,7 @@ main {
   right: 16px;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--red);
+  color: var(--accent-text);
   cursor: pointer;
   display: grid;
 }
@@ -2101,7 +2114,7 @@ main {
   font-family: var(--font-mono);
   font-size: 12px;
   letter-spacing: 0.14em;
-  color: var(--red);
+  color: var(--accent-text);
 }
 
 .doc-card__name {
@@ -2357,7 +2370,7 @@ body.v3 .btn--primary {
   background: var(--red);
   border-color: var(--red);
   color: #fff6e6;
-  box-shadow: 3px 3px 0 rgba(29, 22, 19, 0.35);
+  box-shadow: 3px 3px 0 color-mix(in srgb, var(--ink) 35%, transparent);
 }
 
 body.v3 .btn--primary:hover {
@@ -2371,22 +2384,24 @@ body.v3 .link-arrow {
   font-size: 15px;
   color: var(--ink);
   text-decoration: none;
-  border-bottom: 1px solid rgba(29, 22, 19, 0.35);
+  border-bottom: 1px solid color-mix(in srgb, var(--ink) 35%, transparent);
   padding-bottom: 2px;
 }
 
 body.v3 .site-footer {
-  border-top: 1px solid rgba(29, 22, 19, 0.14);
+  border-top: 1px solid color-mix(in srgb, var(--ink) 14%, transparent);
   background: none;
   color: var(--ink-soft);
 }
 
 /* ==========================================================================
-   深色主题（D078 / D081 / D082）
+   深色主题（D078 / D081 / D082 / D087）
    浅：朱红 #C3272B + 馄饨米白 #FFF8E8
-   深：馄饨绿 #00FF88（边框与字） + 馄饨黑 #141414（底色）
+   深：馄饨黑 #141414（底）+ 白色（字）+ 馄饨绿 #00FF88（只做描边）
+   绿色不当文字色：正文、标题、链接一律白或灰白，绿色只出现在
+   边框、分隔线、方块标记与选中态的描边上（D087，2026-11-05 修订）。
    主色只允许明度 ±8%，色相不动（D079）。
-   这里只覆盖令牌，不写任何组件规则——组件一律读 var()。
+   这里只覆盖令牌；「实心绿底 + 文字」的少数组件在文件末尾单独降级。
    ========================================================================== */
 [data-theme="dark"] {
   /* 底色：馄饨黑三阶，卡片稍亮以便分层 */
@@ -2395,21 +2410,22 @@ body.v3 .site-footer {
   --card: #1f1f1f;
   --card-sunk: #101010;
 
-  /* 字：馄饨绿为主，正文用同相低饱和绿以免长段阅读刺眼 */
-  --ink: #00ff88;
-  --ink-soft: #8fe8bd;
-  --ink-faint: #5c8f7a;
+  /* 字：白为主，次级用中性灰白（不再用绿，绿色只留给描边） */
+  --ink: #ffffff;
+  --ink-soft: #c3cac6;
+  --ink-faint: #7e8683;
 
-  /* 强调 */
+  /* 强调：绿色退居描边与标记 */
   --red: #00ff88;
   --red-deep: #00cc6d;
+  --accent-text: var(--ink);
   --amber: #ffd166;
   --teal: #00ff88;
-  --grey: #6f7a75;
+  --grey: #78827d;
 
-  /* 分隔线 */
-  --line: #2b2b2b;
-  --line-strong: #3a3a3a;
+  /* 分隔线：改绿描边，深色下不再用中性灰 */
+  --line: rgba(0, 255, 136, 0.22);
+  --line-strong: rgba(0, 255, 136, 0.38);
 
   /* 透明层：深色底上不发光，改为绿光的稀薄叠加 */
   --ink-a12: rgba(0, 255, 136, 0.08);
@@ -2429,8 +2445,20 @@ body.v3 .site-footer {
 }
 
 /* 卡带是"实物"：深色下保留米纸底与深字，不随主题漂绿。
-   只换这一张卡的四个可见面，不动全站令牌。 */
+   整张卡就地重声明一套浅色令牌，卡内所有 var() 自动回到朱红/墨色，
+   不必逐个组件覆盖（D087 把绿色限死在描边后，这里更不能漏）。 */
 [data-theme="dark"] .cart {
+  --paper: #d9cfb4;
+  --ink: #2a2420;
+  --ink-soft: #6b6055;
+  --ink-faint: #8b8074;
+  --red: #a8231f;
+  --red-deep: #8d1a17;
+  --accent-text: #a8231f;
+  --line: rgba(160, 31, 34, 0.22);
+  --line-strong: rgba(160, 31, 34, 0.34);
+  --ink-a12: rgba(160, 31, 34, 0.1);
+  --ink-a22: rgba(160, 31, 34, 0.26);
   background: #d9cfb4;
   border-color: #b8ab8c;
 }
@@ -2467,4 +2495,142 @@ body.v3 .site-footer {
 [data-theme="dark"] img,
 [data-theme="dark"] svg.console {
   filter: brightness(0.92) contrast(1.02);
+}
+
+/* ==========================================================================
+   状态件（浅色实心 / 深色描边）
+   浅色主题靠朱红实心块强调；深色主题按 D087 全部降为绿描边 + 白字，
+   所以这类件一律做成「基类 + 深色覆盖」，不在页面里写内联色。
+   ========================================================================== */
+
+.text-accent {
+  color: var(--accent-text);
+}
+
+.check-mark--on {
+  background: var(--red);
+  color: var(--paper);
+  border-color: var(--red);
+}
+
+.badge--ready {
+  background: var(--teal);
+  color: var(--paper);
+  border: 2px solid var(--teal);
+}
+
+/* ==========================================================================
+   深色主题：实心绿底降级为绿描边 + 白字（D087）
+   绿色只出现在描边、分隔线、方块标记上；凡是原来靠绿色实心块承载文字的
+   组件，都在这里改掉——否则黑底绿块上的文字只能反白，等于绿色在当底色。
+   ========================================================================== */
+
+[data-theme="dark"] .text-accent { color: var(--ink); }
+[data-theme="dark"] .check-mark--on,
+[data-theme="dark"] .badge--ready { background: transparent; color: var(--ink); }
+
+/* 站点导航：选中态从实心块改为绿描边 + 淡绿底 */
+[data-theme="dark"] .site-nav a { color: var(--ink-soft); }
+[data-theme="dark"] .site-nav a.is-active {
+  background: rgba(0, 255, 136, 0.1);
+  border: 1.5px solid var(--red);
+  color: var(--ink);
+}
+
+/* 页头圆形按钮与语言切换 */
+[data-theme="dark"] .icon-btn,
+[data-theme="dark"] .lang { color: var(--ink); }
+[data-theme="dark"] .icon-btn:hover { background: rgba(0, 255, 136, 0.1); }
+
+/* 按钮：描边绿 + 白字；主按钮只加一层极淡绿底保留层级 */
+[data-theme="dark"] .btn { color: var(--ink); }
+[data-theme="dark"] .btn--primary,
+[data-theme="dark"] body.v3 .btn--primary {
+  background: rgba(0, 255, 136, 0.12);
+  color: var(--ink);
+  box-shadow: 3px 3px 0 rgba(0, 255, 136, 0.22);
+}
+[data-theme="dark"] .btn--primary:hover,
+[data-theme="dark"] body.v3 .btn--primary:hover { background: rgba(0, 255, 136, 0.2); }
+[data-theme="dark"] .btn--ghost:hover { background: rgba(0, 255, 136, 0.1); }
+
+/* 分段筛选：未选中性灰白描边，选中绿描边白字 */
+[data-theme="dark"] .seg button {
+  border-color: rgba(255, 255, 255, 0.2);
+  color: var(--ink-soft);
+}
+[data-theme="dark"] .seg button.is-on {
+  background: rgba(0, 255, 136, 0.1);
+  border-color: var(--red);
+  color: var(--ink);
+}
+
+/* 标签 */
+[data-theme="dark"] .tag {
+  color: var(--ink);
+  border-color: rgba(0, 255, 136, 0.5);
+}
+[data-theme="dark"] .tag--grey {
+  color: var(--ink-faint);
+  border-color: rgba(255, 255, 255, 0.18);
+}
+[data-theme="dark"] .tag--version {
+  background: transparent;
+  border: 1.5px solid var(--red);
+  color: var(--ink);
+}
+
+/* 审核状态徽章：语义只体现在描边色上，字一律白 */
+[data-theme="dark"] .badge--ok {
+  background: rgba(0, 255, 136, 0.12);
+  border-color: rgba(0, 255, 136, 0.55);
+  color: var(--ink);
+}
+[data-theme="dark"] .badge--pending {
+  background: rgba(255, 209, 102, 0.12);
+  border-color: rgba(255, 209, 102, 0.55);
+  color: var(--ink);
+}
+[data-theme="dark"] .badge--rejected,
+[data-theme="dark"] .badge--draft {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.28);
+  color: var(--ink-soft);
+}
+[data-theme="dark"] .badge--official {
+  background: rgba(0, 255, 136, 0.12);
+  border-color: var(--red);
+  color: var(--ink);
+}
+
+/* 个人中心竖排导航 */
+[data-theme="dark"] .vert-nav a { color: var(--ink-soft); }
+[data-theme="dark"] .vert-nav a.is-active {
+  background: rgba(0, 255, 136, 0.1);
+  color: var(--ink);
+}
+
+/* 版本表表头：实心绿底改为淡绿条 + 绿底边 */
+[data-theme="dark"] .table thead th {
+  background: rgba(0, 255, 136, 0.1);
+  color: var(--ink);
+  border-bottom: 1px solid var(--line-strong);
+}
+
+/* 登录页 tab 图标 */
+[data-theme="dark"] .login-tab.is-on svg {
+  background: rgba(0, 255, 136, 0.12);
+  color: var(--ink);
+}
+
+/* 首页实验卡图标：实心色块改为描边（用 inset 阴影，避免尺寸变化） */
+[data-theme="dark"] .mini--green .mini__icon {
+  background: transparent;
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1.5px var(--teal);
+}
+[data-theme="dark"] .mini--amber .mini__icon {
+  background: transparent;
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1.5px var(--amber);
 }
