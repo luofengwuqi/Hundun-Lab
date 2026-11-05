@@ -5,21 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>上传插件 · Hundun Lab</title>
     <link rel="stylesheet" href="assets/proto.css" />
+      <style>.code { background: var(--card); }</style>
+    <script>
+      /* 主题：内联脚本先于 body 执行，避免首屏闪白（D061）。取值 light / dark（D081）。 */
+      (function () {
+        try {
+          var t = localStorage.getItem("hundunlab.theme");
+          if (t !== "dark" && t !== "light") t = "light";
+          document.documentElement.setAttribute("data-theme", t);
+        } catch (e) {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script>
   </head>
   <body>
     <header class="site-header">
       <div class="site-header__inner">
         <a class="brand" href="01-home.html">
-          <span class="brand__mark"><i></i><i></i><i></i><i></i></span>
+          <span class="brand__mark" aria-hidden="true"><svg class="brand-mark" viewBox="0 0 256 256" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M122.8 63 C128.1 63 135.4 63.2 141.3 65.2 C147.3 67.2 152.9 73.6 158.5 75.2 C164.1 76.8 170.7 74.5 174.9 74.8 C179 75 180.8 75.7 183.5 76.7 C186.2 77.7 188.9 78.9 191.2 80.8 C193.5 82.6 195.4 84.9 197.4 88 C199.3 91.1 199.5 96.3 202.9 99.2 C206.3 102 214.4 102.9 217.9 105.1 C221.4 107.2 222.7 109.1 224.1 112.1 C225.6 115.1 225 119.1 226.4 123.3 C227.9 127.4 231.8 133 232.8 137 C233.9 141 233.4 144.5 232.8 147.4 C232.3 150.2 231.2 152.3 229.4 154.2 C227.7 156.2 226.6 157.7 222.2 159.3 C217.8 160.8 209.4 160.1 203.3 163.6 C197.1 167 190.8 175.9 185.4 180 C179.9 184.2 176.2 186.1 170.6 188.2 C165 190.3 160.4 191.6 151.7 192.5 C142.9 193.4 128.3 193.8 118.1 193.4 C107.9 192.9 97.9 191.3 90.6 189.6 C83.3 187.9 78.8 185.8 74.2 183.3 C69.6 180.7 67.2 178.9 63 174.4 C58.9 169.9 54.7 160.9 49.3 156.5 C43.8 152 34.2 149.9 30.4 147.7 C26.5 145.5 27.1 145 25.9 143.1 C24.7 141.1 23.6 139.2 23.2 136.2 C22.7 133.2 22.7 128 23.1 125 C23.4 122 23.4 120.9 25.1 118.1 C26.7 115.3 29.5 111.1 32.9 108.3 C36.4 105.5 42.7 104.4 45.8 101.3 C49 98.2 49.8 92.8 51.7 89.7 C53.7 86.6 54.3 85 57.5 82.8 C60.7 80.6 64.8 77.8 70.8 76.5 C76.7 75.2 86.7 76.8 93.2 74.9 C99.6 73.1 104.6 67.5 109.5 65.5 C114.4 63.5 117.5 63.1 122.8 63 Z M111.2 75.7 C107.4 77.6 103.9 82.2 98.3 83.8 C92.7 85.3 82.7 84.4 77.7 85.1 C72.7 85.8 70.8 86.9 68.2 88.2 C65.6 89.5 64.7 89.6 62.2 93 C59.7 96.4 56.9 104.8 53.1 108.6 C49.4 112.5 43 113.6 39.8 116 C36.6 118.5 35.3 120.6 34 123.3 C32.8 125.9 32.3 129.4 32.5 131.9 C32.7 134.3 31.7 135.4 35.2 137.9 C38.7 140.4 49.5 144.5 53.6 146.7 C57.6 149 56.8 147.9 59.6 151.3 C62.4 154.8 67.6 163.7 70.4 167.1 C73.3 170.6 73.3 170.3 76.6 172.3 C80 174.3 85.7 177.5 90.6 179.3 C95.5 181.1 99 182 106.1 182.9 C113.1 183.9 125.3 184.8 132.7 184.8 C140.2 184.8 143.9 184.6 150.8 182.9 C157.7 181.3 166.3 179.6 174 175 C181.8 170.4 190.2 159.4 197.3 155.3 C204.3 151.2 212 151.8 216.2 150.4 C220.3 148.9 220.9 148.3 222.2 146.7 C223.5 145 224.5 143.4 223.7 140.5 C223 137.6 219.3 133.3 217.8 129.3 C216.3 125.3 215.7 119.1 214.6 116.4 C213.4 113.7 214.1 114.7 211 113.2 C207.9 111.6 199.7 110.1 196 106.9 C192.3 103.7 190.9 97.1 188.8 94 C186.7 90.9 186.1 90.1 183.5 88.5 C180.9 86.9 178.2 85 173.2 84.2 C168.1 83.5 159.7 85.7 153.4 84 C147.1 82.3 140.7 75.7 135.3 73.8 C129.9 71.9 125.1 72.2 121.1 72.5 C117.1 72.8 115 73.9 111.2 75.7 Z M177.5 95.7 C179.3 94.2 179.7 95.3 180.3 95.7 C180.9 96.2 181.9 95.9 181.3 98.3 C180.8 100.8 177.5 107.9 176.9 110.4 C176.2 112.8 175.6 111 177.4 112.9 C179.3 114.9 184.5 120.9 187.8 122 C191.1 123.1 194.5 119.6 197.3 119.4 C200 119.2 203.3 119.9 204.3 120.7 C205.3 121.5 205.2 122.6 203.3 124.1 C201.5 125.7 195.1 127.3 193.3 130.2 C191.4 133 192.9 139.8 192.1 141.5 C191.3 143.2 190.5 142.7 188.7 140.5 C186.8 138.4 184.7 132.6 181.3 128.4 C177.8 124.3 170.2 118.5 167.9 115.5 C165.6 112.5 167.1 112.1 167.4 110.4 C167.6 108.6 167.8 107.6 169.5 105.2 C171.2 102.8 175.7 97.3 177.5 95.7 Z M129 95.7 C130.2 95.1 130.4 97.4 135.3 98.6 C140.2 99.8 153.7 101.6 158.5 102.9 C163.4 104.1 163.4 104.8 164.6 106.1 C165.9 107.3 166.2 109.5 165.9 110.4 C165.6 111.3 168.6 112.3 162.8 111.5 C157.1 110.8 137.4 107.5 131.6 106.1 C125.9 104.6 128.6 104.3 128.1 102.6 C127.7 100.9 127.8 96.4 129 95.7 Z M122 82.8 C122.9 82.1 123.8 82.4 124.4 82.8 C124.9 83.3 125.2 82.5 125.4 85.4 C125.6 88.3 125.8 96.9 125.5 100 C125.1 103.2 125.2 103 123.3 104.2 C121.3 105.4 118 106.9 113.8 107.3 C109.6 107.8 100.8 107.4 98.1 106.9 C95.3 106.4 97 105.2 97.2 104.3 C97.4 103.5 95.9 103.2 99.2 102 C102.5 100.9 113.6 99.9 116.9 97.5 C120.3 95 118.3 89.6 119.1 87.1 C120 84.7 121.1 83.5 122 82.8 Z M68.8 99.2 C69.7 98.6 71.6 98.4 73.4 99.7 C75.1 101 77.2 105.9 79.4 107.2 C81.5 108.5 84.9 107.2 86.3 107.6 C87.6 108 87.7 108.5 87.5 109.5 C87.3 110.5 88 111 84.9 113.8 C81.9 116.6 72 124.3 69.1 126.2 C66.1 128.1 67.5 125.8 67.1 125 C66.8 124.2 66.3 123.6 67 121.5 C67.8 119.5 71.6 116 71.8 112.9 C71.9 109.9 68.4 105.8 67.9 103.5 C67.4 101.2 67.9 99.8 68.8 99.2 Z M47.7 122.4 C49.2 121.9 52.9 121.7 55.3 122.1 C57.7 122.5 60.2 123.4 62.2 124.6 C64.2 125.8 66.5 127.6 67.3 129.3 C68.2 131 68.1 133.7 67.3 134.7 C66.6 135.7 66.3 136.6 63 135.3 C59.7 134 50.3 128.7 47.6 127 C44.8 125.3 46.3 125.8 46.4 125 C46.4 124.2 46.2 122.9 47.7 122.4 Z"/></svg></span>
           <span class="brand__text">HUNDUN<em>LAB</em></span>
         </a>
         <nav class="site-nav">
           <a href="01-home.html">首页</a>
           <a href="02-software-list.html">软件</a>
-          <a class="is-active" href="04-plugins.html">插件</a>
         </nav>
         <div class="header-actions">
-          <button class="icon-btn" type="button" title="深色主题（延后实现）" aria-label="切换主题">
+          <button class="icon-btn" type="button" data-action="toggle-theme" title="切换到深色主题" aria-label="切换主题">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="12" cy="12" r="8" />
               <path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor" stroke="none" />
@@ -38,9 +50,9 @@
       <div class="page-head" style="padding-top: 12px; padding-bottom: 8px">
         <div>
           <h1 class="page-title" style="font-size: 34px">
-            <span class="bullet" style="width: 14px; height: 14px"></span>上传插件
+            提交插件<span class="bullet" style="width: 18px; height: 18px"></span>
           </h1>
-          <p class="page-sub">提交后进入人工审核，通常 1–3 个工作日</p>
+          <p class="page-sub">提交到 <strong>HundunDesktop</strong> · 通过人工审核后上架，通常 1–3 个工作日</p>
         </div>
       </div>
 
@@ -48,11 +60,11 @@
         <div class="stack-16">
           <div class="side-panel">
             <h3>上传要求</h3>
-            <div class="check-row"><span class="check-mark">·</span>仅支持 .zip，体积不超过 20 MB</div>
-            <div class="check-row"><span class="check-mark">·</span>根目录必须包含 plugin.json</div>
-            <div class="check-row"><span class="check-mark">·</span>图标为 128×128 PNG</div>
-            <div class="check-row"><span class="check-mark">·</span>所有权限需在 manifest 中声明</div>
-            <div class="check-row"><span class="check-mark">·</span>禁止任何形式的联网回传</div>
+            <div class="check-row" style="border-top: 0; font-weight: 700"><span class="req-sq"></span>仅支持 .zip，体积不超过 20 MB</div>
+            <div class="check-row" style="border-top: 0; font-weight: 700"><span class="req-sq"></span>根目录必须包含 plugin.json</div>
+            <div class="check-row" style="border-top: 0; font-weight: 700"><span class="req-sq"></span>图标为 128×128 PNG</div>
+            <div class="check-row" style="border-top: 0; font-weight: 700"><span class="req-sq"></span>所有权限需在 manifest 中声明</div>
+            <div class="check-row" style="border-top: 0; font-weight: 700"><span class="req-sq"></span>禁止任何形式的联网回传</div>
           </div>
 
           <div class="side-panel">
@@ -68,57 +80,78 @@
 
         <div class="stack-16">
           <div class="dropzone">
-            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-              <path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3" />
-              <path d="M12 16V4" />
-              <path d="M8 8l4-4 4 4" />
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+              <path d="M12 10v6" />
+              <path d="M9.5 13.5 12 16l2.5-2.5" />
             </svg>
-            <div class="dropzone__main">拖拽 zip 到这里，或点击选择文件</div>
+            <div class="dropzone__main" style="color: var(--red)">拖拽 zip 到这里，或点击选择文件</div>
             <div class="dropzone__file">已选择：pixelruler-1.2.0.zip · 1.2 MB</div>
           </div>
 
-          <div class="side-panel">
-            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px">
-              <h3 style="margin: 0">预检结果</h3>
-              <span class="badge badge--ok" style="margin-left: auto">可提交</span>
+          <div class="side-panel" style="display: flex; align-items: center; gap: 18px">
+            <div style="flex: 1; display: grid; gap: 6px">
+              <div style="display: flex; align-items: center; gap: 10px; font-size: 13px">
+                <span class="check-mark" style="background: var(--red); color: var(--paper); border-color: var(--red)">✓</span>manifest 校验通过
+              </div>
+              <div style="display: flex; align-items: center; gap: 10px; font-size: 13px">
+                <span class="check-mark" style="background: var(--red); color: var(--paper); border-color: var(--red)">✓</span>权限声明完整（2 项）
+              </div>
             </div>
-            <div class="check-row"><span class="check-mark">✓</span>manifest 校验通过</div>
-            <div class="check-row"><span class="check-mark">✓</span>权限声明完整（2 项）</div>
-            <div class="check-row"><span class="check-mark">✓</span>图标尺寸符合要求</div>
+            <div style="flex: 1; display: grid; gap: 6px">
+              <div style="display: flex; align-items: center; gap: 10px; font-size: 13px">
+                <span class="check-mark" style="background: var(--red); color: var(--paper); border-color: var(--red)">✓</span>图标尺寸符合要求
+              </div>
+            </div>
+            <span
+              class="badge"
+              style="
+                background: var(--teal);
+                color: var(--paper);
+                border: 2px solid var(--teal);
+                height: 34px;
+                padding: 0 16px;
+                font-size: 14px;
+              "
+              >可提交</span
+            >
           </div>
 
-          <div class="side-panel">
+          <div class="side-panel" style="display: flex; flex-direction: column">
             <h3>插件信息</h3>
 
-            <div class="field" style="margin-bottom: 8px">
-              <span class="field__label">插件名称</span>
-              <input class="input" value="PixelRuler" />
-            </div>
-
-            <div style="display: grid; grid-template-columns: 92px 1fr 92px 1fr; gap: 16px; align-items: center; margin-bottom: 8px">
-              <span class="field__label">版本号</span>
-              <input class="input" value="1.2.0" />
-              <span class="field__label">适配版本</span>
-              <input class="input" value="≥ 26.0" />
-            </div>
-
-            <div class="field--stack" style="margin-bottom: 8px">
-              <div class="field__label" style="margin-bottom: 8px">一句话简介</div>
-              <textarea class="textarea">屏幕取色与像素测量工具，常驻菜单栏。</textarea>
-            </div>
-
-            <div class="field--stack" style="margin-bottom: 10px">
-              <div class="field__label" style="margin-bottom: 8px">申请权限</div>
-              <div style="display: flex; gap: 22px; flex-wrap: wrap">
-                <label class="checkbox"><input type="checkbox" checked />读取屏幕内容</label>
-                <label class="checkbox"><input type="checkbox" checked />全局快捷键</label>
-                <label class="checkbox"><input type="checkbox" />读写剪贴板</label>
+            <div style="display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 18px; margin-bottom: 14px">
+              <div>
+                <div class="field__label" style="margin-bottom: 6px; color: var(--red)">插件名称</div>
+                <input class="input" style="height: 44px" value="PixelRuler" />
+              </div>
+              <div>
+                <div class="field__label" style="margin-bottom: 6px; color: var(--red)">版本号</div>
+                <input class="input" style="height: 44px" value="1.2.0" />
+              </div>
+              <div>
+                <div class="field__label" style="margin-bottom: 6px; color: var(--red)">适配版本</div>
+                <input class="input" style="height: 44px" value="≥ 26.0" />
               </div>
             </div>
 
-            <div style="display: flex; gap: 12px; justify-content: flex-end">
-              <a class="btn btn--ghost btn--sm" href="04-plugins.html">存为草稿</a>
-              <a class="btn btn--primary btn--sm" href="04-plugins.html">提交审核</a>
+            <div class="field" style="align-items: start; margin-bottom: 14px; grid-template-columns: 92px 1fr">
+              <span class="field__label" style="padding-top: 10px">一句话简介</span>
+              <textarea class="textarea" style="min-height: 64px">屏幕取色与像素测量工具，常驻菜单栏。</textarea>
+            </div>
+
+            <div class="field--stack" style="margin-bottom: 16px">
+              <div class="field__label" style="margin-bottom: 8px; color: var(--red)">申请权限</div>
+              <div style="display: flex; gap: 26px; flex-wrap: wrap">
+                <label class="checkbox" style="font-weight: 700"><input type="checkbox" checked />读取屏幕内容</label>
+                <label class="checkbox" style="font-weight: 700"><input type="checkbox" checked />全局快捷键</label>
+                <label class="checkbox" style="font-weight: 700"><input type="checkbox" />读写剪贴板</label>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: auto">
+              <button class="btn btn--primary" type="button">提交审核</button>
+              <a class="btn btn--ghost" href="03-software-detail.html#extensions">存为草稿</a>
             </div>
           </div>
         </div>
@@ -126,5 +159,28 @@
     </main>
 
     <footer class="site-footer">© HUNDUNLAB · 独立软件工作室</footer>
+    <script>
+      /* 主题切换：数据属性 + 本地存储。原型不引框架，故用原生事件委托。 */
+      (function () {
+        function sync() {
+          var dark = document.documentElement.getAttribute("data-theme") === "dark";
+          document.querySelectorAll('[data-action="toggle-theme"]').forEach(function (b) {
+            b.title = dark ? "切换到浅色主题" : "切换到深色主题";
+            b.setAttribute("aria-pressed", dark ? "true" : "false");
+          });
+        }
+        document.addEventListener("click", function (e) {
+          var b = e.target.closest && e.target.closest('[data-action="toggle-theme"]');
+          if (!b) return;
+          var next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+          document.documentElement.setAttribute("data-theme", next);
+          try {
+            localStorage.setItem("hundunlab.theme", next);
+          } catch (err) {}
+          sync();
+        });
+        sync();
+      })();
+    </script>
   </body>
 </html>

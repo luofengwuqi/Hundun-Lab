@@ -1,0 +1,718 @@
+/* ==========================================================================
+   Hundun Lab · 物料库（Design Kit）
+   --------------------------------------------------------------------------
+   原型（docs/design/prototype）与生产前端共用的「物料」样式。
+   纯 CSS、无依赖、无构建，类名统一 hd- 前缀，不与项目既有样式冲突。
+   用法：import '@/assets/css/hundun-kit.css'
+   物料清单与可视化预览：docs/design/kit/index.html
+   ========================================================================== */
+
+:root {
+  /* ---------- 色彩 ---------- */
+  --hd-paper: #fff8e8;
+  --hd-paper-deep: #f6ecd6;
+  --hd-card: #fffefb;
+  --hd-ink: #3b2e2b;
+  --hd-ink-soft: #6b5a54;
+  --hd-ink-faint: #9a8d86;
+  --hd-red: #c3272b;
+  --hd-red-deep: #a01f22;
+  --hd-amber: #e8a33d;
+  --hd-teal: #4f8a7b;
+  --hd-grey: #9a938c;
+  --hd-line: #e6d8bd;
+  --hd-line-strong: #d8c4a2;
+
+  /* ---------- 卡带专属（立体感三件套：纸面 / 描边 / 塑料侧面） ---------- */
+  --hd-cart-paper: #f4e3c6;
+  --hd-cart-paper-sunk: #edd8b6;
+  --hd-cart-line: #5a352a;
+  --hd-cart-slab: #b0402e;
+  --hd-cart-slab-deep: #7e2a1f;
+  --hd-cart-cut: 9px; /* 卡带切角 */
+  --hd-cart-edge: 2px; /* 描边厚度 */
+  --hd-cart-accent: var(--hd-red); /* 条纹主色，前端按软件 theme_color 覆盖 */
+
+  /* ---------- 排版 ---------- */
+  --hd-font-ui: "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", sans-serif;
+  --hd-font-mono: "Cascadia Mono", Consolas, "SF Mono", Menlo, monospace;
+
+  /* ---------- 尺度 ---------- */
+  --hd-radius: 8px;
+  --hd-radius-sm: 6px;
+  --hd-border: 2px;
+}
+
+/* ==========================================================================
+   01 按钮 hd-btn
+   ========================================================================== */
+
+.hd-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 52px;
+  padding: 0 32px;
+  border: var(--hd-border) solid var(--hd-red);
+  border-radius: var(--hd-radius);
+  background: transparent;
+  color: var(--hd-red);
+  font-family: var(--hd-font-ui);
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color 0.14s ease,
+    color 0.14s ease,
+    transform 0.14s ease,
+    box-shadow 0.14s ease;
+}
+
+.hd-btn--primary {
+  background: var(--hd-red);
+  color: var(--hd-paper);
+  box-shadow: 3px 3px 0 rgba(120, 30, 25, 0.35);
+}
+
+.hd-btn--primary:hover {
+  background: var(--hd-red-deep);
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 rgba(120, 30, 25, 0.4);
+}
+
+.hd-btn--ghost:hover {
+  background: rgba(195, 39, 43, 0.08);
+}
+
+.hd-btn--sm {
+  height: 38px;
+  padding: 0 18px;
+  font-size: 14px;
+  border-radius: var(--hd-radius-sm);
+}
+
+.hd-btn--lg {
+  height: 58px;
+  padding: 0 42px;
+  font-size: 19px;
+}
+
+.hd-btn--block {
+  width: 100%;
+}
+
+.hd-btn[disabled],
+.hd-btn--disabled {
+  border-color: var(--hd-line-strong);
+  color: var(--hd-grey);
+  background: transparent;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+/* ==========================================================================
+   02 平台胶囊 hd-tag
+   ========================================================================== */
+
+.hd-tag {
+  display: inline-flex;
+  align-items: center;
+  height: 26px;
+  padding: 0 12px;
+  border: 1.5px solid rgba(195, 39, 43, 0.55);
+  border-radius: 999px;
+  font-family: var(--hd-font-mono);
+  font-size: 12px;
+  color: var(--hd-red);
+}
+
+.hd-tag--grey {
+  border-color: var(--hd-line-strong);
+  color: var(--hd-grey);
+}
+
+/* ==========================================================================
+   03 状态徽章 hd-badge（版本号 / 审核状态）
+   ========================================================================== */
+
+.hd-badge {
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: var(--hd-radius-sm);
+  font-family: var(--hd-font-mono);
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.hd-badge--version {
+  background: var(--hd-red);
+  color: var(--hd-paper);
+}
+
+.hd-badge--ok {
+  background: var(--hd-teal);
+  color: var(--hd-paper);
+}
+
+.hd-badge--warn {
+  background: var(--hd-amber);
+  color: var(--hd-ink);
+}
+
+.hd-badge--muted {
+  background: rgba(154, 147, 140, 0.22);
+  color: var(--hd-ink-soft);
+}
+
+/* ==========================================================================
+   04 卡带卡片 hd-cart ★ 物料核心
+   --------------------------------------------------------------------------
+   立体感配方（四层，缺一层就会「塌」）：
+     1. 描边层 ::before —— 深棕八边形，卡带的硬边轮廓
+     2. 纸面层 ::after  —— 内缩 2px 的米黄纸面 + 顶部高光
+     3. 塑料侧面        —— filter: drop-shadow 偏移出的实心色块（无模糊）
+     4. 落地柔影        —— 最后一层带模糊的浅影
+   八边形（切角）与 2px 描边靠「两层 polyglon 各自裁剪」实现，
+   因为 clip-path 会把 border / box-shadow 一起裁掉。
+   ========================================================================== */
+
+.hd-cart {
+  --hd-oct: polygon(
+    var(--hd-cart-cut) 0,
+    calc(100% - var(--hd-cart-cut)) 0,
+    100% var(--hd-cart-cut),
+    100% calc(100% - var(--hd-cart-cut)),
+    calc(100% - var(--hd-cart-cut)) 100%,
+    var(--hd-cart-cut) 100%,
+    0 calc(100% - var(--hd-cart-cut)),
+    0 var(--hd-cart-cut)
+  );
+  --hd-oct-inner: polygon(
+    calc(var(--hd-cart-cut) + 1px) 0,
+    calc(100% - var(--hd-cart-cut) - 1px) 0,
+    100% calc(var(--hd-cart-cut) + 1px),
+    100% calc(100% - var(--hd-cart-cut) - 1px),
+    calc(100% - var(--hd-cart-cut) - 1px) 100%,
+    calc(var(--hd-cart-cut) + 1px) 100%,
+    0 calc(100% - var(--hd-cart-cut) - 1px),
+    0 calc(var(--hd-cart-cut) + 1px)
+  );
+
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  min-height: 236px;
+  background: none;
+  border: 0;
+  color: inherit;
+  text-decoration: none;
+  /* 塑料侧面（实心、无模糊）+ 落地柔影 */
+  filter: drop-shadow(9px 10px 0 var(--hd-cart-slab))
+    drop-shadow(11px 13px 7px rgba(90, 45, 25, 0.22));
+  transition:
+    transform 0.16s ease,
+    filter 0.16s ease;
+}
+
+/* 描边层 */
+.hd-cart::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: var(--hd-cart-line);
+  clip-path: var(--hd-oct);
+}
+
+/* 纸面层 */
+.hd-cart::after {
+  content: "";
+  position: absolute;
+  inset: var(--hd-cart-edge);
+  z-index: 0;
+  background:
+    linear-gradient(180deg, rgba(255, 252, 242, 0.85), rgba(255, 252, 242, 0) 4px),
+    var(--hd-cart-paper);
+  clip-path: var(--hd-oct-inner);
+}
+
+/* 内容压在两层之上 */
+.hd-cart > * {
+  position: relative;
+  z-index: 1;
+}
+
+.hd-cart--interactive {
+  cursor: pointer;
+}
+
+.hd-cart--interactive:hover {
+  transform: translate(-2px, -2px);
+  filter: drop-shadow(11px 12px 0 var(--hd-cart-slab))
+    drop-shadow(13px 16px 9px rgba(90, 45, 25, 0.26));
+}
+
+/* ---------- 顶部斜纹（像素阶梯，颜色可由 --hd-cart-accent 覆盖） ---------- */
+
+.hd-cart__stripe {
+  position: relative;
+  height: 30px;
+  margin: var(--hd-cart-edge) var(--hd-cart-edge) 0;
+  background: var(--hd-cart-paper-sunk);
+  border-bottom: 2px solid var(--hd-cart-line);
+  clip-path: polygon(
+    calc(var(--hd-cart-cut) - 1px) 0,
+    calc(100% - var(--hd-cart-cut) + 1px) 0,
+    100% calc(var(--hd-cart-cut) - 1px),
+    100% 100%,
+    0 100%,
+    0 calc(var(--hd-cart-cut) - 1px)
+  );
+}
+
+.hd-cart__stripe::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--hd-cart-accent);
+  -webkit-mask-image: var(--hd-hazard);
+  mask-image: var(--hd-hazard);
+  -webkit-mask-size: 20px 20px;
+  mask-size: 20px 20px;
+  -webkit-mask-repeat: repeat;
+  mask-repeat: repeat;
+}
+
+/* 像素阶梯斜纹：20px 一格，红 12px / 米 8px，45° 呈「///」 */
+:root {
+  --hd-hazard: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Cg fill='%23fff'%3E%3Crect x='0' y='0' width='4' height='4'/%3E%3Crect x='4' y='0' width='4' height='4'/%3E%3Crect x='8' y='0' width='4' height='4'/%3E%3Crect x='0' y='4' width='4' height='4'/%3E%3Crect x='4' y='4' width='4' height='4'/%3E%3Crect x='16' y='4' width='4' height='4'/%3E%3Crect x='0' y='8' width='4' height='4'/%3E%3Crect x='12' y='8' width='4' height='4'/%3E%3Crect x='16' y='8' width='4' height='4'/%3E%3Crect x='8' y='12' width='4' height='4'/%3E%3Crect x='12' y='12' width='4' height='4'/%3E%3Crect x='16' y='12' width='4' height='4'/%3E%3Crect x='4' y='16' width='4' height='4'/%3E%3Crect x='8' y='16' width='4' height='4'/%3E%3Crect x='12' y='16' width='4' height='4'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* ---------- 卡身 ---------- */
+
+.hd-cart__body {
+  padding: 16px 22px 14px;
+  flex: 1;
+}
+
+.hd-cart__head {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.hd-cart__head--stack {
+  display: block;
+}
+
+.hd-cart__name {
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1.2;
+  color: var(--hd-ink);
+  letter-spacing: 0;
+}
+
+.hd-cart__head--stack .hd-cart__name {
+  display: block;
+}
+
+.hd-cart__ver {
+  font-family: var(--hd-font-mono);
+  font-size: 14px;
+  color: var(--hd-ink-soft);
+  letter-spacing: 0.02em;
+}
+
+.hd-cart__head--stack .hd-cart__ver {
+  display: block;
+  margin-top: 2px;
+}
+
+.hd-cart__desc {
+  margin-top: 6px;
+  font-size: 15px;
+  color: var(--hd-ink-soft);
+}
+
+.hd-cart__tags {
+  margin-top: 16px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.hd-cart__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 22px;
+  border-top: 2px dotted rgba(195, 39, 43, 0.4);
+  font-family: var(--hd-font-mono);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--hd-ink);
+}
+
+.hd-cart__link {
+  color: var(--hd-red);
+  font-weight: 700;
+}
+
+.hd-cart__link:hover {
+  color: var(--hd-red-deep);
+}
+
+/* 已下架：去掉塑料侧面，整体转灰 */
+.hd-cart--off {
+  --hd-cart-paper: #f2ebdd;
+  --hd-cart-line: #a99e8d;
+  --hd-cart-slab: #c9c0b1;
+  --hd-cart-accent: var(--hd-grey);
+  filter: drop-shadow(3px 4px 0 #d9d0c2);
+}
+
+.hd-cart--off .hd-cart__name,
+.hd-cart--off .hd-cart__desc,
+.hd-cart--off .hd-cart__ver,
+.hd-cart--off .hd-cart__foot {
+  color: var(--hd-grey);
+}
+
+/* 扁平（列表页密集排列时可降级，去掉侧面只留描边） */
+.hd-cart--flat {
+  filter: none;
+}
+
+/* 角标 */
+.hd-cart__badge {
+  position: absolute;
+  top: 28px;
+  right: 12px;
+  z-index: 2;
+}
+
+/* 卡带栅格：两列等宽等高，行高跟随容器，卡带侧面不会被货架 overflow 裁掉 */
+.hd-cart-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  grid-auto-rows: 1fr;
+  min-height: 0;
+}
+
+.hd-cart-grid--3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 28px 44px;
+}
+
+/* ==========================================================================
+   05 分节容器 hd-section（带边框的「货架」，含分节标题）
+   ========================================================================== */
+
+.hd-section {
+  display: grid;
+  grid-template-columns: 58fr 42fr;
+  border: var(--hd-border) solid var(--hd-red);
+  border-radius: 16px;
+  background: var(--hd-card);
+  box-shadow: 4px 4px 0 rgba(150, 60, 40, 0.22);
+  overflow: hidden;
+}
+
+.hd-section__col {
+  padding: 20px 30px 22px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.hd-section__col + .hd-section__col {
+  border-left: var(--hd-border) solid var(--hd-red);
+}
+
+.hd-section__head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 12px;
+}
+
+.hd-section__title {
+  font-size: 40px;
+  line-height: 1.1;
+  color: var(--hd-red);
+  font-weight: 400;
+}
+
+.hd-section__note {
+  font-family: var(--hd-font-mono);
+  font-size: 13px;
+  color: var(--hd-ink-soft);
+  letter-spacing: 0.06em;
+}
+
+/* 像素方块（分节标题前 / 上传要求前） */
+.hd-bullet {
+  width: 20px;
+  height: 20px;
+  flex: none;
+  background: var(--hd-red);
+}
+
+.hd-bullet--sm {
+  width: 12px;
+  height: 12px;
+}
+
+/* ==========================================================================
+   06 虚线列表 / 动态行 hd-news
+   ========================================================================== */
+
+.hd-dashed > * + * {
+  border-top: 1px dashed rgba(195, 39, 43, 0.28);
+}
+
+.hd-news {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  row-gap: 6px;
+  column-gap: 18px;
+  padding: 12px 0;
+}
+
+.hd-news__date {
+  grid-row: 1;
+  grid-column: 1;
+  font-family: var(--hd-font-mono);
+  font-size: 14px;
+  color: var(--hd-ink-soft);
+}
+
+.hd-news__badge {
+  grid-row: 1;
+  grid-column: 2;
+  justify-self: end;
+}
+
+.hd-news__name {
+  grid-row: 2;
+  grid-column: 1;
+  font-size: 21px;
+  font-weight: 800;
+  line-height: 1.2;
+  color: var(--hd-ink);
+}
+
+.hd-news__link {
+  grid-row: 2;
+  grid-column: 2;
+  justify-self: end;
+  font-family: var(--hd-font-mono);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--hd-red);
+}
+
+/* ==========================================================================
+   07 数据块 hd-stat
+   ========================================================================== */
+
+.hd-stat__value {
+  font-family: var(--hd-font-mono);
+  font-size: 44px;
+  line-height: 1.1;
+  font-weight: 700;
+  color: var(--hd-red);
+}
+
+.hd-stat__label {
+  margin-top: 4px;
+  font-size: 14px;
+  letter-spacing: 0.1em;
+  color: var(--hd-ink);
+}
+
+.hd-stat__divider {
+  width: 2px;
+  height: 56px;
+  background: rgba(195, 39, 43, 0.35);
+}
+
+/* ==========================================================================
+   08 表单物料 hd-field / hd-input / hd-textarea
+   ========================================================================== */
+
+.hd-label {
+  display: block;
+  margin-bottom: 8px;
+  font-family: var(--hd-font-mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: var(--hd-red);
+}
+
+.hd-input,
+.hd-textarea {
+  width: 100%;
+  padding: 0 14px;
+  height: 52px;
+  border: 1.5px solid var(--hd-line-strong);
+  border-radius: var(--hd-radius-sm);
+  background: var(--hd-card);
+  color: var(--hd-ink);
+  font-family: var(--hd-font-ui);
+  font-size: 15px;
+}
+
+.hd-textarea {
+  height: auto;
+  min-height: 82px;
+  padding: 10px 14px;
+  line-height: 1.6;
+  resize: vertical;
+}
+
+.hd-input:focus,
+.hd-textarea:focus {
+  outline: none;
+  border-color: var(--hd-red);
+  box-shadow: 0 0 0 3px rgba(195, 39, 43, 0.12);
+}
+
+/* 带圆形图标槽的输入框 */
+.hd-input--icon {
+  position: relative;
+}
+
+.hd-input--icon .hd-input {
+  padding-left: 52px;
+}
+
+.hd-input--icon > svg,
+.hd-input--icon > .hd-input__icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--hd-red);
+  color: var(--hd-paper);
+}
+
+/* ==========================================================================
+   09 图标按钮 hd-iconbtn
+   ========================================================================== */
+
+.hd-iconbtn {
+  width: 46px;
+  height: 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: var(--hd-border) solid var(--hd-red);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--hd-red);
+  cursor: pointer;
+}
+
+.hd-iconbtn:hover {
+  background: rgba(195, 39, 43, 0.08);
+}
+
+.hd-iconbtn svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* ==========================================================================
+   10 截图占位 hd-shot
+   ========================================================================== */
+
+.hd-shot {
+  border: 1.5px solid var(--hd-cart-line);
+  border-radius: 6px;
+  background: var(--hd-paper-deep);
+  overflow: hidden;
+}
+
+.hd-shot__bar {
+  display: flex;
+  gap: 5px;
+  padding: 7px 9px;
+  border-bottom: 1.5px solid var(--hd-line-strong);
+  background: var(--hd-card);
+}
+
+.hd-shot__bar i {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--hd-line-strong);
+}
+
+.hd-shot__body {
+  min-height: 132px;
+  padding: 10px;
+}
+
+.hd-shot__caption {
+  margin-top: 8px;
+  font-family: var(--hd-font-mono);
+  font-size: 12px;
+  color: var(--hd-ink-soft);
+}
+
+/* ==========================================================================
+   11 品牌标 hd-brand
+   ========================================================================== */
+
+.hd-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--hd-ink);
+  text-decoration: none;
+}
+
+/* 图形标唯一来源：docs/design/logo/hundun-lab-mark-plain.svg（内联，填色走 currentColor） */
+.hd-brand__mark {
+  display: block;
+  width: 52px;
+  height: 52px;
+  flex: none;
+  color: var(--hd-red);
+}
+
+.hd-brand__mark svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.hd-brand__text {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+
+.hd-brand__text em {
+  font-style: normal;
+  color: var(--hd-red);
+}

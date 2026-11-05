@@ -1,26 +1,29 @@
 # 前台原型（M0a 浅色）
 
-`docs/design/mockups/` 下 9 张设计图的 HTML 落地版。**双击 `index.html` 即可浏览**，不需要 Node、不需要构建、不依赖网络。
+`docs/design/mockups/` 下设计图的 HTML 落地版。**双击 `index.html` 即可浏览**，不需要 Node、不需要构建、不依赖网络。
+
+> **2026-11-05 结构调整**：原 `04-plugins.html`（插件列表）已并入 `03-software-detail.html` 的扩展分区，
+> 因为插件是 HundunDesktop 特有的功能，不是全站通用能力；导航同步收为「首页 / 软件」两项。
+> 依据：`docs/prd/02-DECISIONS-AND-QUESTIONS.md` D071–D077。所以现在只剩 **8 页 + 目录页**，不再与 9 张设计图一一对应。
 
 ## 文件
 
 | 文件 | 对应设计图 |
 | --- | --- |
-| `index.html` | 目录页，9 张图的入口 |
+| `index.html` | 目录页，8 页的入口 |
 | `01-home.html` | `01-home.png` |
 | `02-software-list.html` | `02-software-list.png` |
 | `03-software-detail.html` | `03-software-detail.png` |
 | `03b-software-detail-2.html` | `03b-software-detail-2.png` |
-| `04-plugins.html` | `04-plugins.png` |
-| `05-plugin-detail.html` | `05-plugin-detail.png` |
-| `06-plugin-submit.html` | `06-plugin-submit.png` |
+| `05-plugin-detail.html` | `05-plugin-detail.png`（现在挂在 `/software/:slug/extensions/:id`） |
+| `06-plugin-submit.html` | `06-plugin-submit.png`（现在挂在 `/software/:slug/extensions/submit`） |
 | `07-user-info.html` | `07-user-info.png` |
 | `08-login.html` | `08-login.png` |
 
 ## 结构
 
-- `assets/proto.css` — 唯一一份样式表，顶部是设计令牌（色板 / 字体 / 尺度 / 阴影），下面按组件分节：页头、按钮、卡带卡、插件卡、徽标、表格、表单、登录页。
-- 页面之间靠普通 `<a>` 互链，导航可点：首页 ↔ 软件列表 ↔ 详情 ↔ 插件列表 ↔ 插件详情 ↔ 上传 ↔ 个人信息。登录页刻意不带页头，被设计为独立入口。
+- `assets/proto.css` — 唯一一份样式表，顶部是设计令牌（色板 / 字体 / 尺度 / 阴影），下面按组件分节：页头、按钮、卡带卡、插件卡、扩展分区（`.ext-*`）、徽标、表格、表单、登录页。
+- 页面之间靠普通 `<a>` 互链，导航可点：首页 ↔ 软件列表 ↔ 详情 ↔（页内扩展分区）↔ 插件详情 ↔ 提交 ↔ 个人信息。登录页刻意不带页头，被设计为独立入口。
 
 ## 字体
 

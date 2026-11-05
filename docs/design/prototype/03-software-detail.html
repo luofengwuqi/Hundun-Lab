@@ -5,21 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>HundunDesktop · 软件详情</title>
     <link rel="stylesheet" href="assets/proto.css" />
+    <script>
+      /* 主题：内联脚本先于 body 执行，避免首屏闪白（D061）。取值 light / dark（D081）。 */
+      (function () {
+        try {
+          var t = localStorage.getItem("hundunlab.theme");
+          if (t !== "dark" && t !== "light") t = "light";
+          document.documentElement.setAttribute("data-theme", t);
+        } catch (e) {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script>
   </head>
   <body>
     <header class="site-header">
       <div class="site-header__inner">
         <a class="brand" href="01-home.html">
-          <span class="brand__mark"><i></i><i></i><i></i><i></i></span>
+          <span class="brand__mark" aria-hidden="true"><svg class="brand-mark" viewBox="0 0 256 256" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M122.8 63 C128.1 63 135.4 63.2 141.3 65.2 C147.3 67.2 152.9 73.6 158.5 75.2 C164.1 76.8 170.7 74.5 174.9 74.8 C179 75 180.8 75.7 183.5 76.7 C186.2 77.7 188.9 78.9 191.2 80.8 C193.5 82.6 195.4 84.9 197.4 88 C199.3 91.1 199.5 96.3 202.9 99.2 C206.3 102 214.4 102.9 217.9 105.1 C221.4 107.2 222.7 109.1 224.1 112.1 C225.6 115.1 225 119.1 226.4 123.3 C227.9 127.4 231.8 133 232.8 137 C233.9 141 233.4 144.5 232.8 147.4 C232.3 150.2 231.2 152.3 229.4 154.2 C227.7 156.2 226.6 157.7 222.2 159.3 C217.8 160.8 209.4 160.1 203.3 163.6 C197.1 167 190.8 175.9 185.4 180 C179.9 184.2 176.2 186.1 170.6 188.2 C165 190.3 160.4 191.6 151.7 192.5 C142.9 193.4 128.3 193.8 118.1 193.4 C107.9 192.9 97.9 191.3 90.6 189.6 C83.3 187.9 78.8 185.8 74.2 183.3 C69.6 180.7 67.2 178.9 63 174.4 C58.9 169.9 54.7 160.9 49.3 156.5 C43.8 152 34.2 149.9 30.4 147.7 C26.5 145.5 27.1 145 25.9 143.1 C24.7 141.1 23.6 139.2 23.2 136.2 C22.7 133.2 22.7 128 23.1 125 C23.4 122 23.4 120.9 25.1 118.1 C26.7 115.3 29.5 111.1 32.9 108.3 C36.4 105.5 42.7 104.4 45.8 101.3 C49 98.2 49.8 92.8 51.7 89.7 C53.7 86.6 54.3 85 57.5 82.8 C60.7 80.6 64.8 77.8 70.8 76.5 C76.7 75.2 86.7 76.8 93.2 74.9 C99.6 73.1 104.6 67.5 109.5 65.5 C114.4 63.5 117.5 63.1 122.8 63 Z M111.2 75.7 C107.4 77.6 103.9 82.2 98.3 83.8 C92.7 85.3 82.7 84.4 77.7 85.1 C72.7 85.8 70.8 86.9 68.2 88.2 C65.6 89.5 64.7 89.6 62.2 93 C59.7 96.4 56.9 104.8 53.1 108.6 C49.4 112.5 43 113.6 39.8 116 C36.6 118.5 35.3 120.6 34 123.3 C32.8 125.9 32.3 129.4 32.5 131.9 C32.7 134.3 31.7 135.4 35.2 137.9 C38.7 140.4 49.5 144.5 53.6 146.7 C57.6 149 56.8 147.9 59.6 151.3 C62.4 154.8 67.6 163.7 70.4 167.1 C73.3 170.6 73.3 170.3 76.6 172.3 C80 174.3 85.7 177.5 90.6 179.3 C95.5 181.1 99 182 106.1 182.9 C113.1 183.9 125.3 184.8 132.7 184.8 C140.2 184.8 143.9 184.6 150.8 182.9 C157.7 181.3 166.3 179.6 174 175 C181.8 170.4 190.2 159.4 197.3 155.3 C204.3 151.2 212 151.8 216.2 150.4 C220.3 148.9 220.9 148.3 222.2 146.7 C223.5 145 224.5 143.4 223.7 140.5 C223 137.6 219.3 133.3 217.8 129.3 C216.3 125.3 215.7 119.1 214.6 116.4 C213.4 113.7 214.1 114.7 211 113.2 C207.9 111.6 199.7 110.1 196 106.9 C192.3 103.7 190.9 97.1 188.8 94 C186.7 90.9 186.1 90.1 183.5 88.5 C180.9 86.9 178.2 85 173.2 84.2 C168.1 83.5 159.7 85.7 153.4 84 C147.1 82.3 140.7 75.7 135.3 73.8 C129.9 71.9 125.1 72.2 121.1 72.5 C117.1 72.8 115 73.9 111.2 75.7 Z M177.5 95.7 C179.3 94.2 179.7 95.3 180.3 95.7 C180.9 96.2 181.9 95.9 181.3 98.3 C180.8 100.8 177.5 107.9 176.9 110.4 C176.2 112.8 175.6 111 177.4 112.9 C179.3 114.9 184.5 120.9 187.8 122 C191.1 123.1 194.5 119.6 197.3 119.4 C200 119.2 203.3 119.9 204.3 120.7 C205.3 121.5 205.2 122.6 203.3 124.1 C201.5 125.7 195.1 127.3 193.3 130.2 C191.4 133 192.9 139.8 192.1 141.5 C191.3 143.2 190.5 142.7 188.7 140.5 C186.8 138.4 184.7 132.6 181.3 128.4 C177.8 124.3 170.2 118.5 167.9 115.5 C165.6 112.5 167.1 112.1 167.4 110.4 C167.6 108.6 167.8 107.6 169.5 105.2 C171.2 102.8 175.7 97.3 177.5 95.7 Z M129 95.7 C130.2 95.1 130.4 97.4 135.3 98.6 C140.2 99.8 153.7 101.6 158.5 102.9 C163.4 104.1 163.4 104.8 164.6 106.1 C165.9 107.3 166.2 109.5 165.9 110.4 C165.6 111.3 168.6 112.3 162.8 111.5 C157.1 110.8 137.4 107.5 131.6 106.1 C125.9 104.6 128.6 104.3 128.1 102.6 C127.7 100.9 127.8 96.4 129 95.7 Z M122 82.8 C122.9 82.1 123.8 82.4 124.4 82.8 C124.9 83.3 125.2 82.5 125.4 85.4 C125.6 88.3 125.8 96.9 125.5 100 C125.1 103.2 125.2 103 123.3 104.2 C121.3 105.4 118 106.9 113.8 107.3 C109.6 107.8 100.8 107.4 98.1 106.9 C95.3 106.4 97 105.2 97.2 104.3 C97.4 103.5 95.9 103.2 99.2 102 C102.5 100.9 113.6 99.9 116.9 97.5 C120.3 95 118.3 89.6 119.1 87.1 C120 84.7 121.1 83.5 122 82.8 Z M68.8 99.2 C69.7 98.6 71.6 98.4 73.4 99.7 C75.1 101 77.2 105.9 79.4 107.2 C81.5 108.5 84.9 107.2 86.3 107.6 C87.6 108 87.7 108.5 87.5 109.5 C87.3 110.5 88 111 84.9 113.8 C81.9 116.6 72 124.3 69.1 126.2 C66.1 128.1 67.5 125.8 67.1 125 C66.8 124.2 66.3 123.6 67 121.5 C67.8 119.5 71.6 116 71.8 112.9 C71.9 109.9 68.4 105.8 67.9 103.5 C67.4 101.2 67.9 99.8 68.8 99.2 Z M47.7 122.4 C49.2 121.9 52.9 121.7 55.3 122.1 C57.7 122.5 60.2 123.4 62.2 124.6 C64.2 125.8 66.5 127.6 67.3 129.3 C68.2 131 68.1 133.7 67.3 134.7 C66.6 135.7 66.3 136.6 63 135.3 C59.7 134 50.3 128.7 47.6 127 C44.8 125.3 46.3 125.8 46.4 125 C46.4 124.2 46.2 122.9 47.7 122.4 Z"/></svg></span>
           <span class="brand__text">HUNDUN<em>LAB</em></span>
         </a>
         <nav class="site-nav">
           <a href="01-home.html">首页</a>
           <a class="is-active" href="02-software-list.html">软件</a>
-          <a href="04-plugins.html">插件</a>
         </nav>
         <div class="header-actions">
-          <button class="icon-btn" type="button" title="深色主题（延后实现）" aria-label="切换主题">
+          <button class="icon-btn" type="button" data-action="toggle-theme" title="切换到深色主题" aria-label="切换主题">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="12" cy="12" r="8" />
               <path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor" stroke="none" />
@@ -42,7 +53,7 @@
           <p class="lead">可靠、克制、可定制的桌面工具</p>
           <div class="hero-actions">
             <a class="btn btn--primary" href="03b-software-detail-2.html">查看软件</a>
-            <a class="btn btn--ghost" href="04-plugins.html">浏览插件</a>
+            <a class="btn btn--ghost" href="#extensions">浏览插件</a>
           </div>
           <hr class="rule-dashed" />
           <div class="stats">
@@ -62,44 +73,23 @@
           <rect x="26" y="24" width="308" height="392" rx="34" fill="#2f2a28" />
           <rect x="26" y="24" width="308" height="392" rx="34" fill="none" stroke="#1d1917" stroke-width="4" />
           <rect x="54" y="56" width="252" height="196" rx="10" fill="#cfe0b4" stroke="#141110" stroke-width="4" />
-          <g fill="#7d9a52">
-            <rect x="66" y="68" width="10" height="10" />
-            <rect x="80" y="68" width="10" height="10" />
-            <rect x="94" y="68" width="10" height="10" />
-            <rect x="66" y="82" width="10" height="10" />
-            <rect x="80" y="82" width="10" height="10" />
-            <rect x="94" y="82" width="10" height="10" />
-          </g>
-          <g fill="#c3272b">
-            <rect x="118" y="68" width="10" height="10" />
-            <rect x="132" y="68" width="10" height="10" />
-            <rect x="118" y="82" width="10" height="10" />
-            <rect x="132" y="82" width="10" height="10" />
-          </g>
-          <text x="66" y="150" font-family="Consolas, monospace" font-size="15" fill="#3b2e2b" letter-spacing="1">
+          <defs>
+            <pattern id="px-olive" width="20" height="20" patternUnits="userSpaceOnUse">
+              <rect width="20" height="20" fill="#a8bf7e" />
+              <rect width="10" height="10" fill="#6f8a4a" />
+              <rect x="10" y="10" width="10" height="10" fill="#6f8a4a" />
+            </pattern>
+            <pattern id="px-red" width="20" height="20" patternUnits="userSpaceOnUse">
+              <rect width="20" height="20" fill="#c3272b" />
+              <rect width="10" height="10" fill="#e05a4e" />
+              <rect x="10" y="10" width="10" height="10" fill="#e05a4e" />
+            </pattern>
+          </defs>
+          <text x="180" y="88" text-anchor="middle" font-family="Consolas, monospace" font-size="15" fill="#3b2e2b" letter-spacing="2">
             HUNDUN / OS
           </text>
-          <g stroke="#6f8a4a" stroke-width="1" opacity="0.5">
-            <line x1="54" y1="106" x2="306" y2="106" />
-            <line x1="54" y1="124" x2="306" y2="124" />
-            <line x1="54" y1="142" x2="306" y2="142" />
-            <line x1="54" y1="160" x2="306" y2="160" />
-            <line x1="54" y1="178" x2="306" y2="178" />
-            <line x1="54" y1="196" x2="306" y2="196" />
-            <line x1="54" y1="214" x2="306" y2="214" />
-            <line x1="54" y1="232" x2="306" y2="232" />
-          </g>
-          <g fill="#e8a33d">
-            <rect x="196" y="176" width="9" height="9" />
-            <rect x="209" y="176" width="9" height="9" />
-            <rect x="222" y="176" width="9" height="9" />
-            <rect x="196" y="189" width="9" height="9" />
-            <rect x="209" y="189" width="9" height="9" />
-            <rect x="222" y="189" width="9" height="9" />
-            <rect x="196" y="202" width="9" height="9" />
-            <rect x="209" y="202" width="9" height="9" />
-            <rect x="222" y="202" width="9" height="9" />
-          </g>
+          <rect x="72" y="100" width="98" height="132" fill="url(#px-olive)" stroke="#141110" stroke-width="3" />
+          <rect x="190" y="100" width="98" height="132" fill="url(#px-red)" stroke="#141110" stroke-width="3" />
           <g fill="#3a3330">
             <rect x="76" y="292" width="30" height="86" rx="6" />
             <rect x="52" y="316" width="78" height="30" rx="6" />
@@ -120,9 +110,9 @@
             <span class="section-title">最新版</span>
           </div>
           <article class="cart">
-            <div class="cart__stripe"></div>
+            <div class="cart__stripe cart__stripe--amber"></div>
             <div class="cart__body">
-              <div class="cart__title">
+              <div class="cart__title cart__title--stack">
                 <span class="cart__name">HundunDesktop</span>
                 <span class="cart__ver">v26.2.1024</span>
               </div>
@@ -164,13 +154,210 @@
               <a class="news-row__link" href="03b-software-detail-2.html">查看详情 →</a>
             </div>
           </div>
-          <p style="margin-top: 18px">
-            <a class="more-link" href="03b-software-detail-2.html">看完整版本记录 →</a>
-          </p>
         </div>
+      </section>
+
+      <section class="ext" id="extensions">
+        <div class="ext__head">
+          <div>
+            <h2 class="ext__title">插件<span class="bullet"></span></h2>
+            <p class="ext__sub">
+              HundunDesktop 的扩展由社区与官方共同提供。<strong>只有 HundunDesktop 有插件</strong>，
+              别的软件不一定有——这是它这一台机器的性格，不是馄饨系列的通用功能。
+            </p>
+          </div>
+          <div class="ext__actions">
+            <a class="btn" href="06-plugin-submit.html">提交插件</a>
+          </div>
+        </div>
+
+        <div class="ext-grid">
+          <article class="ext-card">
+            <div class="ext-card__top">
+              <span class="ext-card__icon">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="4" width="18" height="12" rx="2" />
+                  <path d="M8 20h8M12 16v4" />
+                </svg>
+              </span>
+              <span class="ext-card__badge badge badge--official">官方</span>
+            </div>
+            <div class="ext-card__name">Calculator</div>
+            <div class="ext-card__author">Hundun Lab</div>
+            <p class="ext-card__desc">内置计算器，支持表达式与单位换算</p>
+            <div class="ext-card__foot"><span>随机附送</span><a href="05-plugin-detail.html">详情 →</a></div>
+          </article>
+
+          <article class="ext-card">
+            <div class="ext-card__top">
+              <span class="ext-card__icon">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M4 7h16M4 12h10M4 17h13" />
+                </svg>
+              </span>
+              <span class="ext-card__badge badge badge--official">官方</span>
+            </div>
+            <div class="ext-card__name">FastTxt</div>
+            <div class="ext-card__author">Hundun Lab</div>
+            <p class="ext-card__desc">随手一段文本，落到桌面就存下</p>
+            <div class="ext-card__foot"><span>随机附送</span><a href="05-plugin-detail.html">详情 →</a></div>
+          </article>
+
+          <article class="ext-card">
+            <div class="ext-card__top">
+              <span class="ext-card__icon">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="4" />
+                  <path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1" />
+                </svg>
+              </span>
+            </div>
+            <div class="ext-card__name">HundunDock</div>
+            <div class="ext-card__author">@ashimmer</div>
+            <p class="ext-card__desc">桌面底部快捷启动坞</p>
+            <div class="ext-card__foot"><span>2,314 次下载</span><a href="05-plugin-detail.html">详情 →</a></div>
+          </article>
+
+          <article class="ext-card">
+            <div class="ext-card__top">
+              <span class="ext-card__icon">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="7" width="18" height="10" rx="1" />
+                  <path d="M7 7v3M11 7v2M15 7v3M19 7v2" />
+                </svg>
+              </span>
+            </div>
+            <div class="ext-card__name">PixelRuler</div>
+            <div class="ext-card__author">@homo</div>
+            <p class="ext-card__desc">屏幕取色与像素测量</p>
+            <div class="ext-card__foot"><span>4,021 次下载</span><a href="05-plugin-detail.html">详情 →</a></div>
+          </article>
+
+          <article class="ext-card">
+            <div class="ext-card__top">
+              <span class="ext-card__icon">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="8" cy="17" r="3" />
+                  <circle cx="17" cy="15" r="3" />
+                  <path d="M11 17V6l9-2v11" />
+                </svg>
+              </span>
+            </div>
+            <div class="ext-card__name">SounBar</div>
+            <div class="ext-card__author">@chitose</div>
+            <p class="ext-card__desc">可视化音量条</p>
+            <div class="ext-card__foot"><span>2,870 次下载</span><a href="05-plugin-detail.html">详情 →</a></div>
+          </article>
+
+          <article class="ext-card">
+            <div class="ext-card__top">
+              <span class="ext-card__icon">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M7 17a4 4 0 0 1 .5-8 5 5 0 0 1 9.5 1.5A3.5 3.5 0 0 1 17 17z" />
+                </svg>
+              </span>
+            </div>
+            <div class="ext-card__name">ClipSync</div>
+            <div class="ext-card__author">@nightowl</div>
+            <p class="ext-card__desc">剪贴板跨设备同步</p>
+            <div class="ext-card__foot"><span>1,908 次下载</span><a href="05-plugin-detail.html">详情 →</a></div>
+          </article>
+        </div>
+
+        <details class="ext__more">
+          <summary>查看全部插件 <span class="ext__more-hint"></span></summary>
+          <div class="ext__more-body">
+            <div class="filter-row" style="margin-bottom: 16px">
+              <div class="search">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="7" />
+                  <path d="M16.5 16.5 21 21" />
+                </svg>
+                在本机插件里搜索
+              </div>
+              <div class="seg seg--sm">
+                <button type="button">最新</button>
+                <button class="is-on" type="button">最热</button>
+              </div>
+            </div>
+
+            <div class="ext-grid">
+              <article class="ext-card">
+                <div class="ext-card__top">
+                  <span class="ext-card__icon">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M20 14a8 8 0 1 1-10-10 7 7 0 0 0 10 10z" />
+                    </svg>
+                  </span>
+                </div>
+                <div class="ext-card__name">NightShift</div>
+                <div class="ext-card__author">@kazami</div>
+                <p class="ext-card__desc">按日出日落自动切换主题</p>
+                <div class="ext-card__foot"><span>3,557 次下载</span><a href="05-plugin-detail.html">详情 →</a></div>
+              </article>
+
+              <article class="ext-card">
+                <div class="ext-card__top">
+                  <span class="ext-card__icon">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="4" y="5" width="16" height="15" rx="2" />
+                      <path d="M4 10h16M8 3v4M16 3v4" />
+                    </svg>
+                  </span>
+                </div>
+                <div class="ext-card__name">CalMini</div>
+                <div class="ext-card__author">@baicai</div>
+                <p class="ext-card__desc">菜单栏迷你日历</p>
+                <div class="ext-card__foot"><span>986 次下载</span><a href="05-plugin-detail.html">详情 →</a></div>
+              </article>
+
+              <article class="ext-card">
+                <div class="ext-card__top">
+                  <span class="ext-card__icon">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="5" y="10" width="14" height="10" rx="2" />
+                      <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+                    </svg>
+                  </span>
+                </div>
+                <div class="ext-card__name">VaultKey</div>
+                <div class="ext-card__author">@heze</div>
+                <p class="ext-card__desc">本地密码保险箱</p>
+                <div class="ext-card__foot"><span>1,240 次下载</span><a href="05-plugin-detail.html">详情 →</a></div>
+              </article>
+            </div>
+
+            <p class="ext__sub" style="margin-top: 16px">
+              只展示已上架的插件。被驳回的只出现在作者自己的「我的插件」里。
+            </p>
+          </div>
+        </details>
       </section>
     </main>
 
     <footer class="site-footer">© HUNDUNLAB · 独立软件工作室</footer>
+    <script>
+      /* 主题切换：数据属性 + 本地存储。原型不引框架，故用原生事件委托。 */
+      (function () {
+        function sync() {
+          var dark = document.documentElement.getAttribute("data-theme") === "dark";
+          document.querySelectorAll('[data-action="toggle-theme"]').forEach(function (b) {
+            b.title = dark ? "切换到浅色主题" : "切换到深色主题";
+            b.setAttribute("aria-pressed", dark ? "true" : "false");
+          });
+        }
+        document.addEventListener("click", function (e) {
+          var b = e.target.closest && e.target.closest('[data-action="toggle-theme"]');
+          if (!b) return;
+          var next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+          document.documentElement.setAttribute("data-theme", next);
+          try {
+            localStorage.setItem("hundunlab.theme", next);
+          } catch (err) {}
+          sync();
+        });
+        sync();
+      })();
+    </script>
   </body>
 </html>

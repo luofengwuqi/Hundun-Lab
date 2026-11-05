@@ -1,0 +1,722 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Hundun Lab · 物料库</title>
+    <link rel="stylesheet" href="../../../frontend/src/assets/css/hundun-kit.css" />
+    <style>
+      /* 仅本页的「说明书」排版，不属于物料 */
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        padding: 0 0 80px;
+        background-color: var(--hd-paper);
+        background-image:
+          radial-gradient(rgba(180, 150, 110, 0.16) 1px, transparent 1px),
+          repeating-linear-gradient(to bottom, rgba(120, 90, 60, 0.035) 0 1px, transparent 1px 4px);
+        background-size: 4px 4px, 100% 4px;
+        color: var(--hd-ink);
+        font-family: var(--hd-font-ui);
+        line-height: 1.6;
+      }
+
+      .wrap {
+        width: min(1180px, calc(100% - 72px));
+        margin: 0 auto;
+      }
+
+      .masthead {
+        padding: 46px 0 26px;
+        border-bottom: 2px solid var(--hd-red);
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 40px;
+        flex-wrap: wrap;
+      }
+
+      .masthead h1 {
+        margin: 10px 0 0;
+        font-size: 54px;
+        line-height: 1.1;
+        color: var(--hd-red);
+        font-weight: 800;
+        letter-spacing: 0.02em;
+      }
+
+      .masthead p {
+        margin: 12px 0 0;
+        max-width: 620px;
+        color: var(--hd-ink-soft);
+        font-size: 15px;
+      }
+
+      .kicker {
+        font-family: var(--hd-font-mono);
+        font-size: 12px;
+        letter-spacing: 0.18em;
+        color: var(--hd-red);
+        text-transform: uppercase;
+      }
+
+      .toc {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 18px;
+      }
+
+      .toc a {
+        font-family: var(--hd-font-mono);
+        font-size: 12px;
+        padding: 4px 10px;
+        border: 1.5px solid rgba(195, 39, 43, 0.4);
+        border-radius: 999px;
+        color: var(--hd-red);
+        text-decoration: none;
+      }
+
+      .toc a:hover {
+        background: rgba(195, 39, 43, 0.08);
+      }
+
+      section {
+        padding: 44px 0 8px;
+        border-bottom: 1px dashed rgba(195, 39, 43, 0.28);
+      }
+
+      .sec-head {
+        display: flex;
+        align-items: baseline;
+        gap: 14px;
+        flex-wrap: wrap;
+      }
+
+      .sec-num {
+        font-family: var(--hd-font-mono);
+        font-size: 13px;
+        color: var(--hd-red);
+        opacity: 0.7;
+      }
+
+      .sec-head h2 {
+        margin: 0;
+        font-size: 27px;
+        font-weight: 800;
+      }
+
+      .sec-head code,
+      .inline-code {
+        font-family: var(--hd-font-mono);
+        font-size: 12.5px;
+        padding: 2px 7px;
+        border-radius: 5px;
+        background: rgba(195, 39, 43, 0.09);
+        color: var(--hd-red-deep);
+      }
+
+      .sec-desc {
+        margin: 8px 0 22px;
+        max-width: 780px;
+        font-size: 14px;
+        color: var(--hd-ink-soft);
+      }
+
+      .demo {
+        padding: 26px 30px 32px;
+        border: 1.5px dashed rgba(195, 39, 43, 0.32);
+        border-radius: 10px;
+        background: rgba(255, 254, 251, 0.5);
+      }
+
+      .demo--tight {
+        padding: 20px;
+      }
+
+      .demo-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .demo-cards {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 30px;
+      }
+
+      pre {
+        margin: 16px 0 0;
+        padding: 14px 16px;
+        overflow-x: auto;
+        border-left: 3px solid var(--hd-red);
+        border-radius: 0 8px 8px 0;
+        background: #2f2724;
+        color: #f5e7d3;
+        font-family: var(--hd-font-mono);
+        font-size: 12.5px;
+        line-height: 1.7;
+      }
+
+      table {
+        width: 100%;
+        margin-top: 16px;
+        border-collapse: collapse;
+        font-size: 13px;
+      }
+
+      th,
+      td {
+        padding: 8px 10px;
+        text-align: left;
+        border-bottom: 1px solid var(--hd-line);
+        vertical-align: top;
+      }
+
+      th {
+        font-family: var(--hd-font-mono);
+        font-size: 11.5px;
+        letter-spacing: 0.08em;
+        color: var(--hd-ink-soft);
+        text-transform: uppercase;
+      }
+
+      td code {
+        font-family: var(--hd-font-mono);
+        font-size: 12px;
+        color: var(--hd-red-deep);
+      }
+
+      .swatches {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        gap: 14px 12px;
+        margin-top: 14px;
+      }
+
+      .sw i {
+        display: block;
+        height: 38px;
+        border-radius: 6px;
+        border: 1px solid rgba(90, 53, 42, 0.18);
+      }
+
+      .sw span {
+        display: block;
+        margin-top: 5px;
+        font-family: var(--hd-font-mono);
+        font-size: 10.5px;
+        color: var(--hd-ink-soft);
+      }
+
+      .note {
+        margin-top: 16px;
+        padding: 12px 16px;
+        border: 1.5px solid rgba(195, 39, 43, 0.35);
+        border-radius: 8px;
+        background: rgba(195, 39, 43, 0.05);
+        font-size: 13px;
+        color: var(--hd-ink);
+      }
+
+      .note b {
+        color: var(--hd-red);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header class="masthead">
+        <div>
+          <div class="kicker">Design Kit / v1 · 2026-11</div>
+          <h1>Hundun 物料库</h1>
+          <p>
+            把原型拆成可直接取用的独立物料：一层纯 CSS（<span class="inline-code">hundun-kit.css</span>）+
+            一套 Vue 组件（<span class="inline-code">src/components/hundun</span>）。
+            两端共用同一套类名与设计令牌，改一处两边同时生效。
+          </p>
+          <div class="toc">
+            <a href="#token">00 令牌</a>
+            <a href="#cart">01 卡带卡</a>
+            <a href="#section">02 分节容器</a>
+            <a href="#btn">03 按钮</a>
+            <a href="#tag">04 平台标签</a>
+            <a href="#badge">05 状态徽章</a>
+            <a href="#news">06 动态行</a>
+            <a href="#stat">07 数据块</a>
+            <a href="#form">08 表单</a>
+            <a href="#iconbtn">09 图标按钮</a>
+            <a href="#shot">10 截图框</a>
+            <a href="#brand">11 品牌标</a>
+          </div>
+        </div>
+      </header>
+
+      <!-- ============================== 令牌 ============================== -->
+      <section id="token">
+        <div class="sec-head">
+          <span class="sec-num">00</span>
+          <h2>设计令牌</h2>
+          <code>--hd-*</code>
+        </div>
+        <p class="sec-desc">
+          颜色、字体、圆角、卡带切角全部走 CSS 变量。业务侧要改主题，只覆盖变量即可，
+          不要改物料本身的规则。
+        </p>
+
+        <div class="demo">
+          <div class="swatches">
+            <div class="sw"><i style="background: #c3272b"></i><span>--hd-red<br />#c3272b</span></div>
+            <div class="sw"><i style="background: #a01f22"></i><span>--hd-red-deep<br />#a01f22</span></div>
+            <div class="sw"><i style="background: #5a352a"></i><span>--hd-cart-line<br />#5a352a</span></div>
+            <div class="sw"><i style="background: #b0402e"></i><span>--hd-cart-slab<br />#b0402e</span></div>
+            <div class="sw"><i style="background: #f7e7ca"></i><span>--hd-cart-paper<br />#f7e7ca</span></div>
+            <div class="sw"><i style="background: #eed9b8"></i><span>--hd-cart-paper-sunk</span></div>
+            <div class="sw"><i style="background: #fff8e8"></i><span>--hd-paper<br />#fff8e8</span></div>
+            <div class="sw"><i style="background: #3b2e2b"></i><span>--hd-ink<br />#3b2e2b</span></div>
+            <div class="sw"><i style="background: #e6d8bd"></i><span>--hd-line<br />#e6d8bd</span></div>
+            <div class="sw"><i style="background: #4f8a7b"></i><span>--hd-teal<br />#4f8a7b</span></div>
+            <div class="sw"><i style="background: #e8a33d"></i><span>--hd-amber<br />#e8a33d</span></div>
+            <div class="sw"><i style="background: #9a938c"></i><span>--hd-grey<br />#9a938c</span></div>
+          </div>
+          <pre><code>// 引入（Vue 项目全局一次即可）
+import '@/assets/css/hundun-kit.css'
+
+// 换主题：覆盖变量，而不是改物料
+.hd-cart { --hd-cart-accent: #4f8a7b; }</code></pre>
+        </div>
+      </section>
+
+      <!-- ============================== 01 卡带卡 ============================== -->
+      <section id="cart">
+        <div class="sec-head">
+          <span class="sec-num">01</span>
+          <h2>卡带卡片</h2>
+          <code>.hd-cart</code>
+        </div>
+        <p class="sec-desc">
+          全站最重要的物料。立体感由四层叠出来，少一层就变平板。类名结构与原型
+          <span class="inline-code">.cart</span> 一一对应，可整段替换。
+        </p>
+
+        <div class="demo">
+          <div class="demo-cards">
+            <article class="hd-cart">
+              <div class="hd-cart__stripe"></div>
+              <div class="hd-cart__body">
+                <div class="hd-cart__head hd-cart__head--stack">
+                  <span class="hd-cart__name">HundunDesktop</span>
+                  <span class="hd-cart__ver">v26.2.1024</span>
+                </div>
+                <p class="hd-cart__desc">把工具做成卡带</p>
+                <div class="hd-cart__tags">
+                  <span class="hd-tag">Windows</span>
+                  <span class="hd-tag">macOS</span>
+                </div>
+              </div>
+              <div class="hd-cart__foot">
+                <span>12,480 次下载</span>
+                <a class="hd-cart__link" href="#cart">查看详情 →</a>
+              </div>
+            </article>
+
+            <article class="hd-cart" style="--hd-cart-accent: var(--hd-teal)">
+              <div class="hd-cart__stripe"></div>
+              <div class="hd-cart__body">
+                <div class="hd-cart__head hd-cart__head--stack">
+                  <span class="hd-cart__name">Hundun Notes</span>
+                  <span class="hd-cart__ver">v1.4.0</span>
+                </div>
+                <p class="hd-cart__desc">简洁高效的笔记工具</p>
+                <div class="hd-cart__tags">
+                  <span class="hd-tag">Windows</span>
+                  <span class="hd-tag">macOS</span>
+                </div>
+              </div>
+              <div class="hd-cart__foot">
+                <span>3,216 次下载</span>
+                <a class="hd-cart__link" href="#cart">查看详情 →</a>
+              </div>
+            </article>
+
+            <article class="hd-cart hd-cart--off">
+              <div class="hd-cart__stripe"></div>
+              <div class="hd-cart__body">
+                <div class="hd-cart__head hd-cart__head--stack">
+                  <span class="hd-cart__name">Hundun Sync</span>
+                  <span class="hd-cart__ver">v0.3.0</span>
+                </div>
+                <p class="hd-cart__desc">多设备同步</p>
+                <div class="hd-cart__tags">
+                  <span class="hd-tag hd-tag--grey">Linux</span>
+                </div>
+              </div>
+              <div class="hd-cart__foot">
+                <span>— 次下载</span>
+                <span class="hd-badge hd-badge--muted">已下架</span>
+              </div>
+            </article>
+          </div>
+
+          <pre><code>&lt;article class="hd-cart"&gt;
+  &lt;div class="hd-cart__stripe"&gt;&lt;/div&gt;
+  &lt;div class="hd-cart__body"&gt;
+    &lt;div class="hd-cart__head hd-cart__head--stack"&gt;
+      &lt;span class="hd-cart__name"&gt;HundunDesktop&lt;/span&gt;
+      &lt;span class="hd-cart__ver"&gt;v26.2.1024&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;p class="hd-cart__desc"&gt;把工具做成卡带&lt;/p&gt;
+    &lt;div class="hd-cart__tags"&gt;
+      &lt;span class="hd-tag"&gt;Windows&lt;/span&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class="hd-cart__foot"&gt;
+    &lt;span&gt;12,480 次下载&lt;/span&gt;
+    &lt;a class="hd-cart__link" href="/software/slug"&gt;查看详情 →&lt;/a&gt;
+  &lt;/div&gt;
+&lt;/article&gt;</code></pre>
+
+          <table>
+            <thead>
+              <tr>
+                <th>变量</th>
+                <th>作用</th>
+                <th>默认</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td><code>--hd-cart-accent</code></td><td>顶部斜纹主色，按软件 theme_color 覆盖</td><td><code>var(--hd-red)</code></td></tr>
+              <tr><td><code>--hd-cart-cut</code></td><td>卡带切角大小</td><td><code>9px</code></td></tr>
+              <tr><td><code>--hd-cart-edge</code></td><td>描边厚度</td><td><code>2px</code></td></tr>
+              <tr><td><code>--hd-cart-paper</code></td><td>纸面颜色</td><td><code>#f7e7ca</code></td></tr>
+              <tr><td><code>--hd-cart-line</code></td><td>描边颜色</td><td><code>#5a352a</code></td></tr>
+              <tr><td><code>--hd-cart-slab</code></td><td>侧面（厚度）颜色</td><td><code>#b0402e</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="note">
+          <b>立体感配方：</b>① <code>::before</code> 深棕八边形描边 → ② <code>::after</code> 内缩 2px 的纸面 + 顶部高光 →
+          ③ <code>filter: drop-shadow(9px 10px 0)</code> 实心红色塑料侧面 → ④ 再叠一层带模糊的落地柔影。
+          切角不能用 <code>border</code>（会被 <code>clip-path</code> 一起裁掉），所以描边是「外层深色八边形 + 内层浅色八边形」两层裁出来的。
+        </div>
+
+        <div class="demo" style="margin-top: 22px">
+          <div class="sec-head" style="margin-bottom: 14px">
+            <h2 style="font-size: 19px">卡带栅格</h2>
+            <code>.hd-cart-grid</code>
+          </div>
+          <p class="sec-desc" style="margin-bottom: 16px">
+            两列等宽等高，行高跟随容器（<span class="inline-code">grid-auto-rows: 1fr</span>）。
+            直接放进 flex 布局里也不会有高度塌陷问题。
+          </p>
+          <pre><code>&lt;div class="hd-cart-grid"&gt;&lt;!-- 卡带 × N --&gt;&lt;/div&gt;</code></pre>
+        </div>
+      </section>
+
+      <!-- ============================== 02 分节容器 ============================== -->
+      <section id="section">
+        <div class="sec-head">
+          <span class="sec-num">02</span>
+          <h2>分节容器</h2>
+          <code>.hd-section</code>
+          <code>.hd-bullet</code>
+        </div>
+        <p class="sec-desc">
+          带红框的「货架」，默认 58/42 双列；标题由像素方块 + 大号红字 + 等宽备注组成。
+        </p>
+
+        <div class="demo demo--tight">
+          <div class="hd-section" style="min-height: 0">
+            <div class="hd-section__col">
+              <div class="hd-section__head">
+                <span class="hd-bullet"></span>
+                <span class="hd-section__title">软件</span>
+                <span class="hd-section__note">像卡带一样即插即用</span>
+              </div>
+              <div class="hd-cart-grid">
+                <article class="hd-cart">
+                  <div class="hd-cart__stripe"></div>
+                  <div class="hd-cart__body">
+                    <div class="hd-cart__head hd-cart__head--stack">
+                      <span class="hd-cart__name">HundunDesktop</span>
+                      <span class="hd-cart__ver">v26.2.1024</span>
+                    </div>
+                    <div class="hd-cart__tags">
+                      <span class="hd-tag">Windows</span>
+                    </div>
+                  </div>
+                  <div class="hd-cart__foot"><span>12,480 次下载</span><a class="hd-cart__link" href="#section">查看详情 →</a></div>
+                </article>
+              </div>
+            </div>
+            <div class="hd-section__col">
+              <div class="hd-section__head">
+                <span class="hd-bullet"></span>
+                <span class="hd-section__title">最新动态</span>
+              </div>
+              <div class="hd-dashed">
+                <div class="hd-news">
+                  <span class="hd-news__date">2026-10-24</span>
+                  <span class="hd-badge hd-badge--version hd-news__badge">v26.2.1024</span>
+                  <span class="hd-news__name">HundunDesktop</span>
+                  <a class="hd-news__link" href="#section">查看详情 →</a>
+                </div>
+                <div class="hd-news">
+                  <span class="hd-news__date">2026-09-18</span>
+                  <span class="hd-badge hd-badge--version hd-news__badge">v26.1.809</span>
+                  <span class="hd-news__name">HundunDesktop</span>
+                  <a class="hd-news__link" href="#section">查看详情 →</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <pre><code>&lt;div class="hd-section"&gt;
+  &lt;div class="hd-section__col"&gt;
+    &lt;div class="hd-section__head"&gt;
+      &lt;span class="hd-bullet"&gt;&lt;/span&gt;
+      &lt;span class="hd-section__title"&gt;软件&lt;/span&gt;
+      &lt;span class="hd-section__note"&gt;像卡带一样即插即用&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;!-- 内容 --&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+        </div>
+      </section>
+
+      <!-- ============================== 03 按钮 ============================== -->
+      <section id="btn">
+        <div class="sec-head">
+          <span class="sec-num">03</span>
+          <h2>按钮</h2>
+          <code>.hd-btn</code>
+        </div>
+        <p class="sec-desc">
+          默认为描边款，<span class="inline-code">--primary</span> 实底、<span class="inline-code">--ghost</span> 悬浮变底、
+          尺寸 <span class="inline-code">--sm</span> / <span class="inline-code">--lg</span>，<span class="inline-code">--block</span> 撑满。
+        </p>
+        <div class="demo">
+          <div class="demo-row">
+            <button class="hd-btn hd-btn--primary" type="button">查看软件</button>
+            <button class="hd-btn" type="button">浏览插件</button>
+            <button class="hd-btn hd-btn--ghost hd-btn--sm" type="button">存为草稿</button>
+            <button class="hd-btn hd-btn--primary hd-btn--lg" type="button">上传插件</button>
+            <button class="hd-btn" type="button" disabled>已停用</button>
+          </div>
+          <pre><code>&lt;button class="hd-btn hd-btn--primary"&gt;查看软件&lt;/button&gt;</code></pre>
+        </div>
+      </section>
+
+      <!-- ============================== 04 平台标签 ============================== -->
+      <section id="tag">
+        <div class="sec-head">
+          <span class="sec-num">04</span>
+          <h2>平台标签</h2>
+          <code>.hd-tag</code>
+        </div>
+        <p class="sec-desc">胶囊描边，等宽字体，用于 Windows / macOS / Linux 等平台标记。</p>
+        <div class="demo">
+          <div class="demo-row">
+            <span class="hd-tag">Windows</span>
+            <span class="hd-tag">macOS</span>
+            <span class="hd-tag">Linux</span>
+            <span class="hd-tag hd-tag--grey">已停更</span>
+          </div>
+          <pre><code>&lt;span class="hd-tag"&gt;Windows&lt;/span&gt;</code></pre>
+        </div>
+      </section>
+
+      <!-- ============================== 05 状态徽章 ============================== -->
+      <section id="badge">
+        <div class="sec-head">
+          <span class="sec-num">05</span>
+          <h2>状态徽章</h2>
+          <code>.hd-badge</code>
+        </div>
+        <p class="sec-desc">版本号、审核状态、可提交等短状态。四种语气：版本 / 通过 / 提醒 / 失效。</p>
+        <div class="demo">
+          <div class="demo-row">
+            <span class="hd-badge hd-badge--version">v26.2.1024</span>
+            <span class="hd-badge hd-badge--ok">可提交</span>
+            <span class="hd-badge hd-badge--warn">待审核</span>
+            <span class="hd-badge hd-badge--muted">已下架</span>
+          </div>
+          <pre><code>&lt;span class="hd-badge hd-badge--ok"&gt;可提交&lt;/span&gt;</code></pre>
+        </div>
+      </section>
+
+      <!-- ============================== 06 动态行 ============================== -->
+      <section id="news">
+        <div class="sec-head">
+          <span class="sec-num">06</span>
+          <h2>动态行</h2>
+          <code>.hd-news</code>
+          <code>.hd-dashed</code>
+        </div>
+        <p class="sec-desc">
+          两行栅格：日期 + 版本徽章 / 软件名 + 详情链接。父级加 <span class="inline-code">.hd-dashed</span>，行间自动出现红色虚线。
+        </p>
+        <div class="demo">
+          <div class="hd-dashed">
+            <div class="hd-news">
+              <span class="hd-news__date">2026-10-24</span>
+              <span class="hd-badge hd-badge--version hd-news__badge">v26.2.1024</span>
+              <span class="hd-news__name">HundunDesktop</span>
+              <a class="hd-news__link" href="#news">查看详情 →</a>
+            </div>
+            <div class="hd-news">
+              <span class="hd-news__date">2026-09-18</span>
+              <span class="hd-badge hd-badge--version hd-news__badge">v26.1.809</span>
+              <span class="hd-news__name">HundunDesktop</span>
+              <a class="hd-news__link" href="#news">查看详情 →</a>
+            </div>
+          </div>
+          <pre><code>&lt;div class="hd-dashed"&gt;
+  &lt;div class="hd-news"&gt;
+    &lt;span class="hd-news__date"&gt;2026-10-24&lt;/span&gt;
+    &lt;span class="hd-badge hd-badge--version hd-news__badge"&gt;v26.2.1024&lt;/span&gt;
+    &lt;span class="hd-news__name"&gt;HundunDesktop&lt;/span&gt;
+    &lt;a class="hd-news__link" href="/software/slug"&gt;查看详情 →&lt;/a&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+        </div>
+      </section>
+
+      <!-- ============================== 07 数据块 ============================== -->
+      <section id="stat">
+        <div class="sec-head">
+          <span class="sec-num">07</span>
+          <h2>数据块</h2>
+          <code>.hd-stat__value</code>
+          <code>.hd-stat__label</code>
+        </div>
+        <p class="sec-desc">等宽大号数字 + 小标签，配 <span class="inline-code">.hd-stat__divider</span> 竖线分隔。</p>
+        <div class="demo">
+          <div class="demo-row" style="align-items: flex-end; gap: 28px">
+            <div>
+              <div class="hd-stat__value">12,480</div>
+              <div class="hd-stat__label">累计下载</div>
+            </div>
+            <div class="hd-stat__divider"></div>
+            <div>
+              <div class="hd-stat__value" style="font-size: 34px">Windows / Linux</div>
+              <div class="hd-stat__label">支持平台</div>
+            </div>
+          </div>
+          <pre><code>&lt;div class="hd-stat__value"&gt;12,480&lt;/div&gt;
+&lt;div class="hd-stat__label"&gt;累计下载&lt;/div&gt;</code></pre>
+        </div>
+      </section>
+
+      <!-- ============================== 08 表单 ============================== -->
+      <section id="form">
+        <div class="sec-head">
+          <span class="sec-num">08</span>
+          <h2>表单</h2>
+          <code>.hd-label</code>
+          <code>.hd-input</code>
+          <code>.hd-textarea</code>
+        </div>
+        <p class="sec-desc">
+          标签用红色等宽小字；输入框白底 1.5px 边框，聚焦转红并带 3px 光晕。
+          <span class="inline-code">.hd-input--icon</span> 给登录页那种圆形图标槽用。
+        </p>
+        <div class="demo">
+          <div style="display: grid; grid-template-columns: 180px 1fr; gap: 18px 20px; align-items: center">
+            <label class="hd-label" for="f1" style="margin: 0">插件名称</label>
+            <input class="hd-input" id="f1" value="PixelRuler" />
+            <label class="hd-label" for="f2" style="margin: 0">版本号</label>
+            <input class="hd-input" id="f2" value="1.2.0" />
+            <label class="hd-label" for="f3" style="margin: 0">一句话简介</label>
+            <textarea class="hd-textarea" id="f3">屏幕取色与像素测量工具，常驻菜单栏。</textarea>
+          </div>
+          <pre><code>&lt;label class="hd-label" for="name"&gt;插件名称&lt;/label&gt;
+&lt;input class="hd-input" id="name" /&gt;</code></pre>
+        </div>
+      </section>
+
+      <!-- ============================== 09 图标按钮 ============================== -->
+      <section id="iconbtn">
+        <div class="sec-head">
+          <span class="sec-num">09</span>
+          <h2>图标按钮</h2>
+          <code>.hd-iconbtn</code>
+        </div>
+        <p class="sec-desc">圆形描边按钮，用于主题切换、返回、更多等单图标操作。</p>
+        <div class="demo">
+          <div class="demo-row">
+            <button class="hd-iconbtn" type="button" aria-label="切换主题">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="8" />
+                <path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor" stroke="none" />
+              </svg>
+            </button>
+            <button class="hd-iconbtn" type="button" aria-label="返回">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M15 5l-7 7 7 7" />
+              </svg>
+            </button>
+          </div>
+          <pre><code>&lt;button class="hd-iconbtn"&gt;&lt;svg …&gt;&lt;/svg&gt;&lt;/button&gt;</code></pre>
+        </div>
+      </section>
+
+      <!-- ============================== 10 截图框 ============================== -->
+      <section id="shot">
+        <div class="sec-head">
+          <span class="sec-num">10</span>
+          <h2>截图框</h2>
+          <code>.hd-shot</code>
+        </div>
+        <p class="sec-desc">软件/插件的界面截图占位：窗口条 + 内容区 + 说明文字。</p>
+        <div class="demo">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 22px">
+            <figure style="margin: 0">
+              <div class="hd-shot">
+                <div class="hd-shot__bar"><i></i><i></i><i></i></div>
+                <div class="hd-shot__body"></div>
+              </div>
+              <figcaption class="hd-shot__caption">取色放大镜</figcaption>
+            </figure>
+            <figure style="margin: 0">
+              <div class="hd-shot">
+                <div class="hd-shot__bar"><i></i><i></i><i></i></div>
+                <div class="hd-shot__body"></div>
+              </div>
+              <figcaption class="hd-shot__caption">像素测量</figcaption>
+            </figure>
+          </div>
+          <pre><code>&lt;div class="hd-shot"&gt;
+  &lt;div class="hd-shot__bar"&gt;&lt;i&gt;&lt;/i&gt;&lt;i&gt;&lt;/i&gt;&lt;i&gt;&lt;/i&gt;&lt;/div&gt;
+  &lt;div class="hd-shot__body"&gt;&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+        </div>
+      </section>
+
+      <!-- ============================== 11 品牌标 ============================== -->
+      <section id="brand">
+        <div class="sec-head">
+          <span class="sec-num">11</span>
+          <h2>品牌标</h2>
+          <code>.hd-brand</code>
+        </div>
+        <p class="sec-desc">图形标取自 <span class="inline-code">logo/hundun-lab-mark-plain.svg</span>（内联，随 <span class="inline-code">currentColor</span> 上色）+ 字标，<span class="inline-code">em</span> 内的字自动用朱红。</p>
+        <div class="demo">
+          <a class="hd-brand" href="#brand">
+            <span class="hd-brand__mark" aria-hidden="true"><svg class="brand-mark" viewBox="0 0 256 256" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M122.8 63 C128.1 63 135.4 63.2 141.3 65.2 C147.3 67.2 152.9 73.6 158.5 75.2 C164.1 76.8 170.7 74.5 174.9 74.8 C179 75 180.8 75.7 183.5 76.7 C186.2 77.7 188.9 78.9 191.2 80.8 C193.5 82.6 195.4 84.9 197.4 88 C199.3 91.1 199.5 96.3 202.9 99.2 C206.3 102 214.4 102.9 217.9 105.1 C221.4 107.2 222.7 109.1 224.1 112.1 C225.6 115.1 225 119.1 226.4 123.3 C227.9 127.4 231.8 133 232.8 137 C233.9 141 233.4 144.5 232.8 147.4 C232.3 150.2 231.2 152.3 229.4 154.2 C227.7 156.2 226.6 157.7 222.2 159.3 C217.8 160.8 209.4 160.1 203.3 163.6 C197.1 167 190.8 175.9 185.4 180 C179.9 184.2 176.2 186.1 170.6 188.2 C165 190.3 160.4 191.6 151.7 192.5 C142.9 193.4 128.3 193.8 118.1 193.4 C107.9 192.9 97.9 191.3 90.6 189.6 C83.3 187.9 78.8 185.8 74.2 183.3 C69.6 180.7 67.2 178.9 63 174.4 C58.9 169.9 54.7 160.9 49.3 156.5 C43.8 152 34.2 149.9 30.4 147.7 C26.5 145.5 27.1 145 25.9 143.1 C24.7 141.1 23.6 139.2 23.2 136.2 C22.7 133.2 22.7 128 23.1 125 C23.4 122 23.4 120.9 25.1 118.1 C26.7 115.3 29.5 111.1 32.9 108.3 C36.4 105.5 42.7 104.4 45.8 101.3 C49 98.2 49.8 92.8 51.7 89.7 C53.7 86.6 54.3 85 57.5 82.8 C60.7 80.6 64.8 77.8 70.8 76.5 C76.7 75.2 86.7 76.8 93.2 74.9 C99.6 73.1 104.6 67.5 109.5 65.5 C114.4 63.5 117.5 63.1 122.8 63 Z M111.2 75.7 C107.4 77.6 103.9 82.2 98.3 83.8 C92.7 85.3 82.7 84.4 77.7 85.1 C72.7 85.8 70.8 86.9 68.2 88.2 C65.6 89.5 64.7 89.6 62.2 93 C59.7 96.4 56.9 104.8 53.1 108.6 C49.4 112.5 43 113.6 39.8 116 C36.6 118.5 35.3 120.6 34 123.3 C32.8 125.9 32.3 129.4 32.5 131.9 C32.7 134.3 31.7 135.4 35.2 137.9 C38.7 140.4 49.5 144.5 53.6 146.7 C57.6 149 56.8 147.9 59.6 151.3 C62.4 154.8 67.6 163.7 70.4 167.1 C73.3 170.6 73.3 170.3 76.6 172.3 C80 174.3 85.7 177.5 90.6 179.3 C95.5 181.1 99 182 106.1 182.9 C113.1 183.9 125.3 184.8 132.7 184.8 C140.2 184.8 143.9 184.6 150.8 182.9 C157.7 181.3 166.3 179.6 174 175 C181.8 170.4 190.2 159.4 197.3 155.3 C204.3 151.2 212 151.8 216.2 150.4 C220.3 148.9 220.9 148.3 222.2 146.7 C223.5 145 224.5 143.4 223.7 140.5 C223 137.6 219.3 133.3 217.8 129.3 C216.3 125.3 215.7 119.1 214.6 116.4 C213.4 113.7 214.1 114.7 211 113.2 C207.9 111.6 199.7 110.1 196 106.9 C192.3 103.7 190.9 97.1 188.8 94 C186.7 90.9 186.1 90.1 183.5 88.5 C180.9 86.9 178.2 85 173.2 84.2 C168.1 83.5 159.7 85.7 153.4 84 C147.1 82.3 140.7 75.7 135.3 73.8 C129.9 71.9 125.1 72.2 121.1 72.5 C117.1 72.8 115 73.9 111.2 75.7 Z M177.5 95.7 C179.3 94.2 179.7 95.3 180.3 95.7 C180.9 96.2 181.9 95.9 181.3 98.3 C180.8 100.8 177.5 107.9 176.9 110.4 C176.2 112.8 175.6 111 177.4 112.9 C179.3 114.9 184.5 120.9 187.8 122 C191.1 123.1 194.5 119.6 197.3 119.4 C200 119.2 203.3 119.9 204.3 120.7 C205.3 121.5 205.2 122.6 203.3 124.1 C201.5 125.7 195.1 127.3 193.3 130.2 C191.4 133 192.9 139.8 192.1 141.5 C191.3 143.2 190.5 142.7 188.7 140.5 C186.8 138.4 184.7 132.6 181.3 128.4 C177.8 124.3 170.2 118.5 167.9 115.5 C165.6 112.5 167.1 112.1 167.4 110.4 C167.6 108.6 167.8 107.6 169.5 105.2 C171.2 102.8 175.7 97.3 177.5 95.7 Z M129 95.7 C130.2 95.1 130.4 97.4 135.3 98.6 C140.2 99.8 153.7 101.6 158.5 102.9 C163.4 104.1 163.4 104.8 164.6 106.1 C165.9 107.3 166.2 109.5 165.9 110.4 C165.6 111.3 168.6 112.3 162.8 111.5 C157.1 110.8 137.4 107.5 131.6 106.1 C125.9 104.6 128.6 104.3 128.1 102.6 C127.7 100.9 127.8 96.4 129 95.7 Z M122 82.8 C122.9 82.1 123.8 82.4 124.4 82.8 C124.9 83.3 125.2 82.5 125.4 85.4 C125.6 88.3 125.8 96.9 125.5 100 C125.1 103.2 125.2 103 123.3 104.2 C121.3 105.4 118 106.9 113.8 107.3 C109.6 107.8 100.8 107.4 98.1 106.9 C95.3 106.4 97 105.2 97.2 104.3 C97.4 103.5 95.9 103.2 99.2 102 C102.5 100.9 113.6 99.9 116.9 97.5 C120.3 95 118.3 89.6 119.1 87.1 C120 84.7 121.1 83.5 122 82.8 Z M68.8 99.2 C69.7 98.6 71.6 98.4 73.4 99.7 C75.1 101 77.2 105.9 79.4 107.2 C81.5 108.5 84.9 107.2 86.3 107.6 C87.6 108 87.7 108.5 87.5 109.5 C87.3 110.5 88 111 84.9 113.8 C81.9 116.6 72 124.3 69.1 126.2 C66.1 128.1 67.5 125.8 67.1 125 C66.8 124.2 66.3 123.6 67 121.5 C67.8 119.5 71.6 116 71.8 112.9 C71.9 109.9 68.4 105.8 67.9 103.5 C67.4 101.2 67.9 99.8 68.8 99.2 Z M47.7 122.4 C49.2 121.9 52.9 121.7 55.3 122.1 C57.7 122.5 60.2 123.4 62.2 124.6 C64.2 125.8 66.5 127.6 67.3 129.3 C68.2 131 68.1 133.7 67.3 134.7 C66.6 135.7 66.3 136.6 63 135.3 C59.7 134 50.3 128.7 47.6 127 C44.8 125.3 46.3 125.8 46.4 125 C46.4 124.2 46.2 122.9 47.7 122.4 Z"/></svg></span>
+            <span class="hd-brand__text">HUNDUN<em>LAB</em></span>
+          </a>
+          <pre><code>&lt;a class="hd-brand" href="/"&gt;
+  &lt;span class="hd-brand__mark" aria-hidden="true"&gt;&lt;svg …/&gt;&lt;/span&gt;
+  &lt;span class="hd-brand__text"&gt;HUNDUN&lt;em&gt;LAB&lt;/em&gt;&lt;/span&gt;
+&lt;/a&gt;</code></pre>
+        </div>
+      </section>
+    </div>
+  </body>
+</html>

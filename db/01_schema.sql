@@ -206,4 +206,88 @@ CREATE TABLE IF NOT EXISTS `operation_log` (
   KEY `idx_module_name` (`module_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='后台操作审计';
 
+-- ------------------------------------------------------------
+-- 扩展（Extension）
+--   扩展是「某个软件的可安装增量」，不是站点级通用对象。
+--   没有扩展的软件是正常的：有没有扩展由本表数据决定，
+--   software 表上不设 has_extension 之类的布尔开关。
+--   依据：docs/prd/02-DECISIONS-AND-QUESTIONS.md D071–D085
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `extension` (
+  `id`              bigint       NOT NULL AUTO_INCREMENT,
+  `software_id`     bigint       NOT NULL COMMENT '所属软件，必填；扩展不能脱离软件存在',
+  `plugin_id`       varchar(64)  NOT NULL COMMENT 'manifest.json 的 id，同一软件下唯一',
+  `slug`            varchar(64)  NOT NULL COMMENT 'URL 段；同一软件下唯一',
+  `name_zh`         varchar(64)  NOT NULL,
+  `name_en`         varchar(64)  NOT NULL,
+  `summary_zh`      varchar(160) DEFAULT NULL COMMENT '一句话简介',
+  `summary_en`      varchar(160) DEFAULT NULL,
+  `author_type`     varchar(16)  NOT NULL DEFAULT 'community' COMMENT 'official-官方 / community-社区',
+  `author_name`     varchar(64)  DEFAULT NULL COMMENT '社区作者展示名；官方留空',
+  `author_user_id`  bigint       DEFAULT NULL COMMENT '社区作者账号；官方为 NULL',
+  `icon_url`        varchar(500) DEFAULT NULL,
+  `theme_color`     varchar(16)  DEFAULT NULL COMMENT '桌面端卡带主色，如 #C3272B',
+  `readme_url`      varchar(500) DEFAULT NULL COMMENT 'README 的 Markdown 对象键或 URL',
+  `permissions`     varchar(255) DEFAULT NULL COMMENT 'manifest 权限，逗号分隔，原样展示',
+  `platform`        varchar(32)  DEFAULT NULL COMMENT 'win32 / darwin / linux，逗号分隔',
+  `status`          tinyint      NOT NULL DEFAULT '0' COMMENT '0-待审 1-已上架 2-已驳回 3-已下架',
+  `reject_reason`   varchar(500) DEFAULT NULL COMMENT '驳回原因，≤500 字',
+  `featured`        tinyint      NOT NULL DEFAULT '0' COMMENT '1-在详情页精选区优先展示',
+  `download_count`  bigint       NOT NULL DEFAULT '0' COMMENT '冗余计数，与 extension_download 同事务维护',
+  `sort_order`      int          NOT NULL DEFAULT '0',
+  `created_at`      datetime     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at`      datetime     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_extension_sw_slug` (`software_id`, `slug`),
+  UNIQUE KEY `uk_extension_sw_plugin` (`software_id`, `plugin_id`),
+  KEY `idx_extension_sw_status` (`software_id`, `status`),
+  KEY `idx_extension_sw_featured` (`software_id`, `featured`, `download_count`),
+  KEY `idx_extension_author` (`author_user_id`),
+  KEY `extension_software_fk` (`software_id`),
+  KEY `extension_author_fk` (`author_user_id`),
+  CONSTRAINT `extension_software_fk` FOREIGN KEY (`software_id`) REFERENCES `software` (`id`),
+  CONSTRAINT `extension_author_fk` FOREIGN KEY (`author_user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='扩展（挂在软件下）';
+
+-- ------------------------------------------------------------
+-- 扩展版本：新版本 = 新记录重新进审，不覆盖旧记录（D054）
+-- 稳定下载地址由 (extension.slug, version) 解析到公共桶对象，URL 不随换包变化
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `extension_release` (
+  `id`             bigint       NOT NULL AUTO_INCREMENT,
+  `extension_id`   bigint       NOT NULL,
+  `version`        varchar(32)  NOT NULL COMMENT '语义化版本，如 1.2.0',
+  `changelog_zh`   text         COMMENT '更新说明，支持 Markdown',
+  `changelog_en`   text,
+  `object_key`     varchar(500) NOT NULL COMMENT 'OSS 对象键，不含域名（D055）',
+  `file_size`      bigint       NOT NULL DEFAULT '0' COMMENT '字节数',
+  `sha256`         char(64)     DEFAULT NULL COMMENT 'zip 摘要，前台只展示前 12 位',
+  `status`         tinyint      NOT NULL DEFAULT '0' COMMENT '0-待审 1-通过 2-驳回',
+  `download_count` bigint       NOT NULL DEFAULT '0',
+  `published_at`   datetime     DEFAULT NULL COMMENT '通过时间；最新版按此倒序推导，不设 is_latest（D064）',
+  `created_at`     datetime     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at`     datetime     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_extension_release_ver` (`extension_id`, `version`),
+  KEY `idx_extension_release_status` (`extension_id`, `status`),
+  KEY `release_extension_fk` (`extension_id`),
+  CONSTRAINT `release_extension_fk` FOREIGN KEY (`extension_id`) REFERENCES `extension` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='扩展版本';
+
+-- ------------------------------------------------------------
+-- 扩展下载记录（匿名可下，只记计数与时间，不存原始 IP）
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `extension_download` (
+  `id`          bigint       NOT NULL AUTO_INCREMENT,
+  `extension_id` bigint      NOT NULL,
+  `release_id`  bigint       DEFAULT NULL,
+  `ip_hash`     char(64)     DEFAULT NULL COMMENT 'IP 的哈希，不存原文',
+  `user_agent`  varchar(255) DEFAULT NULL,
+  `created_at`  datetime     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_ext_download_ext_time` (`extension_id`, `created_at`),
+  KEY `dl_extension_fk` (`extension_id`),
+  CONSTRAINT `dl_extension_fk` FOREIGN KEY (`extension_id`) REFERENCES `extension` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='扩展下载记录';
+
 SET FOREIGN_KEY_CHECKS = 1;

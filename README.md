@@ -2,7 +2,10 @@
 
 # Hundun Lab 官网
 
-馄饨系列软件的官方站点 —— 介绍每个项目、提供安装包下载、承载插件社区。
+馄饨系列软件的官方站点 —— 介绍每个项目、提供安装包下载、承载**各软件自己的扩展**。
+
+> **只 HundunDesktop 有插件。** 插件不是馄饨系列的通用能力，而是 Desktop 这一台机器特有的功能；
+> 数据层统一叫**扩展**（`extension`），挂在软件下，没有站点级的扩展市场页（D071–D076）。
 
 [![JDK](https://img.shields.io/badge/JDK-17-blue?style=flat-square)](https://openjdk.org/projects/jdk/17/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5-6DB33F?style=flat-square)](https://spring.io/projects/spring-boot)
@@ -20,8 +23,11 @@
 | --- | --- | --- |
 | 1 | 官网前台：首页、软件列表与详情、登录、需登录的下载 | 已完成 |
 | 1 | 管理后台：软件与版本录入、安装包上传、下载数据概览 | 未开始（尚无软件/版本管理接口） |
-| 2 | 插件社区：列表与详情、上传校验 manifest、审核、稳定下载地址 | 未开始（前台为占位页） |
+| 2 | Desktop 扩展：详情页内的市场分区、上传校验 manifest、审核、稳定下载地址 | 未开始（原型有假数据） |
 | 3 | 用户中心、反馈处理、后台权限收口 | 未开始 |
+
+> 上表只表示大阶段。**实时状态、待答问题与挂账项以 [`docs/prd/00-CONTEXT.md`](docs/prd/00-CONTEXT.md) 为准**，
+> 本表不重复登记题数与决策号——两处各写一份必然走样。
 
 ## 技术栈
 
@@ -247,13 +253,17 @@ CI 里可以直接跑。
 
 ## 文档
 
-**准绳文档**：[docs/01-项目计划书.md](docs/01-项目计划书.md) —— 里程碑、范围、接口、数据模型与全部决策记录。路线图以它为准。
+**分治入口**：需求看 [docs/prd/03-PRD-DRAFT.md](docs/prd/03-PRD-DRAFT.md)，决策看 [docs/prd/02-DECISIONS-AND-QUESTIONS.md](docs/prd/02-DECISIONS-AND-QUESTIONS.md)，里程碑看 [docs/01-项目计划书.md](docs/01-项目计划书.md)。同一个问题只在一处有答案。
 
 | 文档 | 用途 |
 | --- | --- |
 | [CHANGELOG.md](CHANGELOG.md) | 变更记录（每次迭代改了什么、为什么） |
+| [docs/prd/00-CONTEXT.md](docs/prd/00-CONTEXT.md) | **需求文档体系入口**：当前状态、文件地图、交接说明 |
+| [docs/prd/03-PRD-DRAFT.md](docs/prd/03-PRD-DRAFT.md) | PRD 正文：范围、F 模块规格、验收清单、追溯表 |
+| [docs/prd/02-DECISIONS-AND-QUESTIONS.md](docs/prd/02-DECISIONS-AND-QUESTIONS.md) | 决策台账：D 已定 / Q 待答 / O 挂账 |
+| [docs/prd/04-INTERVIEW-LOG.md](docs/prd/04-INTERVIEW-LOG.md) | 访谈原答（G 轮次），含证据缺口声明 |
 | [docs/00-骨架评审报告.md](docs/00-骨架评审报告.md) | 底座评估与改造清单（**已冻结**，历史依据） |
-| [docs/01-项目计划书.md](docs/01-项目计划书.md) | 项目准绳：M0–M3 里程碑、范围、风险、决策记录 |
+| [docs/01-项目计划书.md](docs/01-项目计划书.md) | 里程碑与交付物（需求表述已迁至 `docs/prd/03`） |
 | [docs/02-术语与业务规则.md](docs/02-术语与业务规则.md) | 命名硬规则、术语词典、角色权限矩阵、业务不变量 |
 | [docs/03-数据字典.md](docs/03-数据字典.md) | ER 图、字段说明、枚举字典、外键与索引 |
 | [docs/04-接口文档.md](docs/04-接口文档.md) | 接口契约、错误码总表、权限与限流矩阵 |

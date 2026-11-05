@@ -14,6 +14,14 @@ node_modules/
 .vite/
 __screenshots__/
 *.timestamp-*-*.mjs
+__pycache__/
+*.pyc
+
+# logo 构建脚本的中间物：源图与字体体积大且可用公开渠道重新获取，
+# 入库只保留可复现的脚本（*.py）与产出（svg/png）。
+# 需要重新构建时：把字体丢回 docs/design/logo/_build/fonts/ 再跑 build.py
+docs/design/logo/_build/fonts/*.ttf
+docs/design/logo/_build/assets.json
 
 # ---------- IDE ----------
 .idea/

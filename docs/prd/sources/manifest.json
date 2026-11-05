@@ -1,0 +1,103 @@
+{
+  "capture_date": "2026-11-05",
+  "updated": "2026-11-05",
+  "note": "本项目为单人自建站，无甲方、无第三方来件。S01–S06 是既有内部文档，未复制快照：它们原位即在版本库内，以 sha256 校验版本；一旦内容变更，sha256 会失配，届时需重新登记并评估是否触发变更影响。S07/S08 为设计产物，登记目录与代表文件。",
+  "files": [
+    {
+      "source_id": "S01",
+      "original_path": "docs/00-骨架评审报告.md",
+      "snapshot": null,
+      "snapshot_policy": "in-place",
+      "sha256": "e4e7e2153d4067f862d94025d2ae6e3573b1c9886a459b97cf3bab4b01e64c66",
+      "size_bytes": 30304,
+      "received": "2026-10-26",
+      "role": "底座评审报告（阶段 0 快照）",
+      "authority": "己方项目档案；已冻结，只作决策溯源，不作为需求依据",
+      "content": "评估 15-hundun 底座可用性与改造代价，给出 R1–R13 改造项；其中目录名、包名等描述已非现状。"
+    },
+    {
+      "source_id": "S02",
+      "original_path": "docs/01-项目计划书.md",
+      "snapshot": null,
+      "snapshot_policy": "in-place",
+      "sha256": "eb040baca5e00355cdaa8cf382ffe679b5e20368b1543e02312a78d916db05c3",
+      "size_bytes": 60850,
+      "received": "2026-10-26",
+      "role": "原始需求文档与路线图（v1.0）",
+      "authority": "作者出具、未签认；单人项目下作者即决策人，作为需求基线。自 2026-11-05 起，需求表述部分由 docs/prd/03 承接，里程碑部分继续有效。",
+      "content": "立项书：背景、现状盘点、范围、设计系统、技术架构、M0–M3 里程碑、数据模型、接口总览、风险。"
+    },
+    {
+      "source_id": "S03",
+      "original_path": "docs/02-术语与业务规则.md",
+      "snapshot": null,
+      "snapshot_policy": "in-place",
+      "sha256": "82952fefcdc2438c89ee72e7bd7a524696da05bcb484a5b2352d09b8684dbc2d",
+      "size_bytes": 13958,
+      "received": "2026-10-29",
+      "role": "术语、命名硬规则、角色权限、业务不变量",
+      "authority": "己方规范文件；术语与不变量的唯一事实源，PRD 只引用不复述",
+      "content": "命名硬规则 N1–N3、术语词典、权限矩阵、业务流程、19 条业务不变量、易错点。"
+    },
+    {
+      "source_id": "S04",
+      "original_path": "docs/03-数据字典.md",
+      "snapshot": null,
+      "snapshot_policy": "in-place",
+      "sha256": "c8ccdee3701147ef86b8aa20f021107c41f8a12c1efeff4228ebb94ef743d1af",
+      "size_bytes": 16479,
+      "received": "2026-10-29",
+      "role": "数据字典（ER、字段、枚举）",
+      "authority": "己方规范文件；描述层，落地以 db/01_schema.sql 为准",
+      "content": "ER 图、表字段说明、枚举字典、外键与索引。"
+    },
+    {
+      "source_id": "S05",
+      "original_path": "docs/04-接口文档.md",
+      "snapshot": null,
+      "snapshot_policy": "in-place",
+      "sha256": "4c57ba65eb19695025a629a766a16d073925520faacd4432b905c0cc8112f02f",
+      "size_bytes": 17092,
+      "received": "2026-10-29",
+      "role": "接口契约与错误码",
+      "authority": "己方规范文件；契约语义权威，字段以代码为准",
+      "content": "接口清单、统一响应、错误码总表、权限与限流矩阵。"
+    },
+    {
+      "source_id": "S06",
+      "original_path": "README.md",
+      "snapshot": null,
+      "snapshot_policy": "in-place",
+      "sha256": "94fa58db0e1eb34951ac4eb46f82b687b9f3e672a27f5d302ad7927b38ed93a1",
+      "size_bytes": 14447,
+      "received": "2026-11-03",
+      "role": "对外门面（简介、快速开始、进度摘要）",
+      "authority": "己方对外材料；进度表是派生视图，不作为需求或进度依据",
+      "content": "项目简介、技术栈、目录结构、启动步骤、接口一览、路线图、FAQ。"
+    },
+    {
+      "source_id": "S07",
+      "original_path": "docs/design/redesign/",
+      "snapshot": null,
+      "snapshot_policy": "directory",
+      "sha256": null,
+      "size_bytes": null,
+      "received": "2026-11-05",
+      "role": "设计方向稿（ImageGen 生成）",
+      "authority": "生成式产物；含占位文案与未核实数据，只能作视觉方向，禁止作为需求或验收依据（D046）",
+      "content": "首页及内页方向图、_check-01-home.png 对比图。代表文件：Create_a_meticulously_art_dire_2026-11-05T05-05-30.png。"
+    },
+    {
+      "source_id": "S08",
+      "original_path": "docs/design/prototype/",
+      "snapshot": null,
+      "snapshot_policy": "directory",
+      "sha256": null,
+      "size_bytes": null,
+      "received": "2026-11-05",
+      "role": "HTML 原型（视觉与交互基线）",
+      "authority": "己方设计产物；是 M0c 落地的直接依据，但不构成需求承诺（需求以 docs/prd/03 为准）",
+      "content": "01-home 至 08-login 共 9 页 + assets/proto.css；另 docs/design/kit 为物料预览页。"
+    }
+  ]
+}
