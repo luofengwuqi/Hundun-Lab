@@ -20,10 +20,12 @@ const props = defineProps({
   platforms: { type: Array, default: () => [] },
   /** 下载量，数字会千分位格式化 */
   downloads: { type: [Number, String], default: null },
-  /** 下载量后缀 */
-  downloadsLabel: { type: String, default: '次下载' },
+  /** 下载量后缀，如「次下载」；文案由调用方翻译后传入，组件不内置任何语言 */
+  downloadsLabel: { type: String, default: '' },
   /** 详情链接：给了就走 RouterLink，不给就是静态卡片 */
   to: { type: [String, Object], default: null },
+  /** 详情链接文案，同上由调用方翻译后传入 */
+  detailLabel: { type: String, default: '' },
   /** 顶部斜纹主色，一般传软件自己的 theme_color */
   accent: { type: String, default: '' },
   /** 已下架：整卡转灰，去掉彩色侧面 */
@@ -81,7 +83,8 @@ const downloadText = computed(() => {
     <div class="hd-cart__foot">
       <slot name="foot">
         <span>{{ downloadText }} {{ downloadsLabel }}</span>
-        <span v-if="to" class="hd-cart__link">查看详情 →</span>
+        <span v-if="to && detailLabel" class="hd-cart__link">{{ detailLabel }} →</span>
+        <span v-else-if="to" class="hd-cart__link">→</span>
         <span v-else></span>
       </slot>
     </div>

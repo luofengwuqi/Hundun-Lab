@@ -6,6 +6,12 @@ export const SUPPORTED_LOCALES = ['zh', 'en']
 export const LOCALE_STORAGE_KEY = 'hundunlab.locale'
 
 /**
+ * 语言的自称：切换器上永远显示各语言自己的写法，不随当前界面语言变化。
+ * 放在 i18n 层而不是组件里——它不属于任何一条界面文案，不该走 t()。
+ */
+export const LOCALE_LABELS = { zh: '中', en: 'EN' }
+
+/**
  * 语言优先级：本地存储 > 浏览器语言 > 中文。
  * 只认 zh 与 en，其他语言一律回落到英文（比回落中文更容易被非中文用户接受）。
  */

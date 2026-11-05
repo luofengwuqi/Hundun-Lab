@@ -32,6 +32,7 @@ const platforms = computed(() => (props.software.platforms || []).map((p) => t(`
     :downloads="software.totalDownloads || 0"
     :downloads-label="t('home.downloads')"
     :accent="accent"
+    :detail-label="t('home.viewDetail')"
     :to="`/software/${software.slug}`"
   />
 </template>

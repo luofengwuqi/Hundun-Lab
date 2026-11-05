@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { LOCALE_LABELS } from '@/i18n'
 import { setLocale } from '@/i18n'
 import { useSessionStore } from '@/stores/session'
 import { logout } from '@/api/site'
@@ -64,7 +65,7 @@ async function handleLogout() {
             :class="{ 'is-on': locale === 'zh' }"
             @click="switchLocale('zh')"
           >
-            中
+            {{ LOCALE_LABELS.zh }}
           </button>
           <button
             type="button"
@@ -72,7 +73,7 @@ async function handleLogout() {
             :class="{ 'is-on': locale === 'en' }"
             @click="switchLocale('en')"
           >
-            EN
+            {{ LOCALE_LABELS.en }}
           </button>
         </div>
 
