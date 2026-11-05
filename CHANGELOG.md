@@ -9,11 +9,16 @@
 
 ### 新增
 
+- 2026-11-05 新增 `components/FormField.vue`：登录页与登录弹窗共用的表单字段，样式只留一处；`label` 走 `for/id` 关联，`useId` 保证同页多表单不撞 id
+- 2026-11-05 页头新增窄屏汉堡菜单与抽屉（≤860px），导航、语言切换、登录态收进抽屉；换页与 ESC 自动收起，`aria-expanded` 跟随
 - 2026-11-05 新增 `frontend/scripts/check-color.mjs`、`check-i18n.mjs`（O11）：前者禁样式里的十六进制与 `rgb()`/`hsl()` 字面量（`*tokens.css` 豁免），后者禁组件里的 CJK 字面量（`src/i18n/` 与注释豁免）；配套 `lint-baseline.json` 做基线棘轮，违规只许减不许增
-- 2026-11-05 `lint` 改为 `oxlint + check-i18n + check-color`（D059），并补装 `oxlint`（此前脚本引用了但没装）；新增 `pnpm lint:baseline` 用于违规减少后收窄基线
+- 2026-11-05 `lint` 改为 `oxlint + prettier --check + check-i18n + check-color`（D059），并补装 `oxlint`（此前脚本引用了但没装）；新增 `pnpm lint:baseline` 用于违规减少后收窄基线
 
 ### 变更
 
+- 2026-11-05 登录弹窗无障碍：ESC 关闭、打开时焦点进首个输入框、关闭后焦点归还触发元素，补 `aria-describedby` 与错误行 `role="alert"`
+- 2026-11-05 `index.html` 增加内联同步脚本，首屏绘制前读 `hundunlab.theme` 设 `data-theme`，消除深色用户刷新时的 FOUC 闪白；隐私模式下 `localStorage` 抛错则回落浅色
+- 2026-11-05 新增令牌 `--field`（输入框底色）与 `--overlay`（弹窗遮罩），替换组件里写死的 `#fffdf7` 与 `rgba(...)`
 - 2026-11-05 深色主题用色改为「绿只做描边、文字用白」（D087）：`--ink` 系列改白/灰白，`--line` 系列改绿描边；导航选中、筛选胶囊、主按钮、状态徽章、版本标签、扩展图标底板、上传校验块等原「实心绿底 + 反白字」组件统一降为「绿描边 + 白字」（层级用 ≤12% 绿透明底）
 - 2026-11-05 新增 `--accent-text` 令牌（浅色=主色，深色=白），替换 34 处 `color: var(--red)` 与页内红字内联样式（改用 `.text-accent`、`.check-mark--on`、`.badge--ready`）
 - 2026-11-05 原型页脚统一：首页的 `.foot`（品牌 + 标语 + 三个红方块）提到 `assets/proto.css`，02/03/03b/05/06/07 六页换掉旧单行 `.site-footer`
