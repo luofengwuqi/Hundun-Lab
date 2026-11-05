@@ -24,7 +24,11 @@ const router = createRouter({
           name: 'software-detail',
           component: () => import('@/views/site/SoftwarePage.vue'),
         },
-        { path: 'plugins', name: 'plugins', component: () => import('@/views/site/PluginsPage.vue') },
+        {
+          path: 'plugins',
+          name: 'plugins',
+          component: () => import('@/views/site/PluginsPage.vue'),
+        },
         { path: 'login', name: 'login', component: () => import('@/views/site/LoginPage.vue') },
       ],
     },

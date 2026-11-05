@@ -48,7 +48,8 @@ const versionText = computed(() => {
 })
 
 const downloadText = computed(() => {
-  if (props.downloads === null || props.downloads === undefined || props.downloads === '') return '—'
+  if (props.downloads === null || props.downloads === undefined || props.downloads === '')
+    return '—'
   const n = Number(props.downloads)
   return Number.isFinite(n) ? n.toLocaleString() : String(props.downloads)
 })

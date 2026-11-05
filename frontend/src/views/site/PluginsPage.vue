@@ -6,17 +6,19 @@ const { t } = useI18n()
 
 <template>
   <div class="plugins">
-      <section class="section">
-        <div class="container soon">
-          <div class="soon__card card scanlines">
-            <p class="kicker">PLUGINS / WIP</p>
-            <h1 class="soon__title">{{ t('plugins.title') }}</h1>
-            <p class="soon__lead">{{ t('plugins.lead') }}</p>
-            <p class="soon__note mono">{{ t('plugins.note') }}</p>
-            <RouterLink to="/software" class="btn btn--primary">{{ t('home.heroPrimary') }}</RouterLink>
-          </div>
+    <section class="section">
+      <div class="container soon">
+        <div class="soon__card card scanlines">
+          <p class="kicker">PLUGINS / WIP</p>
+          <h1 class="soon__title">{{ t('plugins.title') }}</h1>
+          <p class="soon__lead">{{ t('plugins.lead') }}</p>
+          <p class="soon__note mono">{{ t('plugins.note') }}</p>
+          <RouterLink to="/software" class="btn btn--primary">{{
+            t('home.heroPrimary')
+          }}</RouterLink>
         </div>
-      </section>
+      </div>
+    </section>
   </div>
 </template>
 

@@ -46,7 +46,8 @@ async function submit() {
   } catch (error) {
     // 后端只给错误码，这里翻成当前语言；没有对应文案时用登录失败的通用提示
     const code = error?.errorCode
-    errorKey.value = code && t(`errors.${code}`) !== `errors.${code}` ? `errors.${code}` : 'auth.failed'
+    errorKey.value =
+      code && t(`errors.${code}`) !== `errors.${code}` ? `errors.${code}` : 'auth.failed'
   } finally {
     submitting.value = false
   }
@@ -59,14 +60,21 @@ async function submit() {
       <div class="auth card" role="dialog" aria-modal="true" aria-labelledby="auth-title">
         <div class="auth__head">
           <h2 id="auth-title" class="auth__title">{{ t('auth.title') }}</h2>
-          <button type="button" class="auth__close" :aria-label="t('common.close')" @click="close">×</button>
+          <button type="button" class="auth__close" :aria-label="t('common.close')" @click="close">
+            ×
+          </button>
         </div>
         <p class="auth__lead">{{ t('auth.lead') }}</p>
 
         <form class="auth__form" @submit.prevent="submit">
           <label class="field">
             <span class="field__label">{{ t('auth.username') }}</span>
-            <input v-model="form.username" class="field__input" type="text" autocomplete="username" />
+            <input
+              v-model="form.username"
+              class="field__input"
+              type="text"
+              autocomplete="username"
+            />
           </label>
           <label class="field">
             <span class="field__label">{{ t('auth.password') }}</span>
@@ -81,7 +89,9 @@ async function submit() {
           <p v-if="errorKey" class="auth__error mono">{{ t(errorKey) }}</p>
 
           <div class="auth__actions">
-            <button type="button" class="btn btn--ghost" @click="close">{{ t('auth.cancel') }}</button>
+            <button type="button" class="btn btn--ghost" @click="close">
+              {{ t('auth.cancel') }}
+            </button>
             <button type="submit" class="btn btn--primary" :disabled="submitting">
               {{ submitting ? t('auth.submitting') : t('auth.submit') }}
             </button>

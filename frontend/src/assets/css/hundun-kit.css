@@ -34,8 +34,9 @@
   --hd-cart-accent: var(--hd-red); /* 条纹主色，前端按软件 theme_color 覆盖 */
 
   /* ---------- 排版 ---------- */
-  --hd-font-ui: "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Source Han Sans SC", sans-serif;
-  --hd-font-mono: "Cascadia Mono", Consolas, "SF Mono", Menlo, monospace;
+  --hd-font-ui:
+    'Microsoft YaHei', 'PingFang SC', 'Hiragino Sans GB', 'Source Han Sans SC', sans-serif;
+  --hd-font-mono: 'Cascadia Mono', Consolas, 'SF Mono', Menlo, monospace;
 
   /* ---------- 尺度 ---------- */
   --hd-radius: 8px;
@@ -225,7 +226,7 @@
 
 /* 描边层 */
 .hd-cart::before {
-  content: "";
+  content: '';
   position: absolute;
   inset: 0;
   z-index: 0;
@@ -235,7 +236,7 @@
 
 /* 纸面层 */
 .hd-cart::after {
-  content: "";
+  content: '';
   position: absolute;
   inset: var(--hd-cart-edge);
   z-index: 0;
@@ -280,7 +281,7 @@
 }
 
 .hd-cart__stripe::before {
-  content: "";
+  content: '';
   position: absolute;
   inset: 0;
   background: var(--hd-cart-accent);

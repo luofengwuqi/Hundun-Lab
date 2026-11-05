@@ -21,7 +21,9 @@ const pendingAsset = ref(null)
 const busyAssetId = ref(null)
 const notice = ref({ type: '', key: '' })
 
-const name = computed(() => (detail.value ? localized(detail.value.nameZh, detail.value.nameEn) : ''))
+const name = computed(() =>
+  detail.value ? localized(detail.value.nameZh, detail.value.nameEn) : '',
+)
 const tagline = computed(() =>
   detail.value ? localized(detail.value.taglineZh, detail.value.taglineEn) : '',
 )
@@ -146,163 +148,173 @@ watch(
 
 <template>
   <div class="software-page">
-      <div class="container detail-wrap">
-        <p v-if="loading" class="muted mono">{{ t('common.loading') }}</p>
+    <div class="container detail-wrap">
+      <p v-if="loading" class="muted mono">{{ t('common.loading') }}</p>
 
-        <div v-else-if="notFound" class="empty-state card">
-          <p>{{ t('software.notFound') }}</p>
-          <RouterLink to="/software" class="btn btn--sm">{{ t('software.back') }}</RouterLink>
-        </div>
-
-        <div v-else-if="failed" class="empty-state card">
-          <p>{{ t('common.error') }}</p>
-          <button type="button" class="btn btn--sm" @click="load(route.params.slug)">
-            {{ t('common.retry') }}
-          </button>
-        </div>
-
-        <template v-else-if="detail">
-          <RouterLink to="/software" class="back-link mono">← {{ t('software.back') }}</RouterLink>
-
-          <!-- 顶部：名称 + 下载入口 -->
-          <header class="detail-head">
-            <div class="detail-head__copy">
-              <div class="detail-head__tags">
-                <span v-if="latestRelease" class="tag tag--red mono">v{{ latestRelease.version }}</span>
-                <span v-for="p in detail.platforms" :key="p.platform" class="tag">
-                  {{ t(`platform.${p.platform}`) }}
-                </span>
-              </div>
-              <h1 class="detail-head__title">{{ name }}</h1>
-              <p class="detail-head__tagline">{{ tagline }}</p>
-
-              <div class="detail-head__actions">
-                <button
-                  v-if="primaryAsset"
-                  type="button"
-                  class="btn btn--primary"
-                  :disabled="busyAssetId === primaryAsset.id"
-                  @click="startDownload(primaryAsset)"
-                >
-                  {{ busyAssetId === primaryAsset.id ? t('download.preparing') : t('software.download') }}
-                  <span class="mono detail-head__size">{{ formatSize(primaryAsset.fileSize) }}</span>
-                </button>
-                <span v-if="!session.isLoggedIn" class="muted detail-head__hint">
-                  {{ t('software.downloadHint') }}
-                </span>
-              </div>
-
-              <p v-if="notice.key" class="notice mono" :class="`notice--${notice.type}`">
-                {{ t(notice.key) }}
-              </p>
-            </div>
-
-            <div class="detail-head__side card">
-              <dl>
-                <div v-if="detail.license">
-                  <dt class="kicker">{{ t('software.license') }}</dt>
-                  <dd class="mono">{{ detail.license }}</dd>
-                </div>
-                <div v-if="detail.repoUrl">
-                  <dt class="kicker">{{ t('software.repo') }}</dt>
-                  <dd>
-                    <a :href="detail.repoUrl" target="_blank" rel="noopener noreferrer" class="mono">
-                      {{ detail.repoUrl.replace('https://', '') }}
-                    </a>
-                  </dd>
-                </div>
-                <div v-if="detail.techStack.length">
-                  <dt class="kicker">{{ t('software.techStack') }}</dt>
-                  <dd class="tech">
-                    <span v-for="tech in detail.techStack" :key="tech" class="tag">{{ tech }}</span>
-                  </dd>
-                </div>
-              </dl>
-            </div>
-          </header>
-
-          <!-- 简介 -->
-          <section v-if="introParagraphs.length" class="block">
-            <h2 class="section-title">{{ t('software.overview') }}</h2>
-            <div class="prose block__body">
-              <p v-for="(para, i) in introParagraphs" :key="i">{{ para }}</p>
-            </div>
-          </section>
-
-          <!-- 功能特性 -->
-          <section v-if="detail.features.length" class="block">
-            <h2 class="section-title">{{ t('software.features') }}</h2>
-            <div class="feature-grid">
-              <article v-for="(f, i) in detail.features" :key="i" class="feature card">
-                <span class="feature__icon" aria-hidden="true">{{ f.icon }}</span>
-                <h3 class="feature__title">{{ localized(f.titleZh, f.titleEn) }}</h3>
-                <p class="feature__desc">{{ localized(f.descZh, f.descEn) }}</p>
-              </article>
-            </div>
-          </section>
-
-          <!-- 截图（后台没上传就不显示这一块，不留空壳） -->
-          <section v-if="detail.screenshots.length" class="block">
-            <h2 class="section-title">{{ t('software.screenshots') }}</h2>
-            <div class="shots">
-              <figure v-for="(s, i) in detail.screenshots" :key="i" class="shot card">
-                <img :src="s.imageUrl" :alt="localized(s.captionZh, s.captionEn) || name" loading="lazy" />
-                <figcaption class="mono">{{ localized(s.captionZh, s.captionEn) }}</figcaption>
-              </figure>
-            </div>
-          </section>
-
-          <!-- 版本记录 -->
-          <section class="block">
-            <h2 class="section-title">{{ t('software.releases') }}</h2>
-
-            <p v-if="!detail.releases.length" class="muted">{{ t('software.noRelease') }}</p>
-
-            <div v-for="release in detail.releases" :key="release.id" class="release card">
-              <header class="release__head">
-                <h3 class="mono">v{{ release.version }}</h3>
-                <span class="tag">{{ release.channel }}</span>
-                <span class="mono release__date">{{ formatDate(release.publishedAt) }}</span>
-              </header>
-
-              <div v-if="release.notesZh || release.notesEn" class="release__notes prose">
-                <p>{{ localized(release.notesZh, release.notesEn) }}</p>
-              </div>
-
-              <p v-if="!release.assets.length" class="muted release__empty">{{ t('software.noAsset') }}</p>
-
-              <ul v-else class="assets">
-                <li v-for="asset in release.assets" :key="asset.id" class="assets__row">
-                  <div class="assets__info">
-                    <span class="assets__label mono">{{ assetLabel(asset) }}</span>
-                    <span class="assets__file mono">{{ asset.fileName }}</span>
-                  </div>
-                  <div class="assets__meta mono">
-                    <span>{{ formatSize(asset.fileSize) }}</span>
-                    <button
-                      v-if="asset.sha256"
-                      type="button"
-                      class="assets__sha"
-                      :title="asset.sha256"
-                      @click="copyChecksum(asset.sha256)"
-                    >
-                      {{ asset.sha256.slice(0, 12) }}…
-                    </button>
-                  </div>
-                  <button
-                    type="button"
-                    class="btn btn--sm"
-                    :disabled="busyAssetId === asset.id"
-                    @click="startDownload(asset)"
-                  >
-                    {{ busyAssetId === asset.id ? t('download.preparing') : t('software.download') }}
-                  </button>
-                </li>
-              </ul>
-            </div>
-          </section>
-        </template>
+      <div v-else-if="notFound" class="empty-state card">
+        <p>{{ t('software.notFound') }}</p>
+        <RouterLink to="/software" class="btn btn--sm">{{ t('software.back') }}</RouterLink>
       </div>
+
+      <div v-else-if="failed" class="empty-state card">
+        <p>{{ t('common.error') }}</p>
+        <button type="button" class="btn btn--sm" @click="load(route.params.slug)">
+          {{ t('common.retry') }}
+        </button>
+      </div>
+
+      <template v-else-if="detail">
+        <RouterLink to="/software" class="back-link mono">← {{ t('software.back') }}</RouterLink>
+
+        <!-- 顶部：名称 + 下载入口 -->
+        <header class="detail-head">
+          <div class="detail-head__copy">
+            <div class="detail-head__tags">
+              <span v-if="latestRelease" class="tag tag--red mono"
+                >v{{ latestRelease.version }}</span
+              >
+              <span v-for="p in detail.platforms" :key="p.platform" class="tag">
+                {{ t(`platform.${p.platform}`) }}
+              </span>
+            </div>
+            <h1 class="detail-head__title">{{ name }}</h1>
+            <p class="detail-head__tagline">{{ tagline }}</p>
+
+            <div class="detail-head__actions">
+              <button
+                v-if="primaryAsset"
+                type="button"
+                class="btn btn--primary"
+                :disabled="busyAssetId === primaryAsset.id"
+                @click="startDownload(primaryAsset)"
+              >
+                {{
+                  busyAssetId === primaryAsset.id ? t('download.preparing') : t('software.download')
+                }}
+                <span class="mono detail-head__size">{{ formatSize(primaryAsset.fileSize) }}</span>
+              </button>
+              <span v-if="!session.isLoggedIn" class="muted detail-head__hint">
+                {{ t('software.downloadHint') }}
+              </span>
+            </div>
+
+            <p v-if="notice.key" class="notice mono" :class="`notice--${notice.type}`">
+              {{ t(notice.key) }}
+            </p>
+          </div>
+
+          <div class="detail-head__side card">
+            <dl>
+              <div v-if="detail.license">
+                <dt class="kicker">{{ t('software.license') }}</dt>
+                <dd class="mono">{{ detail.license }}</dd>
+              </div>
+              <div v-if="detail.repoUrl">
+                <dt class="kicker">{{ t('software.repo') }}</dt>
+                <dd>
+                  <a :href="detail.repoUrl" target="_blank" rel="noopener noreferrer" class="mono">
+                    {{ detail.repoUrl.replace('https://', '') }}
+                  </a>
+                </dd>
+              </div>
+              <div v-if="detail.techStack.length">
+                <dt class="kicker">{{ t('software.techStack') }}</dt>
+                <dd class="tech">
+                  <span v-for="tech in detail.techStack" :key="tech" class="tag">{{ tech }}</span>
+                </dd>
+              </div>
+            </dl>
+          </div>
+        </header>
+
+        <!-- 简介 -->
+        <section v-if="introParagraphs.length" class="block">
+          <h2 class="section-title">{{ t('software.overview') }}</h2>
+          <div class="prose block__body">
+            <p v-for="(para, i) in introParagraphs" :key="i">{{ para }}</p>
+          </div>
+        </section>
+
+        <!-- 功能特性 -->
+        <section v-if="detail.features.length" class="block">
+          <h2 class="section-title">{{ t('software.features') }}</h2>
+          <div class="feature-grid">
+            <article v-for="(f, i) in detail.features" :key="i" class="feature card">
+              <span class="feature__icon" aria-hidden="true">{{ f.icon }}</span>
+              <h3 class="feature__title">{{ localized(f.titleZh, f.titleEn) }}</h3>
+              <p class="feature__desc">{{ localized(f.descZh, f.descEn) }}</p>
+            </article>
+          </div>
+        </section>
+
+        <!-- 截图（后台没上传就不显示这一块，不留空壳） -->
+        <section v-if="detail.screenshots.length" class="block">
+          <h2 class="section-title">{{ t('software.screenshots') }}</h2>
+          <div class="shots">
+            <figure v-for="(s, i) in detail.screenshots" :key="i" class="shot card">
+              <img
+                :src="s.imageUrl"
+                :alt="localized(s.captionZh, s.captionEn) || name"
+                loading="lazy"
+              />
+              <figcaption class="mono">{{ localized(s.captionZh, s.captionEn) }}</figcaption>
+            </figure>
+          </div>
+        </section>
+
+        <!-- 版本记录 -->
+        <section class="block">
+          <h2 class="section-title">{{ t('software.releases') }}</h2>
+
+          <p v-if="!detail.releases.length" class="muted">{{ t('software.noRelease') }}</p>
+
+          <div v-for="release in detail.releases" :key="release.id" class="release card">
+            <header class="release__head">
+              <h3 class="mono">v{{ release.version }}</h3>
+              <span class="tag">{{ release.channel }}</span>
+              <span class="mono release__date">{{ formatDate(release.publishedAt) }}</span>
+            </header>
+
+            <div v-if="release.notesZh || release.notesEn" class="release__notes prose">
+              <p>{{ localized(release.notesZh, release.notesEn) }}</p>
+            </div>
+
+            <p v-if="!release.assets.length" class="muted release__empty">
+              {{ t('software.noAsset') }}
+            </p>
+
+            <ul v-else class="assets">
+              <li v-for="asset in release.assets" :key="asset.id" class="assets__row">
+                <div class="assets__info">
+                  <span class="assets__label mono">{{ assetLabel(asset) }}</span>
+                  <span class="assets__file mono">{{ asset.fileName }}</span>
+                </div>
+                <div class="assets__meta mono">
+                  <span>{{ formatSize(asset.fileSize) }}</span>
+                  <button
+                    v-if="asset.sha256"
+                    type="button"
+                    class="assets__sha"
+                    :title="asset.sha256"
+                    @click="copyChecksum(asset.sha256)"
+                  >
+                    {{ asset.sha256.slice(0, 12) }}…
+                  </button>
+                </div>
+                <button
+                  type="button"
+                  class="btn btn--sm"
+                  :disabled="busyAssetId === asset.id"
+                  @click="startDownload(asset)"
+                >
+                  {{ busyAssetId === asset.id ? t('download.preparing') : t('software.download') }}
+                </button>
+              </li>
+            </ul>
+          </div>
+        </section>
+      </template>
+    </div>
 
     <AuthDialog v-model:open="authOpen" @success="onAuthSuccess" />
   </div>

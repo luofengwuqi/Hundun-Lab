@@ -26,25 +26,25 @@ onMounted(load)
 
 <template>
   <div class="software-list">
-      <section class="section">
-        <div class="container">
-          <header class="head">
-            <h1 class="section-title">{{ t('home.softwareTitle') }}</h1>
-            <p class="muted">{{ t('home.softwareLead') }}</p>
-          </header>
+    <section class="section">
+      <div class="container">
+        <header class="head">
+          <h1 class="section-title">{{ t('home.softwareTitle') }}</h1>
+          <p class="muted">{{ t('home.softwareLead') }}</p>
+        </header>
 
-          <p v-if="loading" class="muted mono">{{ t('common.loading') }}</p>
-          <div v-else-if="failed" class="stack-8">
-            <p class="muted">{{ t('common.error') }}</p>
-            <button type="button" class="btn btn--sm" @click="load">{{ t('common.retry') }}</button>
-          </div>
-          <p v-else-if="!items.length" class="muted">{{ t('home.noSoftware') }}</p>
-
-          <div v-else class="grid">
-            <SoftwareCard v-for="item in items" :key="item.slug" :software="item" />
-          </div>
+        <p v-if="loading" class="muted mono">{{ t('common.loading') }}</p>
+        <div v-else-if="failed" class="stack-8">
+          <p class="muted">{{ t('common.error') }}</p>
+          <button type="button" class="btn btn--sm" @click="load">{{ t('common.retry') }}</button>
         </div>
-      </section>
+        <p v-else-if="!items.length" class="muted">{{ t('home.noSoftware') }}</p>
+
+        <div v-else class="grid">
+          <SoftwareCard v-for="item in items" :key="item.slug" :software="item" />
+        </div>
+      </div>
+    </section>
   </div>
 </template>
 

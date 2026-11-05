@@ -2,7 +2,8 @@
 export default {
   meta: {
     title: 'Hundun Lab · Software by Hundun',
-    description: 'The official home of Hundun software: desktop tools, a plugin community and downloads.',
+    description:
+      'The official home of Hundun software: desktop tools, a plugin community and downloads.',
   },
   nav: {
     home: 'Home',

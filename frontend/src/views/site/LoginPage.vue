@@ -30,7 +30,8 @@ async function submit() {
     router.replace(redirect)
   } catch (error) {
     const code = error?.errorCode
-    errorKey.value = code && t(`errors.${code}`) !== `errors.${code}` ? `errors.${code}` : 'auth.failed'
+    errorKey.value =
+      code && t(`errors.${code}`) !== `errors.${code}` ? `errors.${code}` : 'auth.failed'
   } finally {
     submitting.value = false
   }
@@ -39,37 +40,42 @@ async function submit() {
 
 <template>
   <div class="login-page">
-      <div class="container login-wrap">
-        <div class="card login">
-          <h1 class="login__title">{{ t('auth.title') }}</h1>
-          <p class="login__lead">{{ t('auth.lead') }}</p>
+    <div class="container login-wrap">
+      <div class="card login">
+        <h1 class="login__title">{{ t('auth.title') }}</h1>
+        <p class="login__lead">{{ t('auth.lead') }}</p>
 
-          <form class="login__form" @submit.prevent="submit">
-            <label class="field">
-              <span class="field__label">{{ t('auth.username') }}</span>
-              <input v-model="form.username" class="field__input" type="text" autocomplete="username" />
-            </label>
-            <label class="field">
-              <span class="field__label">{{ t('auth.password') }}</span>
-              <input
-                v-model="form.password"
-                class="field__input"
-                type="password"
-                autocomplete="current-password"
-              />
-            </label>
+        <form class="login__form" @submit.prevent="submit">
+          <label class="field">
+            <span class="field__label">{{ t('auth.username') }}</span>
+            <input
+              v-model="form.username"
+              class="field__input"
+              type="text"
+              autocomplete="username"
+            />
+          </label>
+          <label class="field">
+            <span class="field__label">{{ t('auth.password') }}</span>
+            <input
+              v-model="form.password"
+              class="field__input"
+              type="password"
+              autocomplete="current-password"
+            />
+          </label>
 
-            <p v-if="errorKey" class="login__error mono">{{ t(errorKey) }}</p>
+          <p v-if="errorKey" class="login__error mono">{{ t(errorKey) }}</p>
 
-            <div class="login__actions">
-              <RouterLink to="/" class="btn btn--ghost">{{ t('auth.cancel') }}</RouterLink>
-              <button type="submit" class="btn btn--primary" :disabled="submitting">
-                {{ submitting ? t('auth.submitting') : t('auth.submit') }}
-              </button>
-            </div>
-          </form>
-        </div>
+          <div class="login__actions">
+            <RouterLink to="/" class="btn btn--ghost">{{ t('auth.cancel') }}</RouterLink>
+            <button type="submit" class="btn btn--primary" :disabled="submitting">
+              {{ submitting ? t('auth.submitting') : t('auth.submit') }}
+            </button>
+          </div>
+        </form>
       </div>
+    </div>
   </div>
 </template>
 

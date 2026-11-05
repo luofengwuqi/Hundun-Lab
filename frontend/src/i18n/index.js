@@ -56,7 +56,7 @@ setLocale(i18n.global.locale.value)
  * 数据库里中英成对存放（name_zh / name_en），缺英文时回落到中文，不让页面出现空白。
  */
 export function localized(zhValue, enValue) {
-  return i18n.global.locale.value === 'en' ? (enValue || zhValue) : (zhValue || enValue)
+  return i18n.global.locale.value === 'en' ? enValue || zhValue : zhValue || enValue
 }
 
 export default i18n

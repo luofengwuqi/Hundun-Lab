@@ -15,7 +15,9 @@ const repoUrl = 'https://github.com/luofengwuqi/Hundun-Lab'
       </div>
       <div class="site-footer__meta mono">
         <span>© {{ year }}</span>
-        <a :href="repoUrl" target="_blank" rel="noopener noreferrer">{{ t('common.footerLicense') }}</a>
+        <a :href="repoUrl" target="_blank" rel="noopener noreferrer">{{
+          t('common.footerLicense')
+        }}</a>
       </div>
     </div>
   </footer>

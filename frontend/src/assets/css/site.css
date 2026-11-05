@@ -21,8 +21,9 @@
   --amber: #d89b3c;
   --teal: #2f6b5e;
 
-  --font-ui: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+  --font-ui: 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-mono:
+    ui-monospace, SFMono-Regular, 'SF Mono', Consolas, 'Liberation Mono', Menlo, monospace;
 
   --shadow-pixel: 4px 4px 0 var(--ink);
   --shadow-pixel-sm: 3px 3px 0 var(--ink);
@@ -57,7 +58,10 @@ body {
 
 /* ---------------- 排版 ---------------- */
 
-h1, h2, h3, h4 {
+h1,
+h2,
+h3,
+h4 {
   font-weight: 800;
   line-height: 1.25;
   letter-spacing: -0.01em;
@@ -80,7 +84,7 @@ h1, h2, h3, h4 {
 
 /* 标题左侧的像素方块，用重复的短横线做「扫描」质感 */
 .section-title::before {
-  content: "";
+  content: '';
   width: 10px;
   height: 10px;
   background: var(--red);
@@ -104,7 +108,9 @@ h1, h2, h3, h4 {
   box-shadow: var(--shadow-pixel);
   border-radius: var(--radius);
   position: relative;
-  transition: transform 0.16s ease, box-shadow 0.16s ease;
+  transition:
+    transform 0.16s ease,
+    box-shadow 0.16s ease;
 }
 
 .card--interactive:hover {
@@ -128,7 +134,10 @@ h1, h2, h3, h4 {
   text-transform: uppercase;
   cursor: pointer;
   border-radius: var(--radius);
-  transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.15s ease;
+  transition:
+    transform 0.1s ease,
+    box-shadow 0.1s ease,
+    background-color 0.15s ease;
   white-space: nowrap;
 }
 
@@ -199,7 +208,7 @@ h1, h2, h3, h4 {
 /* ---------------- 扫描线（仅用于区块装饰，不铺到正文） ---------------- */
 
 .scanlines::after {
-  content: "";
+  content: '';
   position: absolute;
   inset: 0;
   pointer-events: none;
@@ -250,9 +259,15 @@ h1, h2, h3, h4 {
   color: var(--ink-faint);
 }
 
-.stack-8 > * + * { margin-top: 8px; }
-.stack-16 > * + * { margin-top: 16px; }
-.stack-24 > * + * { margin-top: 24px; }
+.stack-8 > * + * {
+  margin-top: 8px;
+}
+.stack-16 > * + * {
+  margin-top: 16px;
+}
+.stack-24 > * + * {
+  margin-top: 24px;
+}
 
 .sr-only {
   position: absolute;

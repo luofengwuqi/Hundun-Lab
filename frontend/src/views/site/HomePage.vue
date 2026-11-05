@@ -24,7 +24,9 @@ const platformCount = computed(() => {
 const latestItems = computed(() =>
   softwareList.value
     .filter((item) => item.latestVersion)
-    .sort((a, b) => String(b.latestPublishedAt || '').localeCompare(String(a.latestPublishedAt || ''))),
+    .sort((a, b) =>
+      String(b.latestPublishedAt || '').localeCompare(String(a.latestPublishedAt || '')),
+    ),
 )
 
 async function load() {
@@ -49,104 +51,106 @@ onMounted(load)
 
 <template>
   <div class="home">
-      <!-- 首屏：左文右「掌机」，掌机是纯 CSS 拼的，不依赖图片资源 -->
-      <section class="hero scanlines">
-        <div class="container hero__inner">
-          <div class="hero__copy">
-            <p class="kicker">{{ t('home.heroKicker') }}</p>
-            <h1 class="hero__title">{{ t('home.heroTitle') }}</h1>
-            <p class="hero__lead">{{ t('home.heroLead') }}</p>
+    <!-- 首屏：左文右「掌机」，掌机是纯 CSS 拼的，不依赖图片资源 -->
+    <section class="hero scanlines">
+      <div class="container hero__inner">
+        <div class="hero__copy">
+          <p class="kicker">{{ t('home.heroKicker') }}</p>
+          <h1 class="hero__title">{{ t('home.heroTitle') }}</h1>
+          <p class="hero__lead">{{ t('home.heroLead') }}</p>
 
-            <div class="hero__actions">
-              <RouterLink to="/software" class="btn btn--primary">{{ t('home.heroPrimary') }}</RouterLink>
-              <RouterLink to="/plugins" class="btn btn--ghost">{{ t('home.heroSecondary') }}</RouterLink>
-            </div>
-
-            <dl class="hero__stats">
-              <div>
-                <dt class="kicker">{{ t('home.statSoftware') }}</dt>
-                <dd class="mono">{{ softwareList.length }}</dd>
-              </div>
-              <div>
-                <dt class="kicker">{{ t('home.statDownloads') }}</dt>
-                <dd class="mono">{{ totalDownloads.toLocaleString() }}</dd>
-              </div>
-              <div>
-                <dt class="kicker">{{ t('home.statPlatforms') }}</dt>
-                <dd class="mono">{{ platformCount }}</dd>
-              </div>
-            </dl>
+          <div class="hero__actions">
+            <RouterLink to="/software" class="btn btn--primary">{{
+              t('home.heroPrimary')
+            }}</RouterLink>
+            <RouterLink to="/plugins" class="btn btn--ghost">{{
+              t('home.heroSecondary')
+            }}</RouterLink>
           </div>
 
-          <div class="hero__visual" aria-hidden="true">
-            <div class="console">
-              <div class="console__screen">
-                <div class="console__slots">
-                  <span></span><span></span><span></span><span></span>
-                </div>
-                <p class="console__label mono">HUNDUN / OS</p>
-                <div class="console__pixels">
-                  <i v-for="n in 48" :key="n"></i>
-                </div>
-              </div>
-              <div class="console__controls">
-                <div class="console__dpad">
-                  <span class="console__dpad-h"></span>
-                  <span class="console__dpad-v"></span>
-                </div>
-                <div class="console__buttons">
-                  <span class="console__btn console__btn--a"></span>
-                  <span class="console__btn console__btn--b"></span>
-                </div>
+          <dl class="hero__stats">
+            <div>
+              <dt class="kicker">{{ t('home.statSoftware') }}</dt>
+              <dd class="mono">{{ softwareList.length }}</dd>
+            </div>
+            <div>
+              <dt class="kicker">{{ t('home.statDownloads') }}</dt>
+              <dd class="mono">{{ totalDownloads.toLocaleString() }}</dd>
+            </div>
+            <div>
+              <dt class="kicker">{{ t('home.statPlatforms') }}</dt>
+              <dd class="mono">{{ platformCount }}</dd>
+            </div>
+          </dl>
+        </div>
+
+        <div class="hero__visual" aria-hidden="true">
+          <div class="console">
+            <div class="console__screen">
+              <div class="console__slots"><span></span><span></span><span></span><span></span></div>
+              <p class="console__label mono">HUNDUN / OS</p>
+              <div class="console__pixels">
+                <i v-for="n in 48" :key="n"></i>
               </div>
             </div>
+            <div class="console__controls">
+              <div class="console__dpad">
+                <span class="console__dpad-h"></span>
+                <span class="console__dpad-v"></span>
+              </div>
+              <div class="console__buttons">
+                <span class="console__btn console__btn--a"></span>
+                <span class="console__btn console__btn--b"></span>
+              </div>
+            </div>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <!-- 软件列表 -->
-      <section class="section">
-        <div class="container">
-          <header class="section-head">
-            <h2 class="section-title">{{ t('home.softwareTitle') }}</h2>
-            <p class="muted">{{ t('home.softwareLead') }}</p>
-          </header>
+    <!-- 软件列表 -->
+    <section class="section">
+      <div class="container">
+        <header class="section-head">
+          <h2 class="section-title">{{ t('home.softwareTitle') }}</h2>
+          <p class="muted">{{ t('home.softwareLead') }}</p>
+        </header>
 
-          <p v-if="loading" class="muted mono">{{ t('common.loading') }}</p>
-          <div v-else-if="failed" class="stack-8">
-            <p class="muted">{{ t('common.error') }}</p>
-            <button type="button" class="btn btn--sm" @click="load">{{ t('common.retry') }}</button>
-          </div>
-          <p v-else-if="!softwareList.length" class="muted">{{ t('home.noSoftware') }}</p>
-
-          <div v-else class="soft-grid">
-            <SoftwareCard v-for="item in softwareList" :key="item.slug" :software="item" />
-          </div>
+        <p v-if="loading" class="muted mono">{{ t('common.loading') }}</p>
+        <div v-else-if="failed" class="stack-8">
+          <p class="muted">{{ t('common.error') }}</p>
+          <button type="button" class="btn btn--sm" @click="load">{{ t('common.retry') }}</button>
         </div>
-      </section>
+        <p v-else-if="!softwareList.length" class="muted">{{ t('home.noSoftware') }}</p>
 
-      <!-- 最新动态：版本列表本身就是内容，不额外维护一份公告表 -->
-      <section class="section section--tight">
-        <div class="container">
-          <header class="section-head">
-            <h2 class="section-title">{{ t('home.latestTitle') }}</h2>
-            <p class="muted">{{ t('home.latestLead') }}</p>
-          </header>
-
-          <p v-if="!loading && !latestItems.length" class="muted">{{ t('home.latestEmpty') }}</p>
-
-          <ul v-else class="news">
-            <li v-for="item in latestItems" :key="item.slug" class="news__item">
-              <span class="news__date mono">{{ formatDate(item.latestPublishedAt) }}</span>
-              <span class="news__name">{{ localized(item.nameZh, item.nameEn) }}</span>
-              <span class="tag tag--red mono">{{ item.latestVersion }}</span>
-              <RouterLink :to="`/software/${item.slug}`" class="news__link">
-                {{ t('home.viewDetail') }} →
-              </RouterLink>
-            </li>
-          </ul>
+        <div v-else class="soft-grid">
+          <SoftwareCard v-for="item in softwareList" :key="item.slug" :software="item" />
         </div>
-      </section>
+      </div>
+    </section>
+
+    <!-- 最新动态：版本列表本身就是内容，不额外维护一份公告表 -->
+    <section class="section section--tight">
+      <div class="container">
+        <header class="section-head">
+          <h2 class="section-title">{{ t('home.latestTitle') }}</h2>
+          <p class="muted">{{ t('home.latestLead') }}</p>
+        </header>
+
+        <p v-if="!loading && !latestItems.length" class="muted">{{ t('home.latestEmpty') }}</p>
+
+        <ul v-else class="news">
+          <li v-for="item in latestItems" :key="item.slug" class="news__item">
+            <span class="news__date mono">{{ formatDate(item.latestPublishedAt) }}</span>
+            <span class="news__name">{{ localized(item.nameZh, item.nameEn) }}</span>
+            <span class="tag tag--red mono">{{ item.latestVersion }}</span>
+            <RouterLink :to="`/software/${item.slug}`" class="news__link">
+              {{ t('home.viewDetail') }} →
+            </RouterLink>
+          </li>
+        </ul>
+      </div>
+    </section>
   </div>
 </template>
 
@@ -228,7 +232,7 @@ onMounted(load)
 
 /* 屏幕上的扫描线 */
 .console__screen::after {
-  content: "";
+  content: '';
   position: absolute;
   inset: 0;
   background-image: repeating-linear-gradient(
