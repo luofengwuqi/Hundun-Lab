@@ -731,6 +731,42 @@ main {
   color: var(--ink);
 }
 
+/* 「有扩展」标记（Q008：只打布尔标记，不显示数量）。
+   方形红点 + 等宽小字，跟下载量同一行高度，不加边框以免和卡带描边打架。 */
+.cart__ext {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 12px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--red);
+}
+
+.cart__ext::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  background: var(--red);
+}
+
+/* 扩展详情页的来源风险提示（Q007：只有社区扩展显示；官方扩展不显示） */
+.risk-note {
+  margin: 0;
+  padding: 10px 12px;
+  border: 1.5px dashed var(--red);
+  border-radius: var(--radius-sm);
+  background: var(--paper-deep);
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--ink);
+}
+
+.risk-note b {
+  color: var(--red);
+}
+
 /* 已下架：侧面与纸面一起转灰，仍保留卡带轮廓 */
 .cart--off {
   --cart-paper: #f2ebdd;
@@ -949,6 +985,8 @@ main {
 .ext {
   margin-top: 44px;
   padding-top: 34px;
+  /* 末尾留白：扩展分区是 03 的收尾块，"查看全部扩展" 离页脚太近会显得被压住 */
+  padding-bottom: 18px;
   border-top: var(--border) solid var(--line-strong);
 }
 
@@ -1163,6 +1201,12 @@ main {
   border-bottom: 0;
 }
 
+/* 整行靠左（02 列表页：平台筛选 + 排序挨着排） */
+.filter-row--start {
+  justify-content: flex-start;
+  gap: 28px;
+}
+
 .seg {
   display: inline-flex;
   gap: 10px;
@@ -1242,7 +1286,7 @@ main {
 }
 
 .page-section {
-  padding: 16px 0 0;
+  padding: 12px 0 0;
 }
 
 /* ---------- 页脚 ---------- */
@@ -1255,6 +1299,56 @@ main {
   font-size: 12px;
   letter-spacing: 0.1em;
   color: var(--ink-soft);
+}
+
+/* 扉页版式的页脚：左侧「品牌 · 一句话」，右侧标语 + 三个红方块。
+   原本写在 01-home.html 的页内 <style> 里，2026-11-05 提到这里，
+   让 01 与 02/03 用同一个页脚组件（D043 的同一条理由：结构唯一，禁止页面级变体）。 */
+.foot {
+  margin-top: auto;
+  border-top: 1px solid var(--ink-a28);
+  padding: 13px 0 15px;
+}
+
+.foot__inner {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.foot__left {
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+}
+
+.foot__left b {
+  color: var(--ink);
+  letter-spacing: 0.12em;
+}
+
+.foot__right {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+}
+
+.foot__slogan {
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.foot__squares {
+  display: inline-flex;
+  gap: 4px;
+  margin-left: 8px;
+}
+
+.foot__squares i {
+  width: 6px;
+  height: 6px;
+  background: var(--red);
 }
 
 /* ---------- 通用块 ---------- */
@@ -2064,6 +2158,9 @@ main {
 .section--fill > .grid-4 {
   flex: 1 1 auto;
   align-content: stretch;
+  /* 卡带落影约 10px，栅格底部留出余量，避免最后一行影子被页脚边框切断；
+     只加在卡片栅格上，版本表（03b）不受影响，仍保持一屏。 */
+  padding-bottom: 14px;
 }
 
 /* 03b 版本表随剩余高度拉伸 */

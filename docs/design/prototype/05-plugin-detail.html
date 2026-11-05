@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>PixelRuler · 插件详情</title>
+    <title>PixelRuler · 扩展详情</title>
     <link rel="stylesheet" href="assets/proto.css" />
     <script>
       /* 主题：内联脚本先于 body 执行，避免首屏闪白（D061）。取值 light / dark（D081）。 */
@@ -47,7 +47,7 @@
 
     <main class="container">
       <p class="mono" style="padding: 10px 0 6px; font-size: 13px; text-align: center; color: var(--red)">
-        <a href="03-software-detail.html">HundunDesktop</a> / <a href="03-software-detail.html#extensions">插件</a> / PixelRuler
+        <a href="03-software-detail.html">HundunDesktop</a> / <a href="03-software-detail.html#extensions">扩展</a> / PixelRuler
       </p>
 
       <section class="panel detail-hero" style="padding: 24px 28px">
@@ -103,7 +103,7 @@
             justify-content: center;
           "
         >
-          <a class="btn btn--primary" style="height: 56px; font-size: 18px" href="#">下载插件</a>
+          <a class="btn btn--primary" style="height: 56px; font-size: 18px" href="#">下载扩展</a>
           <a class="btn btn--ghost" style="height: 50px" href="#">查看源码</a>
         </div>
       </section>
@@ -228,7 +228,7 @@
             </div>
             <div class="readme">
               <h4># PixelRuler</h4>
-              <p>轻量级的屏幕取色与像素测量插件，常驻菜单栏。</p>
+              <p>轻量级的屏幕取色与像素测量扩展，常驻菜单栏。</p>
               <ul style="margin: 10px 0 0; padding-left: 18px">
                 <li>全局快捷键唤起取色器</li>
                 <li>测量任意两点间像素距离</li>
@@ -285,12 +285,25 @@
             <div class="kv"><span>大小</span><span>1.2 MB</span></div>
             <div class="kv"><span>适配</span><span>HundunDesktop ≥ 26.0</span></div>
             <div class="kv"><span>作者</span><span>@homo</span></div>
+            <div class="kv"><span>来源</span><span>社区作者</span></div>
+            <!-- Q007：社区扩展显示这条固定提示；官方扩展显示「官方提供」徽章且不显示本提示。 -->
+            <p class="risk-note" style="margin-top: 12px">
+              <b>本扩展由社区作者提供</b>，未经官方审核以外的安全验证。安装前请看权限声明，自行评估风险。
+            </p>
           </div>
         </aside>
       </div>
     </main>
 
-    <footer class="site-footer">© HUNDUNLAB · 独立软件工作室</footer>
+    <footer class="foot">
+      <div class="container foot__inner">
+        <div class="foot__left"><b>HUNDUN LAB</b> · 独立软件实验室</div>
+        <div class="foot__right">
+          <span class="foot__slogan">保持好奇，继续创造。</span>
+          <span class="foot__squares"><i></i><i></i><i></i></span>
+        </div>
+      </div>
+    </footer>
     <script>
       /* 主题切换：数据属性 + 本地存储。原型不引框架，故用原生事件委托。 */
       (function () {

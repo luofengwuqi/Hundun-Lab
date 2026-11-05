@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Hundun Lab · 软件</title>
     <link rel="stylesheet" href="assets/proto.css" />
-      <style>.filter-row { justify-content: flex-start; gap: 28px; }</style>
     <script>
       /* 主题：内联脚本先于 body 执行，避免首屏闪白（D061）。取值 light / dark（D081）。 */
       (function () {
@@ -54,7 +53,7 @@
         </div>
         <div class="mini-stats">
           <div>
-            <div class="stat__value">6</div>
+            <div class="stat__value">5</div>
             <div class="stat__label">款软件</div>
           </div>
           <div>
@@ -64,7 +63,7 @@
         </div>
       </div>
 
-      <div class="filter-row">
+      <div class="filter-row filter-row--start">
         <div class="seg">
           <button class="is-on" type="button">全部</button>
           <button type="button">Windows</button>
@@ -87,7 +86,8 @@
                 <span class="cart__ver">v26.2.1024</span>
               </div>
               <p class="cart__desc">桌面环境软件</p>
-              <div class="cart__tags"><span class="tag">Windows</span><span class="tag">macOS</span></div>
+              <div class="cart__tags"><span class="tag">Windows</span><span class="tag">Linux</span></div>
+              <div class="cart__ext">有扩展</div>
             </div>
             <div class="cart__foot"><span>12,480 次下载</span><a href="03-software-detail.html">查看详情 →</a></div>
           </article>
@@ -143,25 +143,19 @@
             </div>
             <div class="cart__foot"><span>5,402 次下载</span><a href="03-software-detail.html">查看详情 →</a></div>
           </article>
-
-          <article class="cart cart--off">
-            <div class="cart__stripe cart__stripe--grey"></div>
-            <div class="cart__body">
-              <div class="cart__title cart__title--stack">
-                <span class="cart__name">Hundun Sync</span>
-                <span class="cart__ver">v0.3.0</span>
-                <span class="badge badge--rejected cart__badge">已下架</span>
-              </div>
-              <p class="cart__desc">多设备同步</p>
-              <div class="cart__tags"><span class="tag tag--grey">Windows</span><span class="tag tag--grey">Linux</span></div>
-            </div>
-            <div class="cart__foot"><span>— 次下载</span><span></span></div>
-          </article>
         </div>
       </section>
     </main>
 
-    <footer class="site-footer">© HUNDUNLAB · 独立软件工作室</footer>
+    <footer class="foot">
+      <div class="container foot__inner">
+        <div class="foot__left"><b>HUNDUN LAB</b> · 独立软件实验室</div>
+        <div class="foot__right">
+          <span class="foot__slogan">保持好奇，继续创造。</span>
+          <span class="foot__squares"><i></i><i></i><i></i></span>
+        </div>
+      </div>
+    </footer>
     <script>
       /* 主题切换：数据属性 + 本地存储。原型不引框架，故用原生事件委托。 */
       (function () {

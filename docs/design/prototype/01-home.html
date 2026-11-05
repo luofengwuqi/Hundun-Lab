@@ -232,7 +232,9 @@
       .product__art {
         position: absolute;
         right: -22px;
-        bottom: -34px;
+        /* 越出卡底是设计的一部分，但 34px 会顶到页脚边框（页脚加边框后暴露）。
+           12px 既保留溢出手感，又不侵入页脚（2026-11-05 修）。 */
+        bottom: -10px;
         width: 200px;
         transform: rotate(-2deg);
         pointer-events: none;
@@ -327,54 +329,9 @@
         color: var(--ink-soft);
       }
 
-      /* ---------- 页脚 ---------- */
-
-      .foot {
-        margin-top: auto;
-        border-top: 1px solid var(--ink-a28);
-        padding: 15px 0 17px;
-      }
-
-      .foot__inner {
-        display: flex;
-        align-items: baseline;
-        justify-content: space-between;
-        gap: 24px;
-      }
-
-      .foot__left {
-        font-size: 13px;
-        letter-spacing: 0.06em;
-        color: var(--ink-soft);
-      }
-
-      .foot__left b {
-        color: var(--ink);
-        letter-spacing: 0.12em;
-      }
-
-      .foot__right {
-        display: flex;
-        align-items: baseline;
-        gap: 14px;
-      }
-
-      .foot__slogan {
-        font-size: 13px;
-        color: var(--ink);
-      }
-
-      .foot__squares {
-        display: inline-flex;
-        gap: 4px;
-        margin-left: 8px;
-      }
-
-      .foot__squares i {
-        width: 6px;
-        height: 6px;
-        background: var(--red);
-      }
+      /* ---------- 页脚 ----------
+         .foot 一套已提到 assets/proto.css（2026-11-05），
+         02/03 也用同一个页脚，本页不再重复定义。 */
 
       @media (max-width: 1120px) {
         .hero {
