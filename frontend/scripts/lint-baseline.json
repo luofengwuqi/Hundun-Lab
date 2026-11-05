@@ -1,11 +1,5 @@
 {
   "_readme": "自动生成，勿手改。新增违规请修代码，不要改这里；减少违规后运行 --update 收窄基线。",
-  "color": {
-    "src/assets/css/base.css": 2,
-    "src/assets/css/hundun-kit.css": 37,
-    "src/assets/css/site.css": 20,
-    "src/views/site/HomePage.vue": 11,
-    "src/views/site/SoftwarePage.vue": 2
-  },
+  "color": {},
   "i18n": {}
 }

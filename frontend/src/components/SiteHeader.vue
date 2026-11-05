@@ -3,6 +3,7 @@ import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { LOCALE_LABELS, setLocale } from '@/i18n'
+import ThemeToggle from '@/components/ThemeToggle.vue'
 import { useSessionStore } from '@/stores/session'
 import { logout } from '@/api/site'
 
@@ -106,6 +107,8 @@ async function handleLogout() {
           <span class="menu-btn__bars" aria-hidden="true"><i></i><i></i><i></i></span>
         </button>
 
+        <ThemeToggle />
+
         <div class="lang-switch" role="group" :aria-label="t('nav.language')">
           <button
             type="button"
@@ -196,7 +199,7 @@ async function handleLogout() {
   height: var(--header-h);
   z-index: 50;
   background: var(--paper);
-  border-bottom: 2px solid var(--ink);
+  border-bottom: 2px solid var(--line);
 }
 
 .site-header__inner {
@@ -237,7 +240,7 @@ async function handleLogout() {
 
 .brand__text em {
   font-style: normal;
-  color: var(--red);
+  color: var(--accent-text);
 }
 
 .site-nav {
@@ -256,12 +259,13 @@ async function handleLogout() {
 }
 
 .site-nav__link:hover {
-  border-color: var(--ink);
+  border-color: var(--line);
 }
 
 .site-nav__link.is-active {
-  background: var(--ink);
-  color: var(--paper);
+  background: var(--chip-on-bg);
+  border-color: var(--chip-on-border);
+  color: var(--chip-on-ink);
 }
 
 .site-nav__link.is-disabled {
@@ -287,7 +291,7 @@ async function handleLogout() {
 
 .lang-switch {
   display: inline-flex;
-  border: 2px solid var(--ink);
+  border: 2px solid var(--line);
   border-radius: var(--radius);
   overflow: hidden;
 }
@@ -302,12 +306,12 @@ async function handleLogout() {
 }
 
 .lang-switch__btn + .lang-switch__btn {
-  border-left: 2px solid var(--ink);
+  border-left: 2px solid var(--line);
 }
 
 .lang-switch__btn.is-on {
-  background: var(--ink);
-  color: var(--paper);
+  background: var(--chip-on-bg);
+  color: var(--chip-on-ink);
 }
 
 /* 汉堡按钮：宽屏不出现，窄屏才接管导航 */
@@ -317,7 +321,7 @@ async function handleLogout() {
   justify-content: center;
   width: 34px;
   height: 34px;
-  border: 2px solid var(--ink);
+  border: 2px solid var(--line);
   border-radius: var(--radius);
   background: var(--card);
   cursor: pointer;
@@ -347,7 +351,7 @@ async function handleLogout() {
   padding: 16px 20px 26px;
   overflow-y: auto;
   background: var(--paper);
-  border-top: 2px solid var(--ink);
+  border-top: 2px solid var(--line);
 }
 
 .drawer__nav {
@@ -363,7 +367,7 @@ async function handleLogout() {
 }
 
 .drawer__link.is-active {
-  color: var(--red);
+  color: var(--accent-text);
 }
 
 .drawer__link.is-disabled {

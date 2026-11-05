@@ -332,7 +332,7 @@ watch(
 }
 
 .back-link:hover {
-  color: var(--red);
+  color: var(--accent-text);
 }
 
 .detail-head {
@@ -341,7 +341,7 @@ watch(
   gap: 36px;
   margin-top: 18px;
   padding-bottom: 36px;
-  border-bottom: 2px solid var(--ink);
+  border-bottom: 2px solid var(--line);
 }
 
 .detail-head__tags {
@@ -389,7 +389,7 @@ watch(
 }
 
 .detail-head__side a {
-  color: var(--red);
+  color: var(--accent-text);
   font-size: 13px;
   word-break: break-all;
 }
@@ -407,11 +407,11 @@ watch(
 }
 
 .notice--ok {
-  color: var(--teal);
+  color: var(--teal-text);
 }
 
 .notice--error {
-  color: var(--red);
+  color: var(--accent-text);
 }
 
 .block {
@@ -463,7 +463,7 @@ watch(
 
 .shot img {
   width: 100%;
-  border-bottom: 2px solid var(--ink);
+  border-bottom: 2px solid var(--line);
 }
 
 .shot figcaption {
@@ -507,7 +507,7 @@ watch(
 
 .assets {
   margin-top: 14px;
-  border-top: 1px dashed rgba(23, 19, 15, 0.28);
+  border-top: 1px dashed var(--line-soft);
 }
 
 .assets__row {
@@ -516,7 +516,7 @@ watch(
   align-items: center;
   gap: 16px;
   padding: 12px 0;
-  border-bottom: 1px dashed rgba(23, 19, 15, 0.18);
+  border-bottom: 1px dashed var(--line-faint);
 }
 
 .assets__info {
@@ -555,7 +555,7 @@ watch(
 }
 
 .assets__sha:hover {
-  color: var(--red);
+  color: var(--accent-text);
   border-color: var(--red);
 }
 

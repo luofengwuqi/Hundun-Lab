@@ -25,7 +25,7 @@ const repoUrl = 'https://github.com/luofengwuqi/Hundun-Lab'
 
 <style scoped>
 .site-footer {
-  border-top: 2px solid var(--ink);
+  border-top: 2px solid var(--line);
   background: var(--paper-2);
   padding: 28px 0;
   margin-top: 40px;
@@ -59,6 +59,6 @@ const repoUrl = 'https://github.com/luofengwuqi/Hundun-Lab'
 }
 
 .site-footer__meta a:hover {
-  color: var(--red);
+  color: var(--accent-text);
 }
 </style>

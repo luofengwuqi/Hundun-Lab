@@ -1,108 +1,9 @@
 /* ============================================================
-   Hundun Lab 设计系统
-   气质来源：HundunDesktop 的复古掌机（像素、扫描线、卡带插槽），
-   但落到网页上必须可读：正文字号 16px 起，中文用系统字体，
-   像素感只出现在边框、标签、数字这些「不需要长读」的元素上。
+   公共组件层：卡片 / 按钮 / 标签 / 页面骨架 / 工具类
+   ------------------------------------------------------------
+   这一层同样不写色值（D057）。深浅两套主题的差异全部由
+   tokens.css 里的语义令牌承担，所以这里看不到 [data-theme] 判断。
    ============================================================ */
-
-:root {
-  /* 纸与墨：暖色纸底比纯白更接近老掌机屏幕的观感，长文也不刺眼 */
-  --paper: #f3ebdc;
-  --paper-2: #e9dcc6;
-  --card: #fbf6ec;
-  /* 输入框底色：比纸底更亮的近白（老掌机屏幕的观感），只用于表单控件 */
-  --field: #fffdf7;
-  /* 弹窗遮罩：墨色半透明，压住底下的纸底但不至于全黑 */
-  --overlay: rgba(23, 19, 15, 0.55);
-  --ink: #17130f;
-  --ink-soft: #574c42;
-  --ink-faint: #8a7d6e;
-  --line: #17130f;
-
-  /* 主色取自桌面端的 accent #C3272B */
-  --red: #c3272b;
-  --red-dark: #9c1d21;
-  --amber: #d89b3c;
-  --teal: #2f6b5e;
-
-  --font-ui: 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  --font-mono:
-    ui-monospace, SFMono-Regular, 'SF Mono', Consolas, 'Liberation Mono', Menlo, monospace;
-
-  --shadow-pixel: 4px 4px 0 var(--ink);
-  --shadow-pixel-sm: 3px 3px 0 var(--ink);
-  --radius: 2px;
-
-  --header-h: 68px;
-  --container: 1120px;
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  background-color: var(--paper);
-  /* 极淡的网点，模拟印刷网屏；不参与阅读，只在空白处提供质地 */
-  background-image: radial-gradient(rgba(23, 19, 15, 0.055) 1px, transparent 1px);
-  background-size: 4px 4px;
-  color: var(--ink);
-  font-family: var(--font-ui);
-  font-size: 16px;
-  line-height: 1.7;
-  -webkit-font-smoothing: antialiased;
-  /* 掌机插图带轻微旋转，允许它溢出但不允许把页面撑宽 */
-  overflow-x: hidden;
-}
-
-.container {
-  width: min(100% - 40px, var(--container));
-  margin-inline: auto;
-}
-
-/* ---------------- 排版 ---------------- */
-
-h1,
-h2,
-h3,
-h4 {
-  font-weight: 800;
-  line-height: 1.25;
-  letter-spacing: -0.01em;
-}
-
-.kicker {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--ink-faint);
-}
-
-.section-title {
-  font-size: clamp(22px, 3vw, 32px);
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-/* 标题左侧的像素方块，用重复的短横线做「扫描」质感 */
-.section-title::before {
-  content: '';
-  width: 10px;
-  height: 10px;
-  background: var(--red);
-  box-shadow: 0 0 0 2px var(--ink);
-  flex: none;
-}
-
-.prose p + p {
-  margin-top: 0.9em;
-}
-
-.prose {
-  color: var(--ink-soft);
-}
 
 /* ---------------- 像素卡片与按钮 ---------------- */
 
@@ -119,7 +20,7 @@ h4 {
 
 .card--interactive:hover {
   transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0 var(--ink);
+  box-shadow: var(--shadow-pixel-lg);
 }
 
 .btn {
@@ -147,13 +48,13 @@ h4 {
 
 .btn:hover {
   transform: translate(-1px, -1px);
-  box-shadow: 4px 4px 0 var(--ink);
+  box-shadow: var(--shadow-pixel);
 }
 
 /* 按下时把阴影收掉，模拟实体按键被压下去 */
 .btn:active {
   transform: translate(2px, 2px);
-  box-shadow: 1px 1px 0 var(--ink);
+  box-shadow: var(--shadow-pixel-xs);
 }
 
 .btn:disabled {
@@ -163,13 +64,15 @@ h4 {
   box-shadow: var(--shadow-pixel-sm);
 }
 
+/* 主按钮：浅色是朱红实心块；深色由令牌换成绿描边 + 白字 + 淡绿底（D087） */
 .btn--primary {
-  background: var(--red);
-  color: #fff8ec;
+  background: var(--btn-primary-bg);
+  border-color: var(--btn-primary-border);
+  color: var(--btn-primary-ink);
 }
 
 .btn--primary:hover {
-  background: var(--red-dark);
+  background: var(--btn-primary-bg-hover);
 }
 
 .btn--ghost {
@@ -188,7 +91,7 @@ h4 {
   align-items: center;
   gap: 6px;
   padding: 3px 9px;
-  border: 1.5px solid var(--ink);
+  border: 1.5px solid var(--tag-line);
   font-family: var(--font-mono);
   font-size: 11px;
   letter-spacing: 0.08em;
@@ -198,15 +101,15 @@ h4 {
 }
 
 .tag--red {
-  background: var(--red);
-  color: #fff8ec;
-  border-color: var(--red-dark);
+  background: var(--tag-red-bg);
+  color: var(--tag-red-ink);
+  border-color: var(--tag-red-border);
 }
 
 .tag--teal {
-  background: var(--teal);
-  color: #f4fbf7;
-  border-color: #234f45;
+  background: var(--tag-teal-bg);
+  color: var(--tag-teal-ink);
+  border-color: var(--tag-teal-border);
 }
 
 /* ---------------- 扫描线（仅用于区块装饰，不铺到正文） ---------------- */
@@ -218,8 +121,8 @@ h4 {
   pointer-events: none;
   background-image: repeating-linear-gradient(
     to bottom,
-    rgba(23, 19, 15, 0.07) 0px,
-    rgba(23, 19, 15, 0.07) 1px,
+    var(--scan) 0px,
+    var(--scan) 1px,
     transparent 1px,
     transparent 4px
   );
@@ -263,6 +166,11 @@ h4 {
   color: var(--ink-faint);
 }
 
+/* 主色文字：深色下自动变白，页面里不要再写 color: var(--red) */
+.text-accent {
+  color: var(--accent-text);
+}
+
 .stack-8 > * + * {
   margin-top: 8px;
 }
@@ -300,8 +208,5 @@ h4 {
 @media (max-width: 720px) {
   .section {
     padding: 48px 0;
-  }
-  body {
-    font-size: 15px;
   }
 }

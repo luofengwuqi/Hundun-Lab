@@ -1,0 +1,317 @@
+/* ============================================================
+   全站唯一色值出处（D057 / D080）
+   ------------------------------------------------------------
+   只有这个文件允许出现十六进制、rgb()、hsl() 字面量；页面、组件、
+   scoped 样式一律只引用 var(--...)。改配色只改这里。
+
+   两套主题（D078 / D081 / D087）：
+   · 浅色 = 朱红 #C3272B + 馄饨米白
+   · 深色 = 馄饨黑 #141414 做底，绿色 #00FF88 只做描边与标记，
+     文字一律白／灰白——绿色不当文字色，也不做实心底承载文字。
+
+   名字分三组：
+   1. 站点语义令牌（--paper/--ink/--btn-primary-bg/...）
+   2. 物料层令牌（--hd-*，hundun-kit.css 消费）
+   3. 「实物」令牌（--obj-console-*、--hd-cart-*）：掌机与卡带是画出来的
+      实体物件，深色下不跟着漂绿，像纸卡就一直是纸卡。
+   ============================================================ */
+
+:root {
+  color-scheme: light;
+
+  /* ---------- 1. 站点：纸与墨 ---------- */
+  /* 暖色纸底比纯白更接近老掌机屏幕的观感，长文也不刺眼 */
+  --paper: #f3ebdc;
+  --paper-2: #e9dcc6;
+  --card: #fbf6ec;
+  /* 输入框底色：比纸底更亮的近白，只用于表单控件 */
+  --field: #fffdf7;
+  /* 弹窗遮罩：墨色半透明，压住底下的纸底但不至于全黑 */
+  --overlay: rgba(23, 19, 15, 0.55);
+  --ink: #17130f;
+  --ink-soft: #574c42;
+  --ink-faint: #8a7d6e;
+
+  /* 三档线：主描边 / 虚线分隔 / 列表细线 */
+  --line: #17130f;
+  --line-soft: rgba(23, 19, 15, 0.25);
+  --line-faint: rgba(23, 19, 15, 0.2);
+  /* 纸面网点与扫描线，只做质地不参与阅读 */
+  --dot: rgba(23, 19, 15, 0.055);
+  --scan: rgba(23, 19, 15, 0.07);
+
+  /* ---------- 1. 站点：主色与语义色 ---------- */
+  /* 主色取自桌面端的 accent #C3272B */
+  --red: #c3272b;
+  --red-dark: #9c1d21;
+  /* 主色的淡底：hover 与选中态的衬底，不承载文字 */
+  --accent-soft: rgba(195, 39, 43, 0.08);
+  /* 文字用的主色：浅色即朱红，深色改白（取代原先散落各处的 color: var(--red)） */
+  --accent-text: var(--red);
+  /* 朱红实心块上的字；深色下实心块降级成描边，这个令牌只做兜底 */
+  --on-accent: #fff8ec;
+  --amber: #d89b3c;
+  --teal: #2f6b5e;
+  /* 成功态文字：浅色用青绿，深色改白（绿不当文字色） */
+  --teal-text: var(--teal);
+  --on-teal: #f4fbf7;
+  --teal-line: #234f45;
+
+  /* ---------- 1. 站点：状态件 ----------
+     浅色靠实心主色块强调；深色在下面的 [data-theme='dark'] 里
+     整套降级为「绿描边 + 白字 + ≤12% 绿透明底」，所以这里必须
+     拆成 bg / ink / border 三个角色，不许组件里直接写 background: var(--red)。 */
+  --btn-primary-bg: var(--red);
+  --btn-primary-bg-hover: var(--red-dark);
+  --btn-primary-border: var(--line);
+  --btn-primary-ink: var(--on-accent);
+
+  /* 导航选中 / 语言切换这类「小开关」 */
+  --chip-on-bg: var(--ink);
+  --chip-on-ink: var(--paper);
+  --chip-on-border: var(--ink);
+
+  --tag-line: var(--ink);
+  --tag-red-bg: var(--red);
+  --tag-red-ink: var(--on-accent);
+  --tag-red-border: var(--red-dark);
+  --tag-teal-bg: var(--teal);
+  --tag-teal-ink: var(--on-teal);
+  --tag-teal-border: var(--teal-line);
+
+  /* ---------- 1. 站点：阴影 ----------
+     硬阴影用「颜色令牌」而不是直接 var(--ink)：深色下白投影会糊成一片，
+     必须整组换成绿光晕。 */
+  --shadow-pixel-xs: 1px 1px 0 var(--ink);
+  --shadow-pixel-sm: 3px 3px 0 var(--ink);
+  --shadow-pixel: 4px 4px 0 var(--ink);
+  --shadow-pixel-lg: 6px 6px 0 var(--ink);
+  --shadow-soft: rgba(23, 19, 15, 0.18);
+
+  /* ---------- 3. 实物：首页 hero 与纯 CSS 掌机 ----------
+     掌机是「画出来的物件」，零件色不随主题变（和卡带同理）；
+     只有塑料底色在深色下提亮一档，否则整台机器糊在黑纸里看不见。 */
+  --hero-top: #f6efe2;
+  --obj-console-body: #17130f;
+  --obj-console-screen: #cfd8b6;
+  --obj-console-line: #0b0908;
+  --obj-console-ink: #2c3421;
+  --obj-console-pixel: #3d4a2c;
+  --obj-console-dpad: #3a332d;
+  --obj-console-accent: #c3272b;
+  --obj-console-accent-2: #d89b3c;
+  --obj-console-shadow: rgba(23, 19, 15, 0.18);
+  --obj-console-scan: rgba(11, 9, 8, 0.16);
+
+  /* ---------- 2. 物料层 hundun-kit（--hd-*） ---------- */
+  --hd-paper: #fff8e8;
+  --hd-paper-deep: #f6ecd6;
+  --hd-card: #fffefb;
+  --hd-ink: #3b2e2b;
+  --hd-ink-soft: #6b5a54;
+  --hd-ink-faint: #9a8d86;
+  --hd-red: #c3272b;
+  --hd-red-deep: #a01f22;
+  --hd-amber: #e8a33d;
+  --hd-teal: #4f8a7b;
+  --hd-grey: #9a938c;
+  --hd-line: #e6d8bd;
+  --hd-line-strong: #d8c4a2;
+
+  /* 物料层也有「文字主色 / 实心块上的字」之分，理由同上 */
+  --hd-accent-text: var(--hd-red);
+  --hd-on-accent: var(--hd-paper);
+  --hd-accent-soft: rgba(195, 39, 43, 0.08);
+  --hd-accent-line: rgba(195, 39, 43, 0.28);
+  --hd-focus-ring: rgba(195, 39, 43, 0.12);
+  --hd-tag-line: rgba(195, 39, 43, 0.55);
+  --hd-btn-shadow: rgba(120, 30, 25, 0.35);
+  --hd-btn-shadow-hover: rgba(120, 30, 25, 0.4);
+  --hd-section-shadow: rgba(150, 60, 40, 0.22);
+  --hd-stat-divider: rgba(195, 39, 43, 0.35);
+
+  --hd-btn-primary-bg: var(--hd-red);
+  --hd-btn-primary-bg-hover: var(--hd-red-deep);
+
+  --hd-badge-version-bg: var(--hd-red);
+  --hd-badge-version-ink: var(--hd-on-accent);
+  --hd-badge-version-line: transparent;
+  --hd-badge-ok-bg: var(--hd-teal);
+  --hd-badge-ok-ink: var(--hd-paper);
+  --hd-badge-ok-line: transparent;
+  --hd-badge-warn-bg: var(--hd-amber);
+  --hd-badge-warn-ink: var(--hd-ink);
+  --hd-badge-warn-line: transparent;
+  --hd-badge-muted-bg: rgba(154, 147, 140, 0.22);
+  --hd-badge-muted-ink: var(--hd-ink-soft);
+  --hd-badge-muted-line: transparent;
+
+  /* ---------- 3. 实物：卡带 ---------- */
+  --hd-cart-paper: #f4e3c6;
+  --hd-cart-paper-sunk: #edd8b6;
+  --hd-cart-line: #5a352a;
+  --hd-cart-slab: #b0402e;
+  --hd-cart-gloss: rgba(255, 252, 242, 0.85);
+  --hd-cart-shadow: rgba(90, 45, 25, 0.22);
+  --hd-cart-shadow-hover: rgba(90, 45, 25, 0.26);
+  --hd-cart-tail: rgba(195, 39, 43, 0.4);
+  --hd-cart-ink: var(--hd-ink);
+  --hd-cart-ink-soft: var(--hd-ink-soft);
+  --hd-cart-link: var(--hd-red);
+  --hd-cart-link-hover: var(--hd-red-deep);
+  /* 卡带内部的标签与角标也走卡带色：卡是米纸印刷品，不跟着页面变白字 */
+  --hd-cart-tag-ink: var(--hd-red);
+  --hd-cart-tag-line: rgba(195, 39, 43, 0.55);
+  --hd-cart-badge-bg: rgba(154, 147, 140, 0.22);
+  --hd-cart-badge-line: transparent;
+
+  /* 已下架：整卡转灰 */
+  --hd-cart-off-paper: #f2ebdd;
+  --hd-cart-off-line: #a99e8d;
+  --hd-cart-off-slab: #c9c0b1;
+  --hd-cart-off-shadow: #d9d0c2;
+
+  /* ---------- 排版与尺度（不含颜色，主题无关） ---------- */
+  --font-ui: 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-mono:
+    ui-monospace, SFMono-Regular, 'SF Mono', Consolas, 'Liberation Mono', Menlo, monospace;
+  --hd-font-ui:
+    'Microsoft YaHei', 'PingFang SC', 'Hiragino Sans GB', 'Source Han Sans SC', sans-serif;
+  --hd-font-mono: 'Cascadia Mono', Consolas, 'SF Mono', Menlo, monospace;
+
+  --radius: 2px;
+  --hd-radius: 8px;
+  --hd-radius-sm: 6px;
+  --hd-border: 2px;
+
+  --header-h: 68px;
+  --container: 1120px;
+}
+
+/* ============================================================
+   深色主题（D087）
+   ------------------------------------------------------------
+   只覆盖令牌。少数必须换结构的地方（实心块 → 描边）也通过
+   拆开的 bg/ink/border 令牌表达，组件样式里一行判断都不用写。
+   ============================================================ */
+
+[data-theme='dark'] {
+  color-scheme: dark;
+
+  /* 底色：馄饨黑三阶，卡片稍亮以便分层 */
+  --paper: #141414;
+  --paper-2: #1b1b1b;
+  --card: #1f1f1f;
+  --field: #121212;
+  --overlay: rgba(0, 0, 0, 0.72);
+
+  /* 字：白为主，次级用中性灰白（绿色不参与文字） */
+  --ink: #ffffff;
+  --ink-soft: #c3cac6;
+  --ink-faint: #7e8683;
+
+  /* 线：改绿描边，深色下不再用中性黑 */
+  --line: rgba(0, 255, 136, 0.22);
+  --line-soft: rgba(0, 255, 136, 0.22);
+  --line-faint: rgba(0, 255, 136, 0.16);
+  --dot: rgba(0, 255, 136, 0.07);
+  --scan: rgba(0, 255, 136, 0.05);
+
+  /* 强调：绿色退居描边与标记 */
+  --red: #00ff88;
+  --red-dark: #00cc6d;
+  --accent-soft: rgba(0, 255, 136, 0.1);
+  --accent-text: var(--ink);
+  --on-accent: var(--ink);
+  --amber: #ffd166;
+  --teal: #00ff88;
+  --teal-text: var(--ink);
+  --on-teal: #06251a;
+  --teal-line: rgba(0, 255, 136, 0.38);
+
+  /* 状态件：实心块一律降级为描边 + 白字 + 淡绿底 */
+  --btn-primary-bg: color-mix(in srgb, var(--red) 12%, transparent);
+  --btn-primary-bg-hover: color-mix(in srgb, var(--red) 20%, transparent);
+  --btn-primary-border: var(--red);
+  --btn-primary-ink: var(--ink);
+
+  --chip-on-bg: rgba(0, 255, 136, 0.1);
+  --chip-on-ink: var(--ink);
+  --chip-on-border: var(--red);
+
+  --tag-line: color-mix(in srgb, var(--red) 50%, transparent);
+  --tag-red-bg: color-mix(in srgb, var(--red) 12%, transparent);
+  --tag-red-ink: var(--ink);
+  --tag-red-border: var(--red);
+  --tag-teal-bg: transparent;
+  --tag-teal-ink: var(--ink);
+  --tag-teal-border: var(--red);
+
+  /* 阴影：深底上实心黑投影看不见，改用暗光晕 */
+  --shadow-pixel-xs: 1px 1px 0 rgba(0, 255, 136, 0.28);
+  --shadow-pixel-sm: 3px 3px 0 rgba(0, 255, 136, 0.16);
+  --shadow-pixel: 4px 4px 0 rgba(0, 255, 136, 0.18);
+  --shadow-pixel-lg: 6px 6px 0 rgba(0, 255, 136, 0.22);
+  --shadow-soft: rgba(0, 255, 136, 0.16);
+
+  /* hero 顶色压到比纸底更暗，避免大面积发光 */
+  --hero-top: #0f0f0f;
+
+  /* 掌机塑料底色提亮一档：其余零件（屏幕、按键、十字键）保持实物本色 */
+  --obj-console-body: #262626;
+  --obj-console-shadow: rgba(0, 0, 0, 0.55);
+
+  /* ---------- 物料层 ---------- */
+  --hd-paper: #141414;
+  --hd-paper-deep: #1b1b1b;
+  --hd-card: #1f1f1f;
+  --hd-ink: #ffffff;
+  --hd-ink-soft: #c3cac6;
+  --hd-ink-faint: #7e8683;
+  --hd-red: #00ff88;
+  --hd-red-deep: #00cc6d;
+  --hd-amber: #ffd166;
+  --hd-teal: #00ff88;
+  --hd-grey: #78827d;
+  --hd-line: rgba(0, 255, 136, 0.18);
+  --hd-line-strong: rgba(0, 255, 136, 0.34);
+
+  --hd-accent-text: var(--hd-ink);
+  --hd-on-accent: var(--hd-ink);
+  --hd-accent-soft: rgba(0, 255, 136, 0.1);
+  --hd-accent-line: rgba(0, 255, 136, 0.28);
+  --hd-focus-ring: rgba(0, 255, 136, 0.18);
+  --hd-tag-line: rgba(0, 255, 136, 0.5);
+  --hd-btn-shadow: rgba(0, 255, 136, 0.2);
+  --hd-btn-shadow-hover: rgba(0, 255, 136, 0.26);
+  --hd-section-shadow: rgba(0, 255, 136, 0.18);
+  --hd-stat-divider: rgba(0, 255, 136, 0.35);
+
+  --hd-btn-primary-bg: rgba(0, 255, 136, 0.12);
+  --hd-btn-primary-bg-hover: rgba(0, 255, 136, 0.2);
+
+  --hd-badge-version-bg: rgba(0, 255, 136, 0.12);
+  --hd-badge-version-ink: var(--hd-ink);
+  --hd-badge-version-line: var(--hd-red);
+  --hd-badge-ok-bg: rgba(0, 255, 136, 0.12);
+  --hd-badge-ok-ink: var(--hd-ink);
+  --hd-badge-ok-line: var(--hd-red);
+  --hd-badge-warn-bg: rgba(255, 209, 102, 0.12);
+  --hd-badge-warn-ink: var(--hd-ink);
+  --hd-badge-warn-line: var(--hd-amber);
+  --hd-badge-muted-bg: rgba(255, 255, 255, 0.1);
+  --hd-badge-muted-ink: var(--hd-ink-soft);
+  --hd-badge-muted-line: rgba(255, 255, 255, 0.22);
+
+  /* 卡带是「实物」：纸面、描边、塑料侧面一律不变，
+     只把卡内文字换回深墨——否则白字压米纸，整张卡就废了。 */
+  --hd-cart-ink: #2a2420;
+  --hd-cart-ink-soft: #6b6055;
+  --hd-cart-link: #a8231f;
+  --hd-cart-link-hover: #8d1a17;
+  --hd-cart-tail: rgba(160, 31, 34, 0.4);
+  --hd-cart-tag-ink: #2a2420;
+  --hd-cart-tag-line: rgba(42, 36, 32, 0.35);
+  --hd-cart-badge-bg: rgba(42, 36, 32, 0.12);
+  --hd-cart-badge-line: rgba(42, 36, 32, 0.3);
+}

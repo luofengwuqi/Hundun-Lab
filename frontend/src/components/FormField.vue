@@ -54,7 +54,7 @@ const id = useId()
 }
 
 .field__input {
-  border: 2px solid var(--ink);
+  border: 2px solid var(--line);
   background: var(--field);
   padding: 9px 11px;
   font-size: 15px;

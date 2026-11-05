@@ -32,6 +32,8 @@
           // 隐私模式下 localStorage 会抛，回落浅色即可，不该因此白屏
         }
         document.documentElement.dataset.theme = theme
+        // 原生控件（滚动条、表单内建 UI）也一起换，否则深色页右侧会挂一条白滚动条
+        document.documentElement.style.colorScheme = theme
       })()
     </script>
   </head>

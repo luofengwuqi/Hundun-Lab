@@ -154,7 +154,7 @@
 
 | 项 | 规则 | 依据 |
 | --- | --- | --- |
-| 色值 | 只在 `frontend/src/assets/css/hundun-kit.css` 与 `tokens.css` 出现；组件禁字面量 | D044、D057 |
+| 色值 | **只在 `frontend/src/styles/tokens.css` 出现**（物料层 `hundun-kit.css` 也只引用令牌）；组件与 scoped 样式禁字面量，`check-color` 严格模式守（基线已归零） | D044、D057 |
 | 页头 | **全站唯一一份**，禁止页面级覆盖 `.site-header` / `.brand` / `.site-nav` / `.lang`；结构唯一，配色随主题切换 | D043、D078 |
 | Logo | 统一 `hundun-lab-mark-plain.svg` 内联，`fill=currentColor` | D042 |
 | 卡带 | 八边形切角 + 硬侧面（无模糊位移）+ 落影；**仅用于 HundunDesktop 的产品区与扩展区** | D035、D040、D077 |
@@ -411,7 +411,7 @@
 
 ### 6.3 前端结构
 
-`styles/tokens.css`（唯一色值）→ `base.css` → `components.css`；物料层 `assets/css/hundun-kit.css`（D041）。
+`styles/tokens.css`（唯一色值，含 `[data-theme="dark"]` 整套覆盖）→ `styles/base.css`（重置 + 排版）→ `styles/components.css`（公共组件类）；物料层 `assets/css/hundun-kit.css`（D041）排在其后，色值同样只取令牌。`main.js` 按此顺序引入，`index.html` 的内联脚本在样式表之前落 `data-theme`（防 FOUC）。
 组件：`SiteHeader`、`SiteFooter`、`SoftwareCard`（HdCart 数据适配）、`HdCart`、`HdSection`、`HdButton`、`HdTag`、`HdBadge`、
 `PluginCard`、`AuthDialog`、`FormField`、`ThemeToggle`、`StatusBadge`、`EmptyState`。
 

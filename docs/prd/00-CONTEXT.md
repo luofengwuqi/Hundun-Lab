@@ -12,15 +12,17 @@
 **第①步「删」已完成**——旧层 27 文件 / 7,252 行与 element-plus、less、marked 全部下线，构建产物未变（证明是死代码）；
 **第②步「修」也已完成**——`FormField` 抽取、AuthDialog 的 ESC/焦点进出、SiteHeader 移动端抽屉、
 `index.html` 首屏主题脚本（防 FOUC），lint 补齐 prettier（D059）。
-**下一步是第③步「换肤」**：新建 `styles/tokens.css` 与 `components.css`，把余下 72 处色值字面量收进令牌，
-并接上深色主题（D087 之后的正式实现）。
+**第③步「换肤」也已完成**——新建 `styles/tokens.css` / `base.css` / `components.css` 三层，`assets/css/{base,site}.css` 下线，
+余下 72 处色值字面量全部收进令牌（`check-color` 基线归零＝严格模式）；深色主题正式落到前端（`[data-theme="dark"]` 整套令牌 +
+D087 的「实心块降级为描边」），页头新增 `ThemeToggle`，两种主题各 5 条路由实测通过。
+**下一步是第④步「补」**：`/software/:slug/extensions/*` 路由与撤掉 `/plugins`、导航收为两项，之后进 M1 后台。
 
 **2026-11-05 模型变更**：插件被纠正为 **HundunDesktop 特有的扩展**，不是全站通用能力。
 数据层改称**扩展**（`extension`），`software_id` 必填；导航收为两项；路由改为
 `/software/:slug/extensions/*`。依据 D071–D086，这是本轮最需要先读的一段。
 
 **待答 0 题**（2026-11-05 G09 八问全部裁决：Q001–Q003、Q005–Q009 已答，完整记录见 `02` 台账各 Q 条目）。
-**挂账 12 项**（`O` 编号，其中 3 项阻塞里程碑；O09、O11 已关闭、O08/O12 已定案）。
+**挂账 13 项**（`O` 编号，其中 3 项阻塞里程碑；O09、O11 已关闭、O08/O12 已定案，O13 为 M0c③ 实测新发现）。
 
 ---
 

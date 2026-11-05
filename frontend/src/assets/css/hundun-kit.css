@@ -2,46 +2,20 @@
    Hundun Lab · 物料库（Design Kit）
    --------------------------------------------------------------------------
    原型（docs/design/prototype）与生产前端共用的「物料」样式。
-   纯 CSS、无依赖、无构建，类名统一 hd- 前缀，不与项目既有样式冲突。
-   用法：import '@/assets/css/hundun-kit.css'
+   纯 CSS、无构建，类名统一 hd- 前缀，不与项目既有样式冲突。
+   用法：先引 styles/tokens.css（--hd-* 色值令牌在那里），再引本文件。
    物料清单与可视化预览：docs/design/kit/index.html
    ========================================================================== */
 
 :root {
-  /* ---------- 色彩 ---------- */
-  --hd-paper: #fff8e8;
-  --hd-paper-deep: #f6ecd6;
-  --hd-card: #fffefb;
-  --hd-ink: #3b2e2b;
-  --hd-ink-soft: #6b5a54;
-  --hd-ink-faint: #9a8d86;
-  --hd-red: #c3272b;
-  --hd-red-deep: #a01f22;
-  --hd-amber: #e8a33d;
-  --hd-teal: #4f8a7b;
-  --hd-grey: #9a938c;
-  --hd-line: #e6d8bd;
-  --hd-line-strong: #d8c4a2;
+  /* ---------- 色值不在这里 ----------
+     全部 --hd-* 颜色令牌集中在 frontend/src/styles/tokens.css（D057），
+     深浅两套主题在同一处定义。本文件只写结构与尺度。 */
 
   /* ---------- 卡带专属（立体感三件套：纸面 / 描边 / 塑料侧面） ---------- */
-  --hd-cart-paper: #f4e3c6;
-  --hd-cart-paper-sunk: #edd8b6;
-  --hd-cart-line: #5a352a;
-  --hd-cart-slab: #b0402e;
-  --hd-cart-slab-deep: #7e2a1f;
   --hd-cart-cut: 9px; /* 卡带切角 */
   --hd-cart-edge: 2px; /* 描边厚度 */
-  --hd-cart-accent: var(--hd-red); /* 条纹主色，前端按软件 theme_color 覆盖 */
-
-  /* ---------- 排版 ---------- */
-  --hd-font-ui:
-    'Microsoft YaHei', 'PingFang SC', 'Hiragino Sans GB', 'Source Han Sans SC', sans-serif;
-  --hd-font-mono: 'Cascadia Mono', Consolas, 'SF Mono', Menlo, monospace;
-
-  /* ---------- 尺度 ---------- */
-  --hd-radius: 8px;
-  --hd-radius-sm: 6px;
-  --hd-border: 2px;
+  --hd-cart-accent: var(--hd-cart-slab); /* 条纹主色，前端按软件 theme_color 覆盖 */
 }
 
 /* ==========================================================================
@@ -58,7 +32,7 @@
   border: var(--hd-border) solid var(--hd-red);
   border-radius: var(--hd-radius);
   background: transparent;
-  color: var(--hd-red);
+  color: var(--hd-accent-text);
   font-family: var(--hd-font-ui);
   font-size: 17px;
   font-weight: 700;
@@ -74,19 +48,19 @@
 }
 
 .hd-btn--primary {
-  background: var(--hd-red);
-  color: var(--hd-paper);
-  box-shadow: 3px 3px 0 rgba(120, 30, 25, 0.35);
+  background: var(--hd-btn-primary-bg);
+  color: var(--hd-on-accent);
+  box-shadow: 3px 3px 0 var(--hd-btn-shadow);
 }
 
 .hd-btn--primary:hover {
-  background: var(--hd-red-deep);
+  background: var(--hd-btn-primary-bg-hover);
   transform: translate(-1px, -1px);
-  box-shadow: 4px 4px 0 rgba(120, 30, 25, 0.4);
+  box-shadow: 4px 4px 0 var(--hd-btn-shadow-hover);
 }
 
 .hd-btn--ghost:hover {
-  background: rgba(195, 39, 43, 0.08);
+  background: var(--hd-accent-soft);
 }
 
 .hd-btn--sm {
@@ -124,11 +98,11 @@
   align-items: center;
   height: 26px;
   padding: 0 12px;
-  border: 1.5px solid rgba(195, 39, 43, 0.55);
+  border: 1.5px solid var(--hd-tag-line);
   border-radius: 999px;
   font-family: var(--hd-font-mono);
   font-size: 12px;
-  color: var(--hd-red);
+  color: var(--hd-accent-text);
 }
 
 .hd-tag--grey {
@@ -145,7 +119,8 @@
   align-items: center;
   height: 24px;
   padding: 0 10px;
-  border: 0;
+  /* 描边平时透明；深色下实心块降级成描边件，靠它补回层级（D087） */
+  border: 1px solid transparent;
   border-radius: var(--hd-radius-sm);
   font-family: var(--hd-font-mono);
   font-size: 12px;
@@ -154,23 +129,27 @@
 }
 
 .hd-badge--version {
-  background: var(--hd-red);
-  color: var(--hd-paper);
+  background: var(--hd-badge-version-bg);
+  border-color: var(--hd-badge-version-line);
+  color: var(--hd-badge-version-ink);
 }
 
 .hd-badge--ok {
-  background: var(--hd-teal);
-  color: var(--hd-paper);
+  background: var(--hd-badge-ok-bg);
+  border-color: var(--hd-badge-ok-line);
+  color: var(--hd-badge-ok-ink);
 }
 
 .hd-badge--warn {
-  background: var(--hd-amber);
-  color: var(--hd-ink);
+  background: var(--hd-badge-warn-bg);
+  border-color: var(--hd-badge-warn-line);
+  color: var(--hd-badge-warn-ink);
 }
 
 .hd-badge--muted {
-  background: rgba(154, 147, 140, 0.22);
-  color: var(--hd-ink-soft);
+  background: var(--hd-badge-muted-bg);
+  border-color: var(--hd-badge-muted-line);
+  color: var(--hd-badge-muted-ink);
 }
 
 /* ==========================================================================
@@ -218,7 +197,7 @@
   text-decoration: none;
   /* 塑料侧面（实心、无模糊）+ 落地柔影 */
   filter: drop-shadow(9px 10px 0 var(--hd-cart-slab))
-    drop-shadow(11px 13px 7px rgba(90, 45, 25, 0.22));
+    drop-shadow(11px 13px 7px var(--hd-cart-shadow));
   transition:
     transform 0.16s ease,
     filter 0.16s ease;
@@ -240,9 +219,7 @@
   position: absolute;
   inset: var(--hd-cart-edge);
   z-index: 0;
-  background:
-    linear-gradient(180deg, rgba(255, 252, 242, 0.85), rgba(255, 252, 242, 0) 4px),
-    var(--hd-cart-paper);
+  background: linear-gradient(180deg, var(--hd-cart-gloss), transparent 4px), var(--hd-cart-paper);
   clip-path: var(--hd-oct-inner);
 }
 
@@ -259,7 +236,7 @@
 .hd-cart--interactive:hover {
   transform: translate(-2px, -2px);
   filter: drop-shadow(11px 12px 0 var(--hd-cart-slab))
-    drop-shadow(13px 16px 9px rgba(90, 45, 25, 0.26));
+    drop-shadow(13px 16px 9px var(--hd-cart-shadow-hover));
 }
 
 /* ---------- 顶部斜纹（像素阶梯，颜色可由 --hd-cart-accent 覆盖） ---------- */
@@ -319,7 +296,7 @@
   font-size: 26px;
   font-weight: 800;
   line-height: 1.2;
-  color: var(--hd-ink);
+  color: var(--hd-cart-ink);
   letter-spacing: 0;
 }
 
@@ -330,7 +307,7 @@
 .hd-cart__ver {
   font-family: var(--hd-font-mono);
   font-size: 14px;
-  color: var(--hd-ink-soft);
+  color: var(--hd-cart-ink-soft);
   letter-spacing: 0.02em;
 }
 
@@ -342,7 +319,7 @@
 .hd-cart__desc {
   margin-top: 6px;
   font-size: 15px;
-  color: var(--hd-ink-soft);
+  color: var(--hd-cart-ink-soft);
 }
 
 .hd-cart__tags {
@@ -358,29 +335,29 @@
   justify-content: space-between;
   gap: 12px;
   padding: 14px 22px;
-  border-top: 2px dotted rgba(195, 39, 43, 0.4);
+  border-top: 2px dotted var(--hd-cart-tail);
   font-family: var(--hd-font-mono);
   font-size: 14px;
   font-weight: 700;
-  color: var(--hd-ink);
+  color: var(--hd-cart-ink);
 }
 
 .hd-cart__link {
-  color: var(--hd-red);
+  color: var(--hd-cart-link);
   font-weight: 700;
 }
 
 .hd-cart__link:hover {
-  color: var(--hd-red-deep);
+  color: var(--hd-cart-link-hover);
 }
 
 /* 已下架：去掉塑料侧面，整体转灰 */
 .hd-cart--off {
-  --hd-cart-paper: #f2ebdd;
-  --hd-cart-line: #a99e8d;
-  --hd-cart-slab: #c9c0b1;
+  --hd-cart-paper: var(--hd-cart-off-paper);
+  --hd-cart-line: var(--hd-cart-off-line);
+  --hd-cart-slab: var(--hd-cart-off-slab);
   --hd-cart-accent: var(--hd-grey);
-  filter: drop-shadow(3px 4px 0 #d9d0c2);
+  filter: drop-shadow(3px 4px 0 var(--hd-cart-off-shadow));
 }
 
 .hd-cart--off .hd-cart__name,
@@ -393,6 +370,20 @@
 /* 扁平（列表页密集排列时可降级，去掉侧面只留描边） */
 .hd-cart--flat {
   filter: none;
+}
+
+/* 卡带内部是「印刷品」：标签与角标不能借全局令牌。
+   深色主题里 --hd-accent-text / --hd-badge-* 已经变成白字，白字压米纸等于没字；
+   这里把它们收回卡带自己的一套色（D087 的同一个坑，卡内组件都要走 --hd-cart-*）。 */
+.hd-cart__tags .hd-tag {
+  color: var(--hd-cart-tag-ink);
+  border-color: var(--hd-cart-tag-line);
+}
+
+.hd-cart__badge {
+  background: var(--hd-cart-badge-bg);
+  border-color: var(--hd-cart-badge-line);
+  color: var(--hd-cart-tag-ink);
 }
 
 /* 角标 */
@@ -427,7 +418,7 @@
   border: var(--hd-border) solid var(--hd-red);
   border-radius: 16px;
   background: var(--hd-card);
-  box-shadow: 4px 4px 0 rgba(150, 60, 40, 0.22);
+  box-shadow: 4px 4px 0 var(--hd-section-shadow);
   overflow: hidden;
 }
 
@@ -452,7 +443,7 @@
 .hd-section__title {
   font-size: 40px;
   line-height: 1.1;
-  color: var(--hd-red);
+  color: var(--hd-accent-text);
   font-weight: 400;
 }
 
@@ -481,7 +472,7 @@
    ========================================================================== */
 
 .hd-dashed > * + * {
-  border-top: 1px dashed rgba(195, 39, 43, 0.28);
+  border-top: 1px dashed var(--hd-accent-line);
 }
 
 .hd-news {
@@ -523,7 +514,7 @@
   font-family: var(--hd-font-mono);
   font-size: 14px;
   font-weight: 700;
-  color: var(--hd-red);
+  color: var(--hd-accent-text);
 }
 
 /* ==========================================================================
@@ -535,7 +526,7 @@
   font-size: 44px;
   line-height: 1.1;
   font-weight: 700;
-  color: var(--hd-red);
+  color: var(--hd-accent-text);
 }
 
 .hd-stat__label {
@@ -548,7 +539,7 @@
 .hd-stat__divider {
   width: 2px;
   height: 56px;
-  background: rgba(195, 39, 43, 0.35);
+  background: var(--hd-stat-divider);
 }
 
 /* ==========================================================================
@@ -561,7 +552,7 @@
   font-family: var(--hd-font-mono);
   font-size: 12px;
   letter-spacing: 0.08em;
-  color: var(--hd-red);
+  color: var(--hd-accent-text);
 }
 
 .hd-input,
@@ -589,7 +580,7 @@
 .hd-textarea:focus {
   outline: none;
   border-color: var(--hd-red);
-  box-shadow: 0 0 0 3px rgba(195, 39, 43, 0.12);
+  box-shadow: 0 0 0 3px var(--hd-focus-ring);
 }
 
 /* 带圆形图标槽的输入框 */
@@ -629,12 +620,12 @@
   border: var(--hd-border) solid var(--hd-red);
   border-radius: 999px;
   background: transparent;
-  color: var(--hd-red);
+  color: var(--hd-accent-text);
   cursor: pointer;
 }
 
 .hd-iconbtn:hover {
-  background: rgba(195, 39, 43, 0.08);
+  background: var(--hd-accent-soft);
 }
 
 .hd-iconbtn svg {
@@ -715,5 +706,5 @@
 
 .hd-brand__text em {
   font-style: normal;
-  color: var(--hd-red);
+  color: var(--hd-accent-text);
 }

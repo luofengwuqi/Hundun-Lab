@@ -1,0 +1,154 @@
+/* ============================================================
+   基础层：重置 + 元素默认值 + 排版骨架
+   ------------------------------------------------------------
+   这一层不写任何色值（D057），颜色一律取 tokens.css 的令牌。
+   层级顺序：tokens.css → base.css → components.css → hundun-kit.css
+   ============================================================ */
+
+/* ---------- 重置 ---------- */
+
+* {
+  margin: 0;
+  padding: 0;
+  /* 让宽高包含内边距与边框，布局才可算 */
+  box-sizing: border-box;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+a:hover,
+a:active,
+a:focus {
+  text-decoration: none;
+  outline: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  border: none;
+}
+
+input,
+textarea,
+select,
+button {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  outline: none;
+  border: none;
+  background: none;
+}
+
+button {
+  cursor: pointer;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* 标题字号按内容定，重置掉浏览器默认层级 */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: normal;
+  font-size: inherit;
+}
+
+.clearfix::after {
+  content: '';
+  display: block;
+  clear: both;
+  height: 0;
+  visibility: hidden;
+}
+
+/* ---------- 页面底 ---------- */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--paper);
+  /* 极淡的网点，模拟印刷网屏；不参与阅读，只在空白处提供质地 */
+  background-image: radial-gradient(var(--dot) 1px, transparent 1px);
+  background-size: 4px 4px;
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 16px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  /* 掌机插图带轻微旋转，允许它溢出但不允许把页面撑宽 */
+  overflow-x: hidden;
+}
+
+.container {
+  width: min(100% - 40px, var(--container));
+  margin-inline: auto;
+}
+
+/* ---------- 排版 ---------- */
+
+h1,
+h2,
+h3,
+h4 {
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+.kicker {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.section-title {
+  font-size: clamp(22px, 3vw, 32px);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* 标题左侧的像素方块，用重复的短横线做「扫描」质感 */
+.section-title::before {
+  content: '';
+  width: 10px;
+  height: 10px;
+  background: var(--red);
+  box-shadow: 0 0 0 2px var(--ink);
+  flex: none;
+}
+
+.prose {
+  color: var(--ink-soft);
+}
+
+.prose p + p {
+  margin-top: 0.9em;
+}
+
+@media (max-width: 720px) {
+  body {
+    font-size: 15px;
+  }
+}

@@ -14,6 +14,7 @@ export default {
     logout: 'Sign out',
     language: 'Language',
     menu: 'Menu',
+    theme: 'Toggle theme',
   },
   home: {
     heroKicker: 'Hundun Lab / an independent software studio',

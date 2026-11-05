@@ -172,7 +172,7 @@ async function submit() {
 }
 
 .auth__close:hover {
-  border-color: var(--ink);
+  border-color: var(--line);
 }
 
 .auth__lead {
@@ -189,7 +189,7 @@ async function submit() {
 
 .auth__error {
   font-size: 12px;
-  color: var(--red);
+  color: var(--accent-text);
 }
 
 .auth__actions {

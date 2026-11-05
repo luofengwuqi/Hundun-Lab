@@ -99,7 +99,7 @@ async function submit() {
 
 .login__error {
   font-size: 12px;
-  color: var(--red);
+  color: var(--accent-text);
 }
 
 .login__actions {

@@ -157,8 +157,8 @@ onMounted(load)
 <style scoped>
 .hero {
   position: relative;
-  border-bottom: 2px solid var(--ink);
-  background: linear-gradient(180deg, #f6efe2 0%, var(--paper) 100%);
+  border-bottom: 2px solid var(--line);
+  background: linear-gradient(180deg, var(--hero-top) 0%, var(--paper) 100%);
   overflow: hidden;
 }
 
@@ -196,7 +196,7 @@ onMounted(load)
   gap: 40px;
   margin-top: 40px;
   padding-top: 20px;
-  border-top: 2px dashed rgba(23, 19, 15, 0.25);
+  border-top: 2px dashed var(--line-soft);
 }
 
 .hero__stats dd {
@@ -214,17 +214,17 @@ onMounted(load)
 
 .console {
   width: min(100%, 320px);
-  background: var(--ink);
+  background: var(--obj-console-body);
   border-radius: 14px 14px 26px 26px;
   padding: 18px 18px 22px;
-  box-shadow: 10px 10px 0 rgba(23, 19, 15, 0.18);
+  box-shadow: 10px 10px 0 var(--obj-console-shadow);
   transform: rotate(-2deg);
 }
 
 .console__screen {
   position: relative;
-  background: #cfd8b6;
-  border: 3px solid #0b0908;
+  background: var(--obj-console-screen);
+  border: 3px solid var(--obj-console-line);
   border-radius: 6px;
   padding: 14px 12px 16px;
   overflow: hidden;
@@ -237,7 +237,7 @@ onMounted(load)
   inset: 0;
   background-image: repeating-linear-gradient(
     to bottom,
-    rgba(11, 9, 8, 0.16) 0 1px,
+    var(--obj-console-scan) 0 1px,
     transparent 1px 3px
   );
 }
@@ -250,7 +250,7 @@ onMounted(load)
 .console__slots span {
   width: 18px;
   height: 8px;
-  background: #0b0908;
+  background: var(--obj-console-line);
   opacity: 0.55;
 }
 
@@ -258,7 +258,7 @@ onMounted(load)
   margin-top: 12px;
   font-size: 9px;
   letter-spacing: 0.22em;
-  color: #2c3421;
+  color: var(--obj-console-ink);
 }
 
 .console__pixels {
@@ -270,12 +270,12 @@ onMounted(load)
 
 .console__pixels i {
   height: 8px;
-  background: #3d4a2c;
+  background: var(--obj-console-pixel);
   opacity: 0.5;
 }
 
 .console__pixels i:nth-child(3n) {
-  background: var(--red);
+  background: var(--obj-console-accent);
   opacity: 0.85;
 }
 
@@ -295,7 +295,7 @@ onMounted(load)
 .console__dpad-h,
 .console__dpad-v {
   position: absolute;
-  background: #3a332d;
+  background: var(--obj-console-dpad);
   border-radius: 2px;
 }
 
@@ -323,11 +323,11 @@ onMounted(load)
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  background: var(--red);
+  background: var(--obj-console-accent);
 }
 
 .console__btn--b {
-  background: var(--amber);
+  background: var(--obj-console-accent-2);
 }
 
 /* ---------- 区块 ---------- */
@@ -352,7 +352,7 @@ onMounted(load)
 }
 
 .news {
-  border-top: 2px solid var(--ink);
+  border-top: 2px solid var(--line);
 }
 
 .news__item {
@@ -361,7 +361,7 @@ onMounted(load)
   align-items: center;
   gap: 14px;
   padding: 14px 4px;
-  border-bottom: 1px solid rgba(23, 19, 15, 0.2);
+  border-bottom: 1px solid var(--line-faint);
   font-size: 14px;
 }
 
@@ -376,7 +376,7 @@ onMounted(load)
 
 .news__link {
   font-weight: 700;
-  color: var(--red);
+  color: var(--accent-text);
   white-space: nowrap;
 }
 

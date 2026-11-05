@@ -9,6 +9,9 @@
 
 ### 新增
 
+- 2026-11-05 新增 `composables/useTheme.js` 与 `components/ThemeToggle.vue`：浅/深切换写 `hundunlab.theme`，同步 `<html data-theme>` 与 `color-scheme`（原生滚动条、表单控件一起换）；页头常驻，窄屏也不收
+- 2026-11-05 新增 `frontend/src/styles/{tokens,base,components}.css` 三层：`tokens.css` 是全站唯一色值出处，同时提供浅色与 `[data-theme="dark"]` 两套令牌（含物料层 `--hd-*` 与「实物」组 `--hd-cart-*` / `--obj-console-*`）
+- 2026-11-05 新增语义令牌：`--accent-text`（浅=主色/深=白）、`--accent-soft`、`--on-accent`、`--teal-text`、`--chip-on-{bg,ink,border}`、`--btn-primary-*`、`--tag-*`（含 `--tag-{red,teal}-{bg,ink,border}`）、`--line-soft`/`--line-faint`/`--dot`/`--scan`、`--shadow-pixel-{xs,sm,lg}`
 - 2026-11-05 新增 `components/FormField.vue`：登录页与登录弹窗共用的表单字段，样式只留一处；`label` 走 `for/id` 关联，`useId` 保证同页多表单不撞 id
 - 2026-11-05 页头新增窄屏汉堡菜单与抽屉（≤860px），导航、语言切换、登录态收进抽屉；换页与 ESC 自动收起，`aria-expanded` 跟随
 - 2026-11-05 新增 `frontend/scripts/check-color.mjs`、`check-i18n.mjs`（O11）：前者禁样式里的十六进制与 `rgb()`/`hsl()` 字面量（`*tokens.css` 豁免），后者禁组件里的 CJK 字面量（`src/i18n/` 与注释豁免）；配套 `lint-baseline.json` 做基线棘轮，违规只许减不许增
@@ -16,6 +19,10 @@
 
 ### 变更
 
+- 2026-11-05 M0c③ 换肤：`assets/css/site.css` 与 `assets/css/base.css` 拆成 `styles/{tokens,base,components}.css` 后删除（`main.js` 按新顺序引入），余下 72 处色值字面量全部收进令牌；`check-color` 基线归零，两个质量脚本进入严格模式
+- 2026-11-05 深色主题在前端正式落地（D087）：状态件拆成 `bg/ink/border` 三个令牌，深色下由令牌整组换成「绿描边 + 白字 + ≤12% 绿底」，组件里不写 `[data-theme]` 判断；硬投影 `--shadow-pixel*` 在深色改绿光晕（原来固定 `var(--ink)`，会变成白投影）
+- 2026-11-05 「实物」单独成组：卡带与首页掌机不随主题漂绿，深色下只换卡内文字墨色（`--hd-cart-ink` 系）与掌机塑料底色一档；`.hd-cart` 内的平台标签与角标改用 `--hd-cart-tag-*`，否则深色的白字会压在米纸上
+- 2026-11-05 结构线统一走 `--line`（浅色与 `--ink` 同值，深色为绿描边）：页头、页脚、hero、详情页分节线、表单输入框、汉堡按钮
 - 2026-11-05 登录弹窗无障碍：ESC 关闭、打开时焦点进首个输入框、关闭后焦点归还触发元素，补 `aria-describedby` 与错误行 `role="alert"`
 - 2026-11-05 `index.html` 增加内联同步脚本，首屏绘制前读 `hundunlab.theme` 设 `data-theme`，消除深色用户刷新时的 FOUC 闪白；隐私模式下 `localStorage` 抛错则回落浅色
 - 2026-11-05 新增令牌 `--field`（输入框底色）与 `--overlay`（弹窗遮罩），替换组件里写死的 `#fffdf7` 与 `rgba(...)`
@@ -27,6 +34,7 @@
 
 ### 修复
 
+- 2026-11-05 修复深色下卡片内平台标签/角标不可读：`.hd-cart__tags .hd-tag` 与 `.hd-cart__badge` 收回卡带自己的色（白字压米纸的问题与原型 `.cart` 是同一个坑）
 - 2026-11-05 深色主题修复：13 处 `rgba(195, 39, 43, ·)` / 3 处 `rgba(29, 22, 19, ·)` 字面量改为 `color-mix(var(--red|--ink))`，否则深色下是看不见的暗红边；06 上传区底色字面量同样令牌化；卡带（`.cart`）在深色下就地重声明一套浅色令牌，避免卡内文字被全局白字吞掉
 - 2026-11-05 02 列表页删掉「已下架」演示卡（违反 F03 只展示 `status = 1`）、平台标签由 macOS 对齐为 Linux、HundunDesktop 卡补「有扩展」标记（Q008）、卡片数与「N 款软件」对齐为 5
 - 2026-11-05 版式修复：卡片栅格底部留 14px 让落影不被页脚切断；`.ext` 补末留白；`.page-section`／页脚纵向微调使 03b 回到一屏（03 因并入扩展分区改为长页，属预期）
@@ -38,6 +46,9 @@
 
 ### 文档
 
+- 2026-11-05 O13 登记：浅色 `--ink-faint` 压纸底实测 2.96:1，低于 AA 小字 4.5:1（深色 4.93:1 无问题），是否加深留作者裁
+- 2026-11-05 D041／D057／D087 各补一条「落地注」：令牌从物料库搬进 `styles/tokens.css`、层级顺序、状态件拆三令牌与「实物」不换肤的口径
+- 2026-11-05 `docs/design/kit/index.html` 补引 `tokens.css`（物料库自身已不含色值）
 - 2026-11-05 新增决策 D087（深色主题绿色只做描边、文字用白），同步原型 README 的深色用色说明
 - 2026-11-05 O11 关闭：质量脚本已落地，台账与 `00-CONTEXT` 同步；M0c 第①步「删」完成，下一步第②步「修」
 - 2026-11-05 G09 八问集中裁决：Q001–Q003、Q005–Q009 全部已答，待答归零；O09 关闭，O08／O12 定案（`docs/prd/02` / `03` / `04`）
