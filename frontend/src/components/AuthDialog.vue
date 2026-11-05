@@ -1,8 +1,9 @@
 <script setup>
-import { reactive, ref, watch } from 'vue'
+import { nextTick, onBeforeUnmount, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { loginWithPassword } from '@/api/site'
 import { useSessionStore } from '@/stores/session'
+import FormField from '@/components/FormField.vue'
 
 const props = defineProps({
   open: { type: Boolean, default: false },
@@ -15,16 +16,44 @@ const session = useSessionStore()
 const form = reactive({ username: '', password: '' })
 const submitting = ref(false)
 const errorKey = ref('')
+const dialogEl = ref(null)
+
+/**
+ * 打开前记住焦点落在哪，关闭时还回去。
+ * 键盘用户点「下载」触发弹窗，关掉后焦点若掉回 <body>，Tab 就得从页头重新开始，
+ * 等于把人的位置丢了。
+ */
+let lastFocused = null
+
+function onKeydown(event) {
+  if (event.key === 'Escape') {
+    event.stopPropagation()
+    close()
+  }
+}
 
 watch(
   () => props.open,
-  (open) => {
+  async (open) => {
     if (open) {
       errorKey.value = ''
       submitting.value = false
+      lastFocused = document.activeElement
+      document.addEventListener('keydown', onKeydown)
+      await nextTick()
+      // 焦点进框：弹窗里第一件事就是输入用户名
+      dialogEl.value?.querySelector('input')?.focus()
+    } else {
+      document.removeEventListener('keydown', onKeydown)
+      if (lastFocused && typeof lastFocused.focus === 'function') {
+        lastFocused.focus()
+      }
+      lastFocused = null
     }
   },
 )
+
+onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown))
 
 function close() {
   emit('update:open', false)
@@ -57,36 +86,32 @@ async function submit() {
 <template>
   <Teleport to="body">
     <div v-if="open" class="auth-overlay" @click.self="close">
-      <div class="auth card" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+      <div
+        ref="dialogEl"
+        class="auth card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="auth-title"
+        aria-describedby="auth-lead"
+      >
         <div class="auth__head">
           <h2 id="auth-title" class="auth__title">{{ t('auth.title') }}</h2>
           <button type="button" class="auth__close" :aria-label="t('common.close')" @click="close">
             ×
           </button>
         </div>
-        <p class="auth__lead">{{ t('auth.lead') }}</p>
+        <p id="auth-lead" class="auth__lead">{{ t('auth.lead') }}</p>
 
         <form class="auth__form" @submit.prevent="submit">
-          <label class="field">
-            <span class="field__label">{{ t('auth.username') }}</span>
-            <input
-              v-model="form.username"
-              class="field__input"
-              type="text"
-              autocomplete="username"
-            />
-          </label>
-          <label class="field">
-            <span class="field__label">{{ t('auth.password') }}</span>
-            <input
-              v-model="form.password"
-              class="field__input"
-              type="password"
-              autocomplete="current-password"
-            />
-          </label>
+          <FormField v-model="form.username" :label="t('auth.username')" autocomplete="username" />
+          <FormField
+            v-model="form.password"
+            :label="t('auth.password')"
+            type="password"
+            autocomplete="current-password"
+          />
 
-          <p v-if="errorKey" class="auth__error mono">{{ t(errorKey) }}</p>
+          <p v-if="errorKey" class="auth__error mono" role="alert">{{ t(errorKey) }}</p>
 
           <div class="auth__actions">
             <button type="button" class="btn btn--ghost" @click="close">
@@ -110,7 +135,7 @@ async function submit() {
   display: grid;
   place-items: center;
   padding: 20px;
-  background: rgba(23, 19, 15, 0.55);
+  background: var(--overlay);
   backdrop-filter: blur(2px);
 }
 
@@ -160,32 +185,6 @@ async function submit() {
   margin-top: 20px;
   display: grid;
   gap: 14px;
-}
-
-.field {
-  display: grid;
-  gap: 6px;
-}
-
-.field__label {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--ink-soft);
-}
-
-.field__input {
-  border: 2px solid var(--ink);
-  background: #fffdf7;
-  padding: 9px 11px;
-  font-size: 15px;
-  border-radius: var(--radius);
-}
-
-.field__input:focus {
-  outline: 3px solid var(--amber);
-  outline-offset: 1px;
 }
 
 .auth__error {

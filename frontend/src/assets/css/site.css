@@ -10,6 +10,10 @@
   --paper: #f3ebdc;
   --paper-2: #e9dcc6;
   --card: #fbf6ec;
+  /* 输入框底色：比纸底更亮的近白（老掌机屏幕的观感），只用于表单控件 */
+  --field: #fffdf7;
+  /* 弹窗遮罩：墨色半透明，压住底下的纸底但不至于全黑 */
+  --overlay: rgba(23, 19, 15, 0.55);
   --ink: #17130f;
   --ink-soft: #574c42;
   --ink-faint: #8a7d6e;

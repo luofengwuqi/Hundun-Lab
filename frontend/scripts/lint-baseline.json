@@ -3,10 +3,8 @@
   "color": {
     "src/assets/css/base.css": 2,
     "src/assets/css/hundun-kit.css": 37,
-    "src/assets/css/site.css": 18,
-    "src/components/AuthDialog.vue": 2,
+    "src/assets/css/site.css": 20,
     "src/views/site/HomePage.vue": 11,
-    "src/views/site/LoginPage.vue": 1,
     "src/views/site/SoftwarePage.vue": 2
   },
   "i18n": {}

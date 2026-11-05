@@ -13,6 +13,7 @@ export default {
     login: 'Sign in',
     logout: 'Sign out',
     language: 'Language',
+    menu: 'Menu',
   },
   home: {
     heroKicker: 'Hundun Lab / an independent software studio',

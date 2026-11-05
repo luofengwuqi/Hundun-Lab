@@ -1,9 +1,8 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { LOCALE_LABELS } from '@/i18n'
-import { setLocale } from '@/i18n'
+import { LOCALE_LABELS, setLocale } from '@/i18n'
 import { useSessionStore } from '@/stores/session'
 import { logout } from '@/api/site'
 
@@ -11,6 +10,12 @@ const { t, locale } = useI18n()
 const route = useRoute()
 const router = useRouter()
 const session = useSessionStore()
+
+/**
+ * 窄屏抽屉。桌面导航在 860px 以下让位给汉堡按钮——
+ * 原来的做法是整条导航 display:none，小屏用户直接没有导航可用。
+ */
+const menuOpen = ref(false)
 
 const navItems = computed(() => [
   { to: '/', label: t('nav.home') },
@@ -23,9 +28,28 @@ function isActive(item) {
   return route.path.startsWith(item.to)
 }
 
+function closeMenu() {
+  menuOpen.value = false
+}
+
 function switchLocale(next) {
   setLocale(next)
+  closeMenu()
 }
+
+// 换页即收起：抽屉是导航，不是常驻面板
+watch(() => route.fullPath, closeMenu)
+
+function onKeydown(event) {
+  if (event.key === 'Escape') closeMenu()
+}
+
+watch(menuOpen, (open) => {
+  if (open) document.addEventListener('keydown', onKeydown)
+  else document.removeEventListener('keydown', onKeydown)
+})
+
+onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown))
 
 async function handleLogout() {
   try {
@@ -34,6 +58,7 @@ async function handleLogout() {
     // 服务端令牌可能已经失效，本地照样要清干净
   }
   session.clear()
+  closeMenu()
   router.push('/')
 }
 </script>
@@ -70,6 +95,17 @@ async function handleLogout() {
       </nav>
 
       <div class="site-header__actions">
+        <button
+          type="button"
+          class="menu-btn"
+          :aria-expanded="menuOpen"
+          aria-controls="site-drawer"
+          :aria-label="t('nav.menu')"
+          @click="menuOpen = !menuOpen"
+        >
+          <span class="menu-btn__bars" aria-hidden="true"><i></i><i></i><i></i></span>
+        </button>
+
         <div class="lang-switch" role="group" :aria-label="t('nav.language')">
           <button
             type="button"
@@ -95,6 +131,56 @@ async function handleLogout() {
             {{ t('nav.logout') }}
           </button>
         </template>
+        <RouterLink v-else to="/login" class="btn btn--primary btn--sm">{{
+          t('nav.login')
+        }}</RouterLink>
+      </div>
+    </div>
+
+    <!-- 窄屏抽屉：导航 + 语言 + 登录态都收在这里，宽屏隐藏 -->
+    <div v-if="menuOpen" id="site-drawer" class="drawer">
+      <nav class="drawer__nav" :aria-label="t('nav.menu')">
+        <template v-for="item in navItems" :key="item.to">
+          <span v-if="item.disabled" class="drawer__link is-disabled">{{ item.label }}</span>
+          <RouterLink
+            v-else
+            :to="item.to"
+            class="drawer__link"
+            :class="{ 'is-active': isActive(item) }"
+          >
+            {{ item.label }}
+          </RouterLink>
+        </template>
+      </nav>
+
+      <div class="drawer__foot">
+        <div class="lang-switch" role="group" :aria-label="t('nav.language')">
+          <button
+            type="button"
+            class="lang-switch__btn"
+            :class="{ 'is-on': locale === 'zh' }"
+            @click="switchLocale('zh')"
+          >
+            {{ LOCALE_LABELS.zh }}
+          </button>
+          <button
+            type="button"
+            class="lang-switch__btn"
+            :class="{ 'is-on': locale === 'en' }"
+            @click="switchLocale('en')"
+          >
+            {{ LOCALE_LABELS.en }}
+          </button>
+        </div>
+
+        <button
+          v-if="session.isLoggedIn"
+          type="button"
+          class="btn btn--ghost btn--sm"
+          @click="handleLogout"
+        >
+          {{ t('nav.logout') }}
+        </button>
         <RouterLink v-else to="/login" class="btn btn--primary btn--sm">{{
           t('nav.login')
         }}</RouterLink>
@@ -224,12 +310,97 @@ async function handleLogout() {
   color: var(--paper);
 }
 
+/* 汉堡按钮：宽屏不出现，窄屏才接管导航 */
+.menu-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: 2px solid var(--ink);
+  border-radius: var(--radius);
+  background: var(--card);
+  cursor: pointer;
+}
+
+.menu-btn__bars {
+  display: grid;
+  gap: 4px;
+}
+
+.menu-btn__bars i {
+  display: block;
+  width: 16px;
+  height: 2px;
+  background: var(--ink);
+}
+
+/* 抽屉：贴在页头下沿，整块纸底盖住内容，不做半透明以免字压字 */
+.drawer {
+  display: none;
+  position: fixed;
+  top: var(--header-h);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 45;
+  padding: 16px 20px 26px;
+  overflow-y: auto;
+  background: var(--paper);
+  border-top: 2px solid var(--ink);
+}
+
+.drawer__nav {
+  display: grid;
+}
+
+.drawer__link {
+  display: block;
+  padding: 13px 4px;
+  font-size: 16px;
+  font-weight: 600;
+  border-bottom: 1px solid var(--ink-faint);
+}
+
+.drawer__link.is-active {
+  color: var(--red);
+}
+
+.drawer__link.is-disabled {
+  color: var(--ink-faint);
+}
+
+.drawer__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 20px;
+}
+
 @media (max-width: 860px) {
-  .site-nav {
-    display: none;
-  }
+  /* 只收页头里那一份；抽屉里的语言切换要留着，所以选择器不能写成 .site-header .lang-switch */
+  .site-nav,
+  .site-header__actions .lang-switch,
+  .site-header__actions .btn,
   .whoami {
     display: none;
+  }
+
+  .site-header__inner {
+    gap: 12px;
+  }
+
+  .site-header__actions {
+    margin-left: auto;
+  }
+
+  .menu-btn {
+    display: inline-flex;
+  }
+
+  .drawer {
+    display: block;
   }
 }
 </style>

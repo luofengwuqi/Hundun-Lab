@@ -13,6 +13,7 @@ export default {
     login: '登录',
     logout: '退出',
     language: '语言',
+    menu: '菜单',
   },
   home: {
     heroKicker: 'Hundun Lab / 独立软件实验室',

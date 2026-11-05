@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
@@ -17,6 +17,23 @@
       property="og:description"
       content="Hundun Lab 是馄饨系列软件的官方网站：桌面工具、插件社区与下载。"
     />
+    <script>
+      /**
+       * 主题必须在首屏绘制之前落到 <html> 上。
+       * 交给 Vue 挂载后再设 data-theme，用户会先看到一帧浅色再跳到深色（FOUC），
+       * 深色用户每次刷新都要被闪一下，所以这段脚本必须内联且同步执行。
+       * 只认 light / dark 两个值，其他一律回落浅色（D081）。
+       */
+      ;(function () {
+        var theme = 'light'
+        try {
+          if (localStorage.getItem('hundunlab.theme') === 'dark') theme = 'dark'
+        } catch (e) {
+          // 隐私模式下 localStorage 会抛，回落浅色即可，不该因此白屏
+        }
+        document.documentElement.dataset.theme = theme
+      })()
+    </script>
   </head>
   <body>
     <div id="app"></div>

@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { loginWithPassword } from '@/api/site'
 import { useSessionStore } from '@/stores/session'
+import FormField from '@/components/FormField.vue'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -46,24 +47,13 @@ async function submit() {
         <p class="login__lead">{{ t('auth.lead') }}</p>
 
         <form class="login__form" @submit.prevent="submit">
-          <label class="field">
-            <span class="field__label">{{ t('auth.username') }}</span>
-            <input
-              v-model="form.username"
-              class="field__input"
-              type="text"
-              autocomplete="username"
-            />
-          </label>
-          <label class="field">
-            <span class="field__label">{{ t('auth.password') }}</span>
-            <input
-              v-model="form.password"
-              class="field__input"
-              type="password"
-              autocomplete="current-password"
-            />
-          </label>
+          <FormField v-model="form.username" :label="t('auth.username')" autocomplete="username" />
+          <FormField
+            v-model="form.password"
+            :label="t('auth.password')"
+            type="password"
+            autocomplete="current-password"
+          />
 
           <p v-if="errorKey" class="login__error mono">{{ t(errorKey) }}</p>
 
@@ -105,32 +95,6 @@ async function submit() {
   margin-top: 22px;
   display: grid;
   gap: 14px;
-}
-
-.field {
-  display: grid;
-  gap: 6px;
-}
-
-.field__label {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--ink-soft);
-}
-
-.field__input {
-  border: 2px solid var(--ink);
-  background: #fffdf7;
-  padding: 9px 11px;
-  font-size: 15px;
-  border-radius: var(--radius);
-}
-
-.field__input:focus {
-  outline: 3px solid var(--amber);
-  outline-offset: 1px;
 }
 
 .login__error {
