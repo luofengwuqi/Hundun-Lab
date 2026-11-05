@@ -7,6 +7,11 @@
 
 ## [未发布]
 
+### 新增
+
+- 2026-11-05 新增 `frontend/scripts/check-color.mjs`、`check-i18n.mjs`（O11）：前者禁样式里的十六进制与 `rgb()`/`hsl()` 字面量（`*tokens.css` 豁免），后者禁组件里的 CJK 字面量（`src/i18n/` 与注释豁免）；配套 `lint-baseline.json` 做基线棘轮，违规只许减不许增
+- 2026-11-05 `lint` 改为 `oxlint + check-i18n + check-color`（D059），并补装 `oxlint`（此前脚本引用了但没装）；新增 `pnpm lint:baseline` 用于违规减少后收窄基线
+
 ### 变更
 
 - 2026-11-05 深色主题用色改为「绿只做描边、文字用白」（D087）：`--ink` 系列改白/灰白，`--line` 系列改绿描边；导航选中、筛选胶囊、主按钮、状态徽章、版本标签、扩展图标底板、上传校验块等原「实心绿底 + 反白字」组件统一降为「绿描边 + 白字」（层级用 ≤12% 绿透明底）
@@ -21,9 +26,15 @@
 - 2026-11-05 02 列表页删掉「已下架」演示卡（违反 F03 只展示 `status = 1`）、平台标签由 macOS 对齐为 Linux、HundunDesktop 卡补「有扩展」标记（Q008）、卡片数与「N 款软件」对齐为 5
 - 2026-11-05 版式修复：卡片栅格底部留 14px 让落影不被页脚切断；`.ext` 补末留白；`.page-section`／页脚纵向微调使 03b 回到一屏（03 因并入扩展分区改为长页，属预期）
 
+### 移除
+
+- 2026-11-05 M0c① 删旧层：`views/{admin,user,login,help}` 27 文件 / 7,252 行、`api/{user,admin,feedback,article}.js`、`stores/{user,article,feedback}.js`、`utils/`（含旧 `request.js`）、`assets/img/` 13 张旧图 1.4MB；依赖移除 `element-plus`、`@element-plus/icons-vue`、`less`、`marked`（构建产物逐字节未变，确认均为死代码）
+- 2026-11-05 `HdCart` 不再内置中文字面量：`downloadsLabel` 默认值置空、新增 `detailLabel` prop，文案由 `SoftwareCard` 传 `t('home.downloads')` / `t('home.viewDetail')`；语言自称移入 `i18n` 的 `LOCALE_LABELS`
+
 ### 文档
 
 - 2026-11-05 新增决策 D087（深色主题绿色只做描边、文字用白），同步原型 README 的深色用色说明
+- 2026-11-05 O11 关闭：质量脚本已落地，台账与 `00-CONTEXT` 同步；M0c 第①步「删」完成，下一步第②步「修」
 - 2026-11-05 G09 八问集中裁决：Q001–Q003、Q005–Q009 全部已答，待答归零；O09 关闭，O08／O12 定案（`docs/prd/02` / `03` / `04`）
 - 2026-11-05 原型 README 增补「细节收口」段与一屏口径（7 页一屏、03 长页）
 - 2026-10-29 新增 `docs/01-项目计划书.md`（立项书：M0 前台重构 / M1 管理后台+上线 / M2 插件社区 / M3 桌面端对接）
