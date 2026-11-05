@@ -7,9 +7,11 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "lint": "run-s lint:*",
+    "lint": "run-s lint:oxlint lint:i18n lint:color",
     "lint:oxlint": "oxlint . --fix",
-    "lint:eslint": "eslint . --fix --cache",
+    "lint:i18n": "node scripts/check-i18n.mjs",
+    "lint:color": "node scripts/check-color.mjs",
+    "lint:baseline": "node scripts/check-i18n.mjs --update && node scripts/check-color.mjs --update",
     "format": "prettier --write --experimental-cli src/"
   },
   "dependencies": {
@@ -28,6 +30,7 @@
     "@vitejs/plugin-vue": "^6.0.4",
     "globals": "^17.4.0",
     "npm-run-all2": "^8.0.4",
+    "oxlint": "^1.91.0",
     "prettier": "3.8.1",
     "vite": "^7.3.1",
     "vite-plugin-vue-devtools": "^8.0.7"
