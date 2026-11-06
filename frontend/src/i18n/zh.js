@@ -57,6 +57,11 @@ export default {
     license: '许可证',
     notFound: '找不到这个软件，它可能已经下架。',
   },
+  platform: {
+    win32: 'Windows',
+    darwin: 'macOS',
+    linux: 'Linux',
+  },
   // 扩展（F07/F08/D071–D076）：只挂在软件详情页下，没有站点级入口
   extension: {
     title: '扩展',

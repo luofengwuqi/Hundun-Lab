@@ -57,6 +57,11 @@ export default {
     license: 'License',
     notFound: 'We could not find this software. It may have been retired.',
   },
+  platform: {
+    win32: 'Windows',
+    darwin: 'macOS',
+    linux: 'Linux',
+  },
   // Extensions (F07/F08/D071–D076): mounted under a software page only, no site-level entry
   extension: {
     title: 'Extensions',
