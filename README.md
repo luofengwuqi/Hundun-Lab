@@ -12,6 +12,8 @@
 [![Vue](https://img.shields.io/badge/Vue-3-42B883?style=flat-square)](https://vuejs.org/)
 [![License](https://img.shields.io/badge/License-MulanPSL--2.0-red?style=flat-square)](LICENSE)
 
+**仓库地址**：[GitHub](https://github.com/luofengwuqi/Hundun-Lab) ｜ [Gitee](https://gitee.com/luofengwuqi/chaos-lab)（每次提交双端同步推送）
+
 站点本身不写死任何软件信息：软件、功能特性、支持平台、版本与安装包全部来自数据库，
 设计目标是一个新版本只需在后台录入数据，而不是改代码重新发版（后台尚未实现）。
 
@@ -23,7 +25,7 @@
 | --- | --- | --- |
 | 1 | 官网前台：首页、软件列表与详情、登录、需登录的下载 | 已完成 |
 | 1 | 管理后台：软件与版本录入、安装包上传、下载数据概览 | 未开始（尚无软件/版本管理接口） |
-| 2 | Desktop 扩展：详情页内的市场分区、上传校验 manifest、审核、稳定下载地址 | 未开始（原型有假数据） |
+| 2 | Desktop 扩展：详情页内的市场分区、上传校验 manifest、审核、稳定下载地址 | **站点侧已落地**（前台分区/详情/提交页 + 列表/详情/下载短链接口）；提交与审核闭环未做 |
 | 3 | 用户中心、反馈处理、后台权限收口 | 未开始 |
 
 > 上表只表示大阶段。**实时状态、待答问题与挂账项以 [`docs/prd/00-CONTEXT.md`](docs/prd/00-CONTEXT.md) 为准**，

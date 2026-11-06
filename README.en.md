@@ -9,6 +9,8 @@ The official site for the Hundun software family — project introductions, inst
 [![Vue](https://img.shields.io/badge/Vue-3-42B883?style=flat-square)](https://vuejs.org/)
 [![License](https://img.shields.io/badge/License-MulanPSL--2.0-red?style=flat-square)](LICENSE)
 
+**Repositories**: [GitHub](https://github.com/luofengwuqi/Hundun-Lab) ｜ [Gitee](https://gitee.com/luofengwuqi/chaos-lab) (every commit is pushed to both)
+
 Nothing about a product is hard-coded: software, features, supported platforms, releases and installers all come from the database.
 The design goal is that a new version is just data entered in the admin console, not a code change and redeploy
 (the console itself is not built yet).
@@ -21,7 +23,7 @@ The site currently features **HundunDesktop**, a retro handheld-style desktop to
 | --- | --- | --- |
 | 1 | Public site: home, software list & detail, sign-in, login-gated downloads | Done |
 | 1 | Admin console: software & release entry, installer upload, download stats | Not started (no software/release management API yet) |
-| 2 | Plugin community: listing & detail, manifest validation on upload, review, stable download URL | Not started (placeholder page) |
+| 2 | Plugin community: listing & detail, manifest validation on upload, review, stable download URL | Site-side shipped (public section, detail & submit pages; list/detail/download APIs) — submit & review pipeline pending |
 | 3 | User center, feedback handling, admin permission hardening | Not started |
 
 ## Tech stack
