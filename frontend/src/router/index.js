@@ -1,10 +1,14 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { TOKEN_KEY } from '@/api/http'
 import SiteLayout from '@/layouts/SiteLayout.vue'
 
 /**
- * 前台路由。全部匿名可访问，登录只影响「下载」这个动作，
- * 所以这里不写任何全局跳转守卫——守卫会把匿名用户挡在首页外面。
- * 管理后台会在阶段 3 以独立布局挂在 /admin 下，单独加守卫。
+ * 前台路由。
+ *
+ * 导航只有两项：首页 / 软件（D076）。扩展是 HundunDesktop 特有的能力，
+ * 没有站点级入口——列表在详情页的 #extensions 分区（D074），
+ * 这里只挂扩展的二级页（F07–F09）与用户页（F11）。
+ * 管理后台会在 M1 以独立布局挂在 /admin 下，单独加守卫。
  */
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -24,24 +28,56 @@ const router = createRouter({
           name: 'software-detail',
           component: () => import('@/views/site/SoftwarePage.vue'),
         },
+        // 扩展列表就是详情页的 #extensions 分区，老链接落回锚点
         {
-          path: 'plugins',
-          name: 'plugins',
-          component: () => import('@/views/site/PluginsPage.vue'),
+          path: 'software/:slug/extensions',
+          redirect: (to) => ({ name: 'software-detail', params: to.params, hash: '#extensions' }),
+        },
+        {
+          path: 'software/:slug/extensions/submit',
+          name: 'extension-submit',
+          component: () => import('@/views/site/ExtensionSubmitPage.vue'),
+          props: true,
+        },
+        {
+          path: 'software/:slug/extensions/:id',
+          name: 'extension-detail',
+          component: () => import('@/views/site/ExtensionPage.vue'),
+          props: true,
+        },
+        {
+          path: 'user/info',
+          name: 'user-info',
+          component: () => import('@/views/site/UserInfoPage.vue'),
         },
         { path: 'login', name: 'login', component: () => import('@/views/site/LoginPage.vue') },
       ],
     },
+    // 「插件」页已被 D074 废弃、并进软件详情的扩展分区；
+    // 旧链接与桌面端 COMMUNITY_URL（Q009）都落回 HundunDesktop 的扩展分区，不留死链
+    { path: '/plugins', redirect: '/software/hundundesktop#extensions' },
     { path: '/:pathMatch(.*)*', redirect: '/' },
   ],
   scrollBehavior(to, from, savedPosition) {
-    return savedPosition || { top: 0 }
+    if (savedPosition) return savedPosition
+    if (to.hash) {
+      // 页头是固定定位的（68px 高），锚点目标上移一截，别藏在页头后面
+      return { el: to.hash, top: 84, behavior: 'smooth' }
+    }
+    return { top: 0 }
   },
 })
 
+// /user/** 需要登录；记住来源，登录成功后回跳（§3.2）
+router.beforeEach((to) => {
+  if (to.path.startsWith('/user') && !localStorage.getItem(TOKEN_KEY)) {
+    return { name: 'login', query: { redirect: to.fullPath } }
+  }
+})
+
 router.afterEach((to) => {
-  // 详情页拿到数据后会自己覆盖标题，这里只处理静态页
-  if (to.name !== 'software-detail') {
+  // 详情页与扩展详情拿到数据后会自己覆盖标题，这里只处理静态页
+  if (to.name !== 'software-detail' && to.name !== 'extension-detail') {
     document.title = 'Hundun Lab'
   }
 })

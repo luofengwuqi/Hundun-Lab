@@ -9,6 +9,11 @@
 
 ### 新增
 
+- 2026-11-06 M0c④ 扩展前端（F07/F08）：`components/ExtensionSection.vue`（软件详情页 `#extensions` 分区，精选 ≤6、计 0 不渲染、失败分区内重试）与 `views/site/ExtensionPage.vue`（面包屑回锚点、版本历史、README、permissions 原样、SHA256 前 12 位；官方徽章与社区风险提示按 Q007 切换）；`api/extension.js` 以 M0 假数据提供与 schema 对齐的 6 个扩展（D083），M2 只换实现层
+- 2026-11-06 M0c④ 扩展提交（F09）：`views/site/ExtensionSubmitPage.vue` 落地 4 项礼貌预检（≤20MB / zip 魔数 / manifest 存在 / id 合法，D051/D052），zip 走手写中央目录解析 + `DecompressionStream('deflate-raw')`，manifest 内容自动预填表单；提交按钮明确提示「M2 开放」，不假装成功
+- 2026-11-06 M0c④ 用户页（F11）：`views/site/UserInfoPage.vue` 只读基本资料 + 我的扩展空态引导（不直连上传页，按 D074 回软件详情页）
+- 2026-11-06 新增路由 `/software/:slug/extensions/submit|:id` 与 `/user/info`（F08/F09/F11 路由表落地），`scrollBehavior` 支持锚点（页头 68px 固定所以上移 84px）；`beforeEach` 守卫 `/user/**` 未登录跳登录并带 `redirect` 回跳
+- 2026-11-06 i18n 新增 `extension` / `extSubmit` / `user` 文案块与 `errors.EXTENSION_NOT_FOUND`；中英键表同步
 - 2026-11-05 新增 `composables/useTheme.js` 与 `components/ThemeToggle.vue`：浅/深切换写 `hundunlab.theme`，同步 `<html data-theme>` 与 `color-scheme`（原生滚动条、表单控件一起换）；页头常驻，窄屏也不收
 - 2026-11-05 新增 `frontend/src/styles/{tokens,base,components}.css` 三层：`tokens.css` 是全站唯一色值出处，同时提供浅色与 `[data-theme="dark"]` 两套令牌（含物料层 `--hd-*` 与「实物」组 `--hd-cart-*` / `--obj-console-*`）
 - 2026-11-05 新增语义令牌：`--accent-text`（浅=主色/深=白）、`--accent-soft`、`--on-accent`、`--teal-text`、`--chip-on-{bg,ink,border}`、`--btn-primary-*`、`--tag-*`（含 `--tag-{red,teal}-{bg,ink,border}`）、`--line-soft`/`--line-faint`/`--dot`/`--scan`、`--shadow-pixel-{xs,sm,lg}`
@@ -19,6 +24,8 @@
 
 ### 变更
 
+- 2026-11-06 M0c④ 撤 `/plugins`（D074/D076）：导航收为两项（首页 / 软件），首页 hero 次按钮改指 `/software/hundundesktop#extensions`；`/plugins` 重定向回该锚点（Q009 的 301 兜底，桌面端 `COMMUNITY_URL` 切换前的落点）
+- 2026-11-06 F07 展示口径修正：初始只露出精选扩展（≤6），非精选的进「查看全部」内联展开（每页 12），与 PRD F07 一致（此前实现会把非精选直接平铺）
 - 2026-11-05 M0c③ 换肤：`assets/css/site.css` 与 `assets/css/base.css` 拆成 `styles/{tokens,base,components}.css` 后删除（`main.js` 按新顺序引入），余下 72 处色值字面量全部收进令牌；`check-color` 基线归零，两个质量脚本进入严格模式
 - 2026-11-05 深色主题在前端正式落地（D087）：状态件拆成 `bg/ink/border` 三个令牌，深色下由令牌整组换成「绿描边 + 白字 + ≤12% 绿底」，组件里不写 `[data-theme]` 判断；硬投影 `--shadow-pixel*` 在深色改绿光晕（原来固定 `var(--ink)`，会变成白投影）
 - 2026-11-05 「实物」单独成组：卡带与首页掌机不随主题漂绿，深色下只换卡内文字墨色（`--hd-cart-ink` 系）与掌机塑料底色一档；`.hd-cart` 内的平台标签与角标改用 `--hd-cart-tag-*`，否则深色的白字会压在米纸上
@@ -34,6 +41,8 @@
 
 ### 修复
 
+- 2026-11-06 修复扩展二级页路由没配 `props: true`，`slug`/`id` 传不进页面组件、详情页恒 404 的问题（`extension-detail` 与 `extension-submit` 两条路由）
+- 2026-11-06 修复 `ExtensionSubmitPage` 漏 `import FormField`——未注册组件被渲染成空的自定义元素，提交表单整体不可见（Playwright 实测暴露）
 - 2026-11-05 修复深色下卡片内平台标签/角标不可读：`.hd-cart__tags .hd-tag` 与 `.hd-cart__badge` 收回卡带自己的色（白字压米纸的问题与原型 `.cart` 是同一个坑）
 - 2026-11-05 深色主题修复：13 处 `rgba(195, 39, 43, ·)` / 3 处 `rgba(29, 22, 19, ·)` 字面量改为 `color-mix(var(--red|--ink))`，否则深色下是看不见的暗红边；06 上传区底色字面量同样令牌化；卡带（`.cart`）在深色下就地重声明一套浅色令牌，避免卡内文字被全局白字吞掉
 - 2026-11-05 02 列表页删掉「已下架」演示卡（违反 F03 只展示 `status = 1`）、平台标签由 macOS 对齐为 Linux、HundunDesktop 卡补「有扩展」标记（Q008）、卡片数与「N 款软件」对齐为 5
@@ -41,11 +50,13 @@
 
 ### 移除
 
+- 2026-11-06 删除 `views/site/PluginsPage.vue`（旧 `/plugins` 占位页，D074 废弃站点级入口；路由改为重定向）
 - 2026-11-05 M0c① 删旧层：`views/{admin,user,login,help}` 27 文件 / 7,252 行、`api/{user,admin,feedback,article}.js`、`stores/{user,article,feedback}.js`、`utils/`（含旧 `request.js`）、`assets/img/` 13 张旧图 1.4MB；依赖移除 `element-plus`、`@element-plus/icons-vue`、`less`、`marked`（构建产物逐字节未变，确认均为死代码）
 - 2026-11-05 `HdCart` 不再内置中文字面量：`downloadsLabel` 默认值置空、新增 `detailLabel` prop，文案由 `SoftwareCard` 传 `t('home.downloads')` / `t('home.viewDetail')`；语言自称移入 `i18n` 的 `LOCALE_LABELS`
 
 ### 文档
 
+- 2026-11-06 M0c④ 收尾：`00-CONTEXT` 标记四步全完成；台账新增 **O14**（Vue 前台版式向 M0b 原型迁移，`HomePage` 仍是旧版）；本文件补 M0c④ 各条
 - 2026-11-05 O13 登记：浅色 `--ink-faint` 压纸底实测 2.96:1，低于 AA 小字 4.5:1（深色 4.93:1 无问题），是否加深留作者裁
 - 2026-11-05 D041／D057／D087 各补一条「落地注」：令牌从物料库搬进 `styles/tokens.css`、层级顺序、状态件拆三令牌与「实物」不换肤的口径
 - 2026-11-05 `docs/design/kit/index.html` 补引 `tokens.css`（物料库自身已不含色值）

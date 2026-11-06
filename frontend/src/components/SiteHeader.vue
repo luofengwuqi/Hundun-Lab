@@ -18,10 +18,10 @@ const session = useSessionStore()
  */
 const menuOpen = ref(false)
 
+// 主导航固定两项（D076）：扩展没有站点级入口，只能从软件详情页进
 const navItems = computed(() => [
   { to: '/', label: t('nav.home') },
   { to: '/software', label: t('nav.software') },
-  { to: '/plugins', label: t('nav.plugins') },
 ])
 
 function isActive(item) {

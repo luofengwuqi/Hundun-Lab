@@ -6,6 +6,7 @@ import { fetchSoftwareDetail, requestDownloadTicket } from '@/api/site'
 import { localized } from '@/i18n'
 import { useSessionStore } from '@/stores/session'
 import AuthDialog from '@/components/AuthDialog.vue'
+import ExtensionSection from '@/components/ExtensionSection.vue'
 
 const { t, te } = useI18n()
 const route = useRoute()
@@ -137,9 +138,11 @@ async function copyChecksum(text) {
   }
 }
 
-onMounted(() => load(route.params.slug))
+const slug = computed(() => String(route.params.slug || ''))
+
+onMounted(() => load(slug.value))
 watch(
-  () => route.params.slug,
+  () => slug.value,
   (slug) => {
     if (slug) load(slug)
   },
@@ -158,7 +161,7 @@ watch(
 
       <div v-else-if="failed" class="empty-state card">
         <p>{{ t('common.error') }}</p>
-        <button type="button" class="btn btn--sm" @click="load(route.params.slug)">
+        <button type="button" class="btn btn--sm" @click="load(slug)">
           {{ t('common.retry') }}
         </button>
       </div>
@@ -313,6 +316,9 @@ watch(
             </ul>
           </div>
         </section>
+
+        <!-- F07：扩展市场在详情页内，没有站点级入口（D074/D076） -->
+        <ExtensionSection v-if="detail" :slug="slug" />
       </template>
     </div>
 

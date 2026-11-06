@@ -63,7 +63,7 @@ onMounted(load)
             <RouterLink to="/software" class="btn btn--primary">{{
               t('home.heroPrimary')
             }}</RouterLink>
-            <RouterLink to="/plugins" class="btn btn--ghost">{{
+            <RouterLink to="/software/hundundesktop#extensions" class="btn btn--ghost">{{
               t('home.heroSecondary')
             }}</RouterLink>
           </div>

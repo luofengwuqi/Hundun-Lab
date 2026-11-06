@@ -8,21 +8,23 @@
 **只有 8 页**：01 按参考图重构、02/03 迁新版式并做完细节收口（页脚/术语/标记/间距四类）、
 原 04 插件列表并入 03 的扩展分区（D074）、深色主题已补齐（D082）并按 D087 改为「绿只做描边、文字用白」。
 管理后台（M1）、扩展闭环（M2）、桌面端对接（M3）均未开始，接口契约与数据模型已冻结。
-**M0c（落地 Vue）已开工**：O11 两个质量脚本补齐并接入 `lint`；「删 → 修 → 换肤 → 补」的
-**第①步「删」已完成**——旧层 27 文件 / 7,252 行与 element-plus、less、marked 全部下线，构建产物未变（证明是死代码）；
-**第②步「修」也已完成**——`FormField` 抽取、AuthDialog 的 ESC/焦点进出、SiteHeader 移动端抽屉、
-`index.html` 首屏主题脚本（防 FOUC），lint 补齐 prettier（D059）。
-**第③步「换肤」也已完成**——新建 `styles/tokens.css` / `base.css` / `components.css` 三层，`assets/css/{base,site}.css` 下线，
-余下 72 处色值字面量全部收进令牌（`check-color` 基线归零＝严格模式）；深色主题正式落到前端（`[data-theme="dark"]` 整套令牌 +
-D087 的「实心块降级为描边」），页头新增 `ThemeToggle`，两种主题各 5 条路由实测通过。
-**下一步是第④步「补」**：`/software/:slug/extensions/*` 路由与撤掉 `/plugins`、导航收为两项，之后进 M1 后台。
+**M0c（落地 Vue）四步「删 → 修 → 换肤 → 补」已全部完成**：
+①「删」旧层 27 文件 / 7,252 行下线；②「修」FormField/AuthDialog 焦点/移动端抽屉/防 FOUC；
+③「换肤」tokens 三层 + 深色主题 + ThemeToggle（check-color / check-i18n 双基线归零＝严格模式）；
+④「补」也已落地（2026-11-06）——`/software/:slug/extensions/submit|:id`、`/user/info` 三条路由 +
+`ExtensionSection`（F07：精选 ≤6、查看全部内联展开）+ `ExtensionPage`（F08：README/权限/风险提示/SHA256 前 12 位）+
+`ExtensionSubmitPage`（F09：4 项礼貌预检 + zip 中央目录解析 + manifest 预填，提交按钮明确提示 M2 开放）+
+`UserInfoPage`（F11 只读资料与我的扩展空态）；`/plugins` 删除并重定向回 `#extensions`（Q009 兜底），
+导航收两项（D076）。Firefox 双主题 38 项断言实测全过（含 /plugins 重定向、跨软件 404、预检、登录守卫）。
+**M0c 剩余一项挂账 O14**：Vue 前台的首页等版式仍是旧版（早于原型 01 重设计），需向 M0b 原型迁移。
+**下一步是 M1 管理后台**（O01–O03 外部依赖解锁上线前完成即可）。
 
 **2026-11-05 模型变更**：插件被纠正为 **HundunDesktop 特有的扩展**，不是全站通用能力。
 数据层改称**扩展**（`extension`），`software_id` 必填；导航收为两项；路由改为
 `/software/:slug/extensions/*`。依据 D071–D086，这是本轮最需要先读的一段。
 
 **待答 0 题**（2026-11-05 G09 八问全部裁决：Q001–Q003、Q005–Q009 已答，完整记录见 `02` 台账各 Q 条目）。
-**挂账 13 项**（`O` 编号，其中 3 项阻塞里程碑；O09、O11 已关闭、O08/O12 已定案，O13 为 M0c③ 实测新发现）。
+**挂账 14 项**（`O` 编号，其中 3 项阻塞里程碑；O09、O11 已关闭、O08/O12 已定案，O13 为 M0c③ 实测新发现，O14 为 M0c④ 收尾项）。
 
 ---
 
