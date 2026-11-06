@@ -9,6 +9,10 @@
 
 ### 新增
 
+- 2026-11-06 后端扩展站点侧接口（M2 站点侧提前落地，D075 路径）：`module/extension` 新增 `GET /software/{slug}/extensions`（列表，featured DESC、download_count DESC，只含 status=1）、`GET /software/{slug}/extensions/{idOrSlug}`（详情含已发布版本；数字主键或 URL slug，跨软件 404/D072）、`GET /software/{slug}/extensions/{idOrSlug}/download`（302 到最新版预签名 URL + 匿名计数，OSS 未配置 503）；`ErrorCode` 新增 `EXTENSION_NOT_FOUND`；整个控制器 `@PublicApi`（extension_download 匿名可下口径），提交类接口将来单独开控制器
+- 2026-11-06 扩展种子数据 `db/03_seed_extension.sql`（D083：官方预置 + 演示社区扩展，与前台 M0 假数据同一批 6 个扩展 9 个版本）；`extension` 表补 `license`/`repo_url` 两列（01_schema 更新 + 存量库走 `db/10_extension_license_repo.sql` 增量）；`bundled` 不加列，由 `authorType=official` 推导
+- 2026-11-06 前端 `api/extension.js` 从 M0 假数据切到真接口（页面组件零改动）；扩展详情 README 改从 `readme_url` 拉取 Markdown 文本展示（M0 纯文本，M2 换渲染器；拉不到自动隐藏分区）；i18n 补齐后端已有而前端缺失的 6 个错误码（`USER_NOT_FOUND` / `USER_ALREADY_EXISTS` / `USER_EMAIL_CODE_*` / `USER_EMAIL_SEND_FAILED` / `CONFLICT`）
+- 2026-11-06 后端测试补 `src/test/resources/mockito-extensions/org.mockito.plugins.MockMaker = mock-maker-subclass`：受限 CI/沙盒不允许 byte-buddy 自附着（self-attach）时 inline maker 全量崩，subclass maker 无此依赖且对现有 23 个用例等效
 - 2026-11-06 M0c④ 扩展前端（F07/F08）：`components/ExtensionSection.vue`（软件详情页 `#extensions` 分区，精选 ≤6、计 0 不渲染、失败分区内重试）与 `views/site/ExtensionPage.vue`（面包屑回锚点、版本历史、README、permissions 原样、SHA256 前 12 位；官方徽章与社区风险提示按 Q007 切换）；`api/extension.js` 以 M0 假数据提供与 schema 对齐的 6 个扩展（D083），M2 只换实现层
 - 2026-11-06 M0c④ 扩展提交（F09）：`views/site/ExtensionSubmitPage.vue` 落地 4 项礼貌预检（≤20MB / zip 魔数 / manifest 存在 / id 合法，D051/D052），zip 走手写中央目录解析 + `DecompressionStream('deflate-raw')`，manifest 内容自动预填表单；提交按钮明确提示「M2 开放」，不假装成功
 - 2026-11-06 M0c④ 用户页（F11）：`views/site/UserInfoPage.vue` 只读基本资料 + 我的扩展空态引导（不直连上传页，按 D074 回软件详情页）
@@ -56,6 +60,7 @@
 
 ### 文档
 
+- 2026-11-06 接口文档修订（D071 后置）：§2 矩阵补扩展站点侧三接口；§5.2 改「M2 扩展社区」并标记已实现/设计态，旧 `/plugin/**` 设计稿作废；§4.5 注明命名 `PLUGIN_*` → `EXTENSION_*`；db/README 执行顺序补 03/10 脚本
 - 2026-11-06 M0c④ 收尾：`00-CONTEXT` 标记四步全完成；台账新增 **O14**（Vue 前台版式向 M0b 原型迁移，`HomePage` 仍是旧版）；本文件补 M0c④ 各条
 - 2026-11-05 O13 登记：浅色 `--ink-faint` 压纸底实测 2.96:1，低于 AA 小字 4.5:1（深色 4.93:1 无问题），是否加深留作者裁
 - 2026-11-05 D041／D057／D087 各补一条「落地注」：令牌从物料库搬进 `styles/tokens.css`、层级顺序、状态件拆三令牌与「实物」不换肤的口径

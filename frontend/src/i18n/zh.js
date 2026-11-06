@@ -187,5 +187,11 @@ export default {
     INTERNAL_ERROR: '服务器开小差了，请稍后再试。',
     SERVICE_UNAVAILABLE: '服务暂不可用。',
     USER_PASSWORD_WRONG: '用户名或密码不正确。',
+    USER_NOT_FOUND: '用户不存在。',
+    USER_ALREADY_EXISTS: '注册信息不可用，请更换后重试。',
+    USER_EMAIL_CODE_EXPIRED: '验证码已过期，请重新获取。',
+    USER_EMAIL_CODE_WRONG: '验证码不正确。',
+    USER_EMAIL_SEND_FAILED: '验证码发送失败，请稍后再试。',
+    CONFLICT: '资源冲突，请刷新后重试。',
   },
 }

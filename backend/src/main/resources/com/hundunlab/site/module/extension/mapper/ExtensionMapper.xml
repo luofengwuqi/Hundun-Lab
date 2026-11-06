@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hundunlab.site.module.extension.mapper.ExtensionMapper">
+
+    <sql id="extensionColumns">
+        e.id, e.software_id, e.plugin_id, e.slug, e.name_zh, e.name_en,
+        e.summary_zh, e.summary_en, e.author_type, e.author_name, e.author_user_id,
+        e.icon_url, e.theme_color, e.readme_url, e.permissions, e.platform,
+        e.license, e.repo_url, e.status, e.reject_reason, e.featured,
+        e.download_count, e.sort_order, e.created_at, e.updated_at
+    </sql>
+
+    <!-- 列表只认已上架扩展（F07-01），排序 featured DESC, download_count DESC -->
+    <select id="selectPublishedBySoftwareSlug"
+            resultType="com.hundunlab.site.module.extension.pojo.Entity.Extension">
+        SELECT <include refid="extensionColumns"/>
+        FROM extension e
+        INNER JOIN software s ON s.id = e.software_id AND s.status = 1
+        WHERE s.slug = #{slug}
+          AND e.status = 1
+        ORDER BY e.featured DESC, e.download_count DESC, e.sort_order ASC, e.id ASC
+    </select>
+
+    <!-- 详情：软件对不上即 404（D072 防跨软件串门）；数字主键与 slug 两个入口 -->
+    <select id="selectPublishedBySoftwareAndId"
+            resultType="com.hundunlab.site.module.extension.pojo.Entity.Extension">
+        SELECT <include refid="extensionColumns"/>
+        FROM extension e
+        WHERE e.software_id = #{softwareId}
+          AND e.status = 1
+          AND e.id = #{id}
+        LIMIT 1
+    </select>
+
+    <select id="selectPublishedBySoftwareAndSlug"
+            resultType="com.hundunlab.site.module.extension.pojo.Entity.Extension">
+        SELECT <include refid="extensionColumns"/>
+        FROM extension e
+        WHERE e.software_id = #{softwareId}
+          AND e.status = 1
+          AND e.slug = #{slug}
+        LIMIT 1
+    </select>
+
+    <select id="selectPublishedReleases"
+            resultType="com.hundunlab.site.module.extension.pojo.Entity.ExtensionRelease">
+        SELECT id, extension_id, version, changelog_zh, changelog_en, object_key,
+               file_size, sha256, status, download_count, published_at, created_at, updated_at
+        FROM extension_release
+        WHERE extension_id = #{extensionId}
+          AND status = 1
+        ORDER BY published_at DESC, id DESC
+    </select>
+
+    <select id="selectLatestPublishedRelease"
+            resultType="com.hundunlab.site.module.extension.pojo.Entity.ExtensionRelease">
+        SELECT id, extension_id, version, changelog_zh, changelog_en, object_key,
+               file_size, sha256, status, download_count, published_at, created_at, updated_at
+        FROM extension_release
+        WHERE extension_id = #{extensionId}
+          AND status = 1
+        ORDER BY published_at DESC, id DESC
+        LIMIT 1
+    </select>
+
+    <insert id="insertDownload">
+        INSERT INTO extension_download (extension_id, release_id, ip_hash, user_agent)
+        VALUES (#{extensionId}, #{releaseId}, #{ipHash}, #{userAgent})
+    </insert>
+
+</mapper>

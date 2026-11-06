@@ -190,5 +190,11 @@ export default {
     INTERNAL_ERROR: 'Something went wrong on our side.',
     SERVICE_UNAVAILABLE: 'Service unavailable.',
     USER_PASSWORD_WRONG: 'Incorrect username or password.',
+    USER_NOT_FOUND: 'This user does not exist.',
+    USER_ALREADY_EXISTS: 'That registration info is unavailable. Please try another.',
+    USER_EMAIL_CODE_EXPIRED: 'The code has expired. Please request a new one.',
+    USER_EMAIL_CODE_WRONG: 'The code is incorrect.',
+    USER_EMAIL_SEND_FAILED: 'Could not send the code. Please try again later.',
+    CONFLICT: 'Resource conflict. Please refresh and try again.',
   },
 }

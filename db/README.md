@@ -6,9 +6,10 @@
 mysql -u<user> -p -e "CREATE DATABASE hundun_lab CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;"
 mysql -u<user> -p hundun_lab < db/01_schema.sql
 mysql -u<user> -p hundun_lab < db/02_seed.sql
+mysql -u<user> -p hundun_lab < db/03_seed_extension.sql
 ```
 
-`01_schema.sql` 与 `02_seed.sql` 都做了幂等处理（`CREATE TABLE IF NOT EXISTS` / `INSERT IGNORE`），重复执行不会报错，也不会覆盖后台已编辑的内容。
+`01_schema.sql` 与 `02_seed.sql`、`03_seed_extension.sql` 都做了幂等处理（`CREATE TABLE IF NOT EXISTS` / `INSERT IGNORE`），重复执行不会报错，也不会覆盖后台已编辑的内容。存量库升级跑 `10_*.sql` 增量脚本。
 
 ## 文件约定
 
@@ -16,6 +17,7 @@ mysql -u<user> -p hundun_lab < db/02_seed.sql
 | --- | --- |
 | `01_schema.sql` | 全量基础结构，只含 DDL |
 | `02_seed.sql` | 初始内容数据（软件、功能特性、平台、首个版本） |
+| `03_seed_extension.sql` | 扩展种子（D083：官方扩展预置 + 演示社区扩展，与前台 M0 假数据同一批） |
 | `1x_*.sql` | 增量变更，按序号追加，可重复执行 |
 
 ## 硬规则

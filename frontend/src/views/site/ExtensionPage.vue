@@ -26,6 +26,7 @@ const failed = ref(false)
 const notFound = ref(false)
 const ext = ref(null)
 const softwareName = ref('')
+const readmeText = ref('')
 
 const name = computed(() => (ext.value ? localized(ext.value.nameZh, ext.value.nameEn) : ''))
 const summary = computed(() =>
@@ -34,6 +35,24 @@ const summary = computed(() =>
 const isOfficial = computed(() => ext.value?.authorType === 'official')
 const latestRelease = computed(() => ext.value?.releases?.[0] || null)
 const releases = computed(() => ext.value?.releases || [])
+
+/**
+ * README：后端只存对象键/URL（readme_url），前端拉 Markdown 文本展示；
+ * M0 纯文本 pre-wrap，M2 接渲染器。拉不到（OSS 未配 / 对象缺失）就藏分区，
+ * 不让详情页的其他内容陪葬。
+ */
+async function loadReadme(url) {
+  readmeText.value = ''
+  if (!url) return
+  try {
+    const res = await fetch(url)
+    if (res.ok) {
+      readmeText.value = await res.text()
+    }
+  } catch {
+    // README 属增强内容，失败静默
+  }
+}
 
 function formatDate(value) {
   return value ? String(value).slice(0, 10) : '—'
@@ -54,9 +73,11 @@ async function load() {
   failed.value = false
   notFound.value = false
   ext.value = null
+  readmeText.value = ''
   try {
     ext.value = await fetchExtensionDetail(props.slug, props.id)
     document.title = `${name.value} · Hundun Lab`
+    loadReadme(ext.value.readmeUrl)
   } catch (error) {
     if (error?.errorCode === 'EXTENSION_NOT_FOUND') {
       notFound.value = true
@@ -164,11 +185,11 @@ watch(() => [props.slug, props.id], load)
               </ul>
             </section>
 
-            <!-- README：M0 纯文本 pre-wrap，M2 接入 Markdown 渲染（readme_url） -->
-            <section v-if="ext.readmeZh || ext.readmeEn" class="block">
+            <!-- README：后端 readme_url 拉取的 Markdown 文本，M0 纯文本 pre-wrap，M2 接渲染器 -->
+            <section v-if="readmeText" class="block">
               <h2 class="ext-heading">{{ t('extension.readme') }}</h2>
               <div class="card readme">
-                <p class="prose">{{ localized(ext.readmeZh, ext.readmeEn) }}</p>
+                <p class="prose">{{ readmeText }}</p>
               </div>
             </section>
           </div>

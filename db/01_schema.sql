@@ -230,6 +230,8 @@ CREATE TABLE IF NOT EXISTS `extension` (
   `readme_url`      varchar(500) DEFAULT NULL COMMENT 'README 的 Markdown 对象键或 URL',
   `permissions`     varchar(255) DEFAULT NULL COMMENT 'manifest 权限，逗号分隔，原样展示',
   `platform`        varchar(32)  DEFAULT NULL COMMENT 'win32 / darwin / linux，逗号分隔',
+  `license`         varchar(64)  DEFAULT NULL COMMENT '开源许可证，如 MIT',
+  `repo_url`        varchar(255) DEFAULT NULL COMMENT '源码仓库；详情页「查看源码」用',
   `status`          tinyint      NOT NULL DEFAULT '0' COMMENT '0-待审 1-已上架 2-已驳回 3-已下架',
   `reject_reason`   varchar(500) DEFAULT NULL COMMENT '驳回原因，≤500 字',
   `featured`        tinyint      NOT NULL DEFAULT '0' COMMENT '1-在详情页精选区优先展示',
