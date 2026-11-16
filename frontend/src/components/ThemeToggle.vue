@@ -29,17 +29,18 @@ const { theme, toggleTheme } = useTheme()
 </template>
 
 <style scoped>
+/* 与原型 .icon-btn 对齐：46px 圆按钮、主色描边、透明底 */
 .theme-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 34px;
-  height: 34px;
+  width: 46px;
+  height: 46px;
   flex: none;
   padding: 0;
-  border: 2px solid var(--line);
+  border: 2px solid var(--red);
   border-radius: 999px;
-  background: var(--card);
+  background: transparent;
   color: var(--accent-text);
   cursor: pointer;
 }
@@ -49,7 +50,7 @@ const { theme, toggleTheme } = useTheme()
 }
 
 .theme-btn svg {
-  width: 17px;
-  height: 17px;
+  width: 20px;
+  height: 20px;
 }
 </style>

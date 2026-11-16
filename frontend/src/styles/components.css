@@ -140,6 +140,10 @@
 .page__main {
   flex: 1;
   padding-top: var(--header-h);
+  /* 一屏应用外壳：让页面自身可以用 flex 把剩余高度分给能长高的区块（M0b 原型） */
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
 .section {

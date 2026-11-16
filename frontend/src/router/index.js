@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { TOKEN_KEY } from '@/api/http'
+import { readToken } from '@/utils/token'
 import SiteLayout from '@/layouts/SiteLayout.vue'
 
 /**
@@ -9,6 +9,9 @@ import SiteLayout from '@/layouts/SiteLayout.vue'
  * 没有站点级入口——列表在详情页的 #extensions 分区（D074），
  * 这里只挂扩展的二级页（F07–F09）与用户页（F11）。
  * 管理后台会在 M1 以独立布局挂在 /admin 下，单独加守卫。
+ *
+ * 登录页不在 SiteLayout 里：原型 08-login.html 是独立的 100vh 满屏页，
+ * 刻意不带全站页头页脚，所以它挂在顶级路由上。
  */
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -50,9 +53,10 @@ const router = createRouter({
           name: 'user-info',
           component: () => import('@/views/site/UserInfoPage.vue'),
         },
-        { path: 'login', name: 'login', component: () => import('@/views/site/LoginPage.vue') },
       ],
     },
+    // 登录页：独立满屏布局，不套 SiteLayout（无全站页头页脚）
+    { path: '/login', name: 'login', component: () => import('@/views/site/LoginPage.vue') },
     // 「插件」页已被 D074 废弃、并进软件详情的扩展分区；
     // 旧链接与桌面端 COMMUNITY_URL（Q009）都落回 HundunDesktop 的扩展分区，不留死链
     { path: '/plugins', redirect: '/software/hundundesktop#extensions' },
@@ -61,8 +65,8 @@ const router = createRouter({
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) return savedPosition
     if (to.hash) {
-      // 页头是固定定位的（68px 高），锚点目标上移一截，别藏在页头后面
-      return { el: to.hash, top: 84, behavior: 'smooth' }
+      // 页头是固定定位的（90px 高），锚点目标上移一截，别藏在页头后面
+      return { el: to.hash, top: 106, behavior: 'smooth' }
     }
     return { top: 0 }
   },
@@ -70,7 +74,7 @@ const router = createRouter({
 
 // /user/** 需要登录；记住来源，登录成功后回跳（§3.2）
 router.beforeEach((to) => {
-  if (to.path.startsWith('/user') && !localStorage.getItem(TOKEN_KEY)) {
+  if (to.path.startsWith('/user') && !readToken()) {
     return { name: 'login', query: { redirect: to.fullPath } }
   }
 })

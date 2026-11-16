@@ -5,6 +5,17 @@
    层级顺序：tokens.css → base.css → components.css → hundun-kit.css
    ============================================================ */
 
+/* 像素标题字体：Fusion Pixel 12px（缝合像素字体），SIL OFL 1.1，可商用。
+   来自 docs/design/prototype/assets/fonts/，许可原文随字体一同复制到本目录。
+   设计网格是 12px，只在 12 的整数倍字号下锐利；字重固定 400，不要加粗。 */
+@font-face {
+  font-family: 'Fusion Pixel';
+  src: url('../assets/fonts/fusion-pixel-12px-sc.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* ---------- 重置 ---------- */
 
 * {
@@ -86,9 +97,13 @@ html {
 
 body {
   background-color: var(--paper);
-  /* 极淡的网点，模拟印刷网屏；不参与阅读，只在空白处提供质地 */
-  background-image: radial-gradient(var(--dot) 1px, transparent 1px);
-  background-size: 4px 4px;
+  /* 网点 + 扫描线两层纸感质地；不参与阅读，只在空白处提供质感（M0b 原型 01） */
+  background-image:
+    radial-gradient(var(--dot) 1px, transparent 1px),
+    repeating-linear-gradient(to bottom, var(--scan) 0 1px, transparent 1px 4px);
+  background-size:
+    4px 4px,
+    100% 4px;
   color: var(--ink);
   font-family: var(--font-ui);
   font-size: 16px;
@@ -99,8 +114,14 @@ body {
 }
 
 .container {
-  width: min(100% - 40px, var(--container));
+  width: min(var(--container), calc(100% - 96px));
   margin-inline: auto;
+}
+
+@media (max-width: 900px) {
+  .container {
+    width: min(var(--container), calc(100% - 40px));
+  }
 }
 
 /* ---------- 排版 ---------- */

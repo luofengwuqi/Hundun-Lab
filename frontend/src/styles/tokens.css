@@ -87,6 +87,8 @@
   --shadow-pixel: 4px 4px 0 var(--ink);
   --shadow-pixel-lg: 6px 6px 0 var(--ink);
   --shadow-soft: rgba(23, 19, 15, 0.18);
+  /* 登录卡这类「纸片」用暖红柔影，比纯墨黑的像素硬影更接近原型（08-login.html） */
+  --shadow-card: 6px 6px 0 rgba(150, 60, 40, 0.22);
 
   /* ---------- 3. 实物：首页 hero 与纯 CSS 掌机 ----------
      掌机是「画出来的物件」，零件色不随主题变（和卡带同理）；
@@ -171,8 +173,62 @@
   --hd-cart-off-slab: #c9c0b1;
   --hd-cart-off-shadow: #d9d0c2;
 
+  /* ---------- 4. 实物：首页扉页插画（M0b 原型 01） ----------
+     瓦片、积木与掌机是「画出来的物件」，不是界面色板（同 --obj-console-*）：
+     深色下不漂绿，只在 HomePage 用 filter 整体降一档亮度。
+     原型 01-home.html 里的内联 SVG 色值全部收敛到这里，页面只写 var()。 */
+  --obj-art-wood: #c3a279;
+  --obj-art-wood-line: #8f7150;
+  --obj-art-ink: #2f211b;
+  --obj-art-shell: #43302a;
+  --obj-art-screen: #b9c79a;
+  --obj-art-screen-a: #9fb27f;
+  --obj-art-screen-b: #6f8a4a;
+  --obj-art-red: #b5322c;
+  --obj-art-red-deep: #7d2621;
+  --obj-art-red-mid: #96302a;
+  --obj-art-red-light: #d9614f;
+  --obj-art-amber: #cf8a4a;
+  --obj-art-detail: #8b6d4c;
+  --obj-art-paper: #f6ecd8;
+  --obj-art-paper-2: #e6d7bb;
+  --obj-art-paper-3: #cdbb9c;
+  --obj-art-tan: #c9b48c;
+  --obj-art-tan-2: #dccaa6;
+  --obj-art-yellow: #e2bb5e;
+  --obj-art-yellow-2: #c99f3c;
+  --obj-art-yellow-3: #a87e28;
+  --obj-art-green: #6f8f6d;
+  --obj-art-green-2: #557a58;
+
+  /* 登录页背景贴纸：300×300 的手柄/卡带轮廓，棕褐 10% 描边（原型 08-login.html）。
+     深色下这块几乎不可见，不另做覆盖——它本来只是纸面上的暗纹。 */
+  --obj-login-texture: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300' viewBox='0 0 300 300'%3E%3Cg fill='none' stroke='%23c99a6e' stroke-opacity='0.10' stroke-width='1.5'%3E%3Crect x='28' y='34' width='24' height='32' rx='4'/%3E%3Crect x='34' y='42' width='12' height='11' rx='2'/%3E%3Crect x='150' y='60' width='28' height='17' rx='3'/%3E%3Crect x='150' y='83' width='28' height='17' rx='3'/%3E%3Crect x='60' y='150' width='34' height='24' rx='5'/%3E%3Ccircle cx='69' cy='161' r='4'/%3E%3Ccircle cx='85' cy='161' r='4'/%3E%3Crect x='170' y='168' width='20' height='20' rx='3'/%3E%3C/g%3E%3C/svg%3E");
+
+  /* ---------- 5. 派生透明层（原型 v3 首页的纸感阴影与描边） ----------
+     透明层一律走令牌，页面里不写 rgba 字面量（D080）。 */
+  --ink-a12: rgba(23, 19, 15, 0.12);
+  --ink-a14: rgba(23, 19, 15, 0.14);
+  --ink-a22: rgba(23, 19, 15, 0.22);
+  --ink-a28: rgba(23, 19, 15, 0.28);
+  --ink-a30: rgba(23, 19, 15, 0.3);
+  --sheen: rgba(255, 255, 255, 0.18);
+  --sheen-strong: rgba(255, 255, 255, 0.28);
+  --teal-a22: rgba(63, 107, 79, 0.22);
+  --amber-a22: rgba(217, 161, 59, 0.22);
+
+  /* 实验卡的图标底：浅色是实心色块，深色整组降级为描边（D087） */
+  --mini-green-bg: var(--teal);
+  --mini-green-ink: var(--on-teal);
+  --mini-green-line: var(--teal-a22);
+  --mini-amber-bg: var(--amber);
+  --mini-amber-ink: var(--ink);
+  --mini-amber-line: var(--amber-a22);
+
   /* ---------- 排版与尺度（不含颜色，主题无关） ---------- */
   --font-ui: 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  /* 扉页大标题专用：Fusion Pixel 12px，只在 12 的整数倍字号下锐利，字重固定 400 */
+  --font-display: 'Fusion Pixel', var(--font-ui);
   --font-mono:
     ui-monospace, SFMono-Regular, 'SF Mono', Consolas, 'Liberation Mono', Menlo, monospace;
   --hd-font-ui:
@@ -184,8 +240,9 @@
   --hd-radius-sm: 6px;
   --hd-border: 2px;
 
-  --header-h: 68px;
-  --container: 1120px;
+  /* 与 M0b 原型校准：版心 1312px、页头 90px */
+  --header-h: 90px;
+  --container: 1312px;
 }
 
 /* ============================================================
@@ -253,6 +310,7 @@
   --shadow-pixel: 4px 4px 0 rgba(0, 255, 136, 0.18);
   --shadow-pixel-lg: 6px 6px 0 rgba(0, 255, 136, 0.22);
   --shadow-soft: rgba(0, 255, 136, 0.16);
+  --shadow-card: 6px 6px 0 rgba(0, 255, 136, 0.18);
 
   /* hero 顶色压到比纸底更暗，避免大面积发光 */
   --hero-top: #0f0f0f;
@@ -314,4 +372,24 @@
   --hd-cart-tag-line: rgba(42, 36, 32, 0.35);
   --hd-cart-badge-bg: rgba(42, 36, 32, 0.12);
   --hd-cart-badge-line: rgba(42, 36, 32, 0.3);
+
+  /* 扉页插画是实物：色值一律不变，只在 HomePage 用 filter 降亮度 */
+  /* 纸感透明层在深底上不发光，改成稀薄绿光晕 */
+  --ink-a12: rgba(0, 255, 136, 0.08);
+  --ink-a14: rgba(0, 255, 136, 0.1);
+  --ink-a22: rgba(0, 255, 136, 0.16);
+  --ink-a28: rgba(0, 255, 136, 0.22);
+  --ink-a30: rgba(0, 255, 136, 0.24);
+  --sheen: rgba(0, 255, 136, 0.14);
+  --sheen-strong: rgba(0, 255, 136, 0.2);
+  --teal-a22: rgba(0, 255, 136, 0.2);
+  --amber-a22: rgba(255, 209, 102, 0.22);
+
+  /* 实验卡图标：实心色块降级为绿／黄描边 + 白字（D087） */
+  --mini-green-bg: transparent;
+  --mini-green-ink: var(--ink);
+  --mini-green-line: var(--red);
+  --mini-amber-bg: transparent;
+  --mini-amber-ink: var(--ink);
+  --mini-amber-line: var(--amber);
 }
