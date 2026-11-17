@@ -17,7 +17,7 @@ const repoUrl = 'https://github.com/luofengwuqi/Hundun-Lab'
         }}</a>
       </div>
       <div class="foot__right">
-        <span class="foot__slogan">{{ t('common.footerSlogan') }}</span>
+        <span class="foot__slogan">{{ t('common.slogan') }}</span>
         <span class="foot__squares" aria-hidden="true"><i></i><i></i><i></i></span>
       </div>
     </div>

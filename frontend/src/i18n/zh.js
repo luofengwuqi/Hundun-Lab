@@ -169,7 +169,6 @@ export default {
     methodEmailCode: '邮箱 + 验证码',
     methodEmailPassword: '邮箱 + 密码',
     methodNote: '四种方式都走已上线的登录接口；验证码发到账号绑定的邮箱。',
-    tagline: '把工具做成卡带',
     usernamePlaceholder: '请输入用户名',
     passwordPlaceholder: '请输入密码',
     phone: '手机号',
@@ -310,7 +309,8 @@ export default {
     error: '出了点问题。',
     empty: '暂无内容',
     footerBrand: '独立软件实验室',
-    footerSlogan: '保持好奇，继续创造。',
+    // 品牌口号：页脚与登录卡共用这一句，别在任何页面里另抄一份（D090/D091）
+    slogan: '保持好奇，继续创造。',
     footerSource: '源码',
   },
   // 后端只返回错误码，这里负责把它翻译成人话；缺 key 时前端会回落到通用文案

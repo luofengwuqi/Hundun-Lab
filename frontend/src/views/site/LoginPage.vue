@@ -262,7 +262,7 @@ async function submit() {
     <form class="login-card" @submit.prevent="submit">
       <span class="login-card__mark" aria-hidden="true"><BrandMark /></span>
       <div class="login-card__brand">HUNDUN<em>LAB</em></div>
-      <p class="login-card__tag">{{ t('auth.tagline') }}</p>
+      <p class="login-card__tag">{{ t('common.slogan') }}</p>
 
       <!-- 账号输入：用户名 / 手机号 / 邮箱共用一格，随方式切换 -->
       <div v-if="activeMethod === 'username'" class="input-icon">

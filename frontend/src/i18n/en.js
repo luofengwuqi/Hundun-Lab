@@ -172,7 +172,6 @@ export default {
     methodEmailCode: 'Email + code',
     methodEmailPassword: 'Email + password',
     methodNote: 'All four methods call live endpoints. Codes go to the email on your account.',
-    tagline: 'Tools, built like cartridges',
     usernamePlaceholder: 'Enter your username',
     passwordPlaceholder: 'Enter your password',
     phone: 'Phone',
@@ -313,7 +312,8 @@ export default {
     error: 'Something went wrong.',
     empty: 'Nothing here yet',
     footerBrand: 'Independent software studio',
-    footerSlogan: 'Stay curious, keep creating.',
+    // Brand motto: shared by the footer and the sign-in card — do not copy it elsewhere (D090/D091)
+    slogan: 'Stay curious, keep creating.',
     footerSource: 'Source',
   },
   errors: {
