@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { readToken } from '@/utils/token'
+import { readToken, clearSession, touchSession } from '@/utils/token'
 
 /**
  * 站点对外接口的统一出口。
@@ -11,8 +11,25 @@ import { readToken } from '@/utils/token'
  *
  * token 的存取统一走 @/utils/token：登录时选了「记住我」就落在 localStorage，
  * 没选就落在 sessionStorage，这里读的时候两种都认。
+ *
+ * 会话失效收口在这里：
+ * - 成功响应 → touchSession()，与后端 Redis 的滑动续期保持同一节奏；
+ * - 令牌类错误 → 清本地登录态并广播 AUTH_EXPIRED_EVENT，由 main.js 跳登录页。
+ *   （这里不直接 import router：router → views → api 会绕回来形成循环。）
  */
 export { TOKEN_KEY } from '@/utils/token'
+
+/** 登录态真的不能用了的错误码：令牌过期/无效，或账号被禁 */
+const SESSION_DEAD_CODES = new Set([
+  'AUTH_TOKEN_EXPIRED',
+  'AUTH_TOKEN_INVALID',
+  'AUTH_ACCOUNT_DISABLED',
+])
+
+/** 登录类接口自己的失败不代表会话失效，不能触发全局跳转 */
+const AUTH_ENDPOINT = /^\/user\/login\//
+
+export const AUTH_EXPIRED_EVENT = 'hundunlab:auth-expired'
 
 export class ApiError extends Error {
   constructor({ errorCode, message, status }) {
@@ -37,13 +54,27 @@ http.interceptors.request.use((config) => {
   return config
 })
 
+/**
+ * 令牌失效的统一处理：本地登录态已经不成立，别让页面继续装成登录中。
+ */
+function handleDeadSession(errorCode, url) {
+  if (!SESSION_DEAD_CODES.has(errorCode)) return
+  if (AUTH_ENDPOINT.test(url || '')) return
+  if (!readToken()) return
+  clearSession()
+  window.dispatchEvent(new CustomEvent(AUTH_EXPIRED_EVENT, { detail: { errorCode } }))
+}
+
 http.interceptors.response.use(
   (response) => {
     const body = response.data
     // 后端统一返回 { code, errorCode, message, data }
     if (body && (body.code === 200 || body.code === 0)) {
+      // 有请求就有活动，续上本地空闲计时（与后端滑动过期同步）
+      touchSession()
       return body.data
     }
+    handleDeadSession(body?.errorCode, response.config?.url)
     throw new ApiError({
       errorCode: body?.errorCode,
       message: body?.message,
@@ -53,6 +84,7 @@ http.interceptors.response.use(
   (error) => {
     const body = error.response?.data
     if (body && typeof body === 'object') {
+      handleDeadSession(body.errorCode, error.config?.url)
       throw new ApiError({
         errorCode: body.errorCode,
         message: body.message,

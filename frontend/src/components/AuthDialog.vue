@@ -2,6 +2,7 @@
 import { nextTick, onBeforeUnmount, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { loginWithPassword } from '@/api/site'
+import { authErrorKey } from '@/api/authError'
 import { useSessionStore } from '@/stores/session'
 import FormField from '@/components/FormField.vue'
 
@@ -61,22 +62,31 @@ function close() {
 
 async function submit() {
   if (submitting.value) return
-  if (!form.username.trim() || !form.password) {
-    errorKey.value = 'auth.failed'
+  // 先按后端 DTO 的限制拦一道：用户名 1–10 位、密码 6–20 位，
+  // 免得填错了走一趟网络，最后只拿到一句「请求参数有误」
+  const username = form.username.trim()
+  if (!username || !form.password) {
+    errorKey.value = 'auth.required'
+    return
+  }
+  if (username.length > 10) {
+    errorKey.value = 'auth.invalidUsername'
+    return
+  }
+  if (form.password.length < 6 || form.password.length > 20) {
+    errorKey.value = 'auth.invalidPassword'
     return
   }
   submitting.value = true
   errorKey.value = ''
   try {
-    const data = await loginWithPassword(form.username.trim(), form.password)
+    const data = await loginWithPassword(username, form.password)
     session.setSession(data.token, data.user)
     emit('success', data.user)
     close()
   } catch (error) {
-    // 后端只给错误码，这里翻成当前语言；没有对应文案时用登录失败的通用提示
-    const code = error?.errorCode
-    errorKey.value =
-      code && t(`errors.${code}`) !== `errors.${code}` ? `errors.${code}` : 'auth.failed'
+    // 错误码 → 文案的映射统一走 authErrorKey，登录页与弹窗同一套口径
+    errorKey.value = authErrorKey(error, 'password')
   } finally {
     submitting.value = false
   }

@@ -1,0 +1,220 @@
+/* ============================================================
+   管理端专属令牌（.admin-shell 作用域，D094）
+   ------------------------------------------------------------
+   来源：15-hundun 的后台视觉（gitee.com/luofengwuqi/15-hundun），
+   用户要求「样式完全复刻」。它的色值原本散在各组件的 less/style 里，
+   这里一次性收口，页面与组件只写 var(--adm-*)，与 D080「色值只住令牌文件」
+   同一条口径。文件名以 tokens.css 结尾，check-color 据此豁免。
+
+   为什么另开一套而不复用站点令牌：后台是另一套形态语言——大圆角卡片、
+   轻阴影、渐变菜单项，与公开站点的硬阴影＋像素风不一致。D089 已把两端
+   定为两个布局，视觉也允许分开；但主色同源（浅色 #C3272B、深色 #00FF88，
+   D078），不新造色相。
+
+   深色段是等效重绘，不是原项目所有（原项目只有浅色）：把米色纸卡换成
+   馄饨黑卡片、朱红换绿描边＋白字（D087 实心块降级规则）。
+   ============================================================ */
+
+.admin-shell {
+  /* ---------- 画布与卡片 ---------- */
+  /* 整页底：原项目是 body #fff，卡片才是米色，所以两层都保留 */
+  --adm-canvas: #ffffff;
+  /* 底图取自原项目（一张馄饨线稿平铺图，米底＋棕红线条），
+     只在浅色出现；深色下置 none，保持纯馄饨黑（用户要求「深色模式不动」）。
+     路径相对本文件，Vite 会把它打进 admin 那个懒加载 chunk。 */
+  --adm-canvas-image: url('../assets/img/admin/background.jpg');
+  --adm-surface: #fff8e8;
+  /* 表头／头像描边这类「比卡片深一档」的米色 */
+  --adm-surface-head: #ffefd5;
+  /* 详情页字段块：半透明米色，hover 加深 */
+  --adm-surface-soft: rgba(255, 239, 213, 0.5);
+  --adm-surface-soft-hover: rgba(255, 239, 213, 0.8);
+
+  /* ---------- 文字 ---------- */
+  --adm-ink: #333333;
+  --adm-ink-soft: #606266;
+  --adm-ink-faint: #999999;
+
+  /* ---------- 主色（浅色 = 朱红，与站点同源） ---------- */
+  --adm-primary: #c3272b;
+  --adm-primary-hover: #d64a4f;
+  /* 菜单激活渐变的两端：深一档压住标题，亮一档做 hover */
+  --adm-primary-deep: #b91f24;
+  --adm-primary-bright: #d63a3f;
+  --adm-on-primary: #ffffff;
+
+  /* 主色实心块（激活菜单、侧栏底部按钮、页码当前页）。
+     浅色就是朱红渐变；深色会换成淡绿底＋绿描边（D087），
+     所以凡是要「实心主色」的地方都用这一组，不要直接写 --adm-primary 当背景。 */
+  --adm-primary-block: linear-gradient(135deg, #c3272b 0%, #b91f24 100%);
+  --adm-primary-block-hover: linear-gradient(135deg, #d63a3f 0%, #c3272b 100%);
+  --adm-primary-block-ink: #ffffff;
+  --adm-primary-block-border: transparent;
+
+  /* ---------- 侧栏菜单项：渐变米条 ---------- */
+  --adm-nav-bg-from: #fff5eb;
+  --adm-nav-bg-to: #ffe8d0;
+  --adm-nav-bg-hover-to: #ffd9b3;
+  --adm-nav-ink: #5a4a42;
+  --adm-nav-glow: rgba(255, 255, 255, 0.6);
+  --adm-nav-shine: rgba(255, 255, 255, 0.3);
+
+  /* ---------- 阴影：原项目是「轻阴影＋大圆角」，与站点硬阴影区分 ---------- */
+  --adm-shadow-card: 0 2px 10px rgba(0, 0, 0, 0.1);
+  --adm-shadow-soft: 0 2px 12px 0 rgba(0, 0, 0, 0.05);
+  --adm-shadow-table: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  --adm-shadow-nav: 0 2px 8px rgba(255, 167, 103, 0.15);
+  --adm-shadow-nav-hover: 0 6px 16px rgba(255, 167, 103, 0.3);
+  --adm-shadow-primary: 0 4px 16px rgba(195, 39, 43, 0.45);
+  --adm-shadow-primary-hover: 0 8px 24px rgba(195, 39, 43, 0.6);
+
+  /* ---------- 圆角：后台比站点圆得多，这是两套形态的分界 ---------- */
+  --adm-radius-card: 20px;
+  --adm-radius-block: 8px;
+  --adm-radius-nav: 12px;
+  --adm-radius-pill: 20px;
+
+  /* ---------- 特例：超管那行的高亮 ---------- */
+  --adm-row-super-bg: #ecf5ff;
+  --adm-row-super-ink: #409eff;
+
+  /* ---------- Element Plus 主题变量映射 ---------- */
+  /* 只在本作用域覆盖，站点其余部分即使将来用 EP 也不会被带偏。
+     light-N / dark-2 是 EP 自己算的衍生色，必须成套给，否则按钮 hover 会回蓝。 */
+  --el-color-primary: var(--adm-primary);
+  --el-color-primary-light-3: #d15c60;
+  --el-color-primary-light-5: #e19395;
+  --el-color-primary-light-7: #eebdbe;
+  --el-color-primary-light-8: #f3d1d2;
+  --el-color-primary-light-9: #f9e5e5;
+  --el-color-primary-dark-2: var(--adm-primary-deep);
+  --el-color-success: #529b2e;
+  --el-color-success-light-9: #eef7e8;
+  --el-color-danger: var(--adm-primary);
+  --el-color-danger-light-9: #f9e5e5;
+  --el-color-warning: #b88230;
+  --el-color-warning-light-9: #fdf5e8;
+  --el-text-color-primary: var(--adm-ink);
+  --el-text-color-regular: var(--adm-ink-soft);
+  --el-text-color-secondary: var(--adm-ink-faint);
+  --el-border-color: #e4d9c6;
+  --el-border-color-light: #ece2d1;
+  --el-border-color-lighter: #f2eade;
+  --el-fill-color-blank: var(--adm-surface);
+  --el-fill-color-light: var(--adm-surface-head);
+  --el-fill-color-lighter: #fffbf3;
+  --el-bg-color: var(--adm-surface);
+  --el-bg-color-overlay: var(--adm-surface);
+  /* 输入框必须单独给：EP 在 :root 已经把 --el-input-bg-color 定成白色，
+     只改 --el-fill-color-blank 会被它顶掉，深色下就是一个白框戳在黑底上 */
+  --el-input-bg-color: #ffffff;
+  /* 分页按钮同理：.el-pagination 自己会把 --el-pagination-button-bg-color
+     重新定义成 var(--el-fill-color)，所以得从 --el-fill-color 下手 */
+  --el-fill-color: var(--adm-surface-head);
+  --el-disabled-bg-color: var(--adm-surface-head);
+  --el-pagination-bg-color: var(--adm-surface-head);
+  --el-pagination-button-bg-color: var(--adm-surface-head);
+  --el-pagination-button-disabled-bg-color: var(--adm-canvas);
+  --el-pagination-text-color: var(--adm-ink-soft);
+  --el-pagination-hover-color: var(--adm-primary);
+  --el-border-radius-base: 6px;
+  --el-font-family: inherit;
+}
+
+/* ---------- 深色：等效重绘（D087 实心块降级为描边＋白字） ---------- */
+[data-theme='dark'] .admin-shell {
+  --adm-canvas: #141414;
+  /* 深色不铺底图：线稿是米底，铺在馄饨黑上会变成一块亮斑 */
+  --adm-canvas-image: none;
+  --adm-surface: #1f1f1f;
+  --adm-surface-head: #262626;
+  --adm-surface-soft: rgba(255, 248, 232, 0.06);
+  --adm-surface-soft-hover: rgba(255, 248, 232, 0.1);
+
+  --adm-ink: #ffffff;
+  --adm-ink-soft: #c3cac6;
+  --adm-ink-faint: #7e8683;
+
+  /* 深色主色改绿（D078），实心块降级为淡绿底＋绿描边＋白字 */
+  --adm-primary: #00ff88;
+  --adm-primary-hover: #33ff9f;
+  --adm-primary-deep: #00cc6d;
+  --adm-primary-bright: #66ffb8;
+  --adm-on-primary: #ffffff;
+
+  --adm-primary-block: rgba(0, 255, 136, 0.12);
+  --adm-primary-block-hover: rgba(0, 255, 136, 0.2);
+  --adm-primary-block-ink: #ffffff;
+  --adm-primary-block-border: #00ff88;
+
+  --adm-nav-bg-from: #1f1f1f;
+  --adm-nav-bg-to: #262626;
+  --adm-nav-bg-hover-to: #2e2e2e;
+  --adm-nav-ink: #c3cac6;
+  --adm-nav-glow: rgba(0, 255, 136, 0.12);
+  --adm-nav-shine: rgba(0, 255, 136, 0.18);
+
+  /* 深色不投深影，靠描边分层 */
+  --adm-shadow-card: 0 0 0 1px rgba(0, 255, 136, 0.14);
+  --adm-shadow-soft: 0 0 0 1px rgba(0, 255, 136, 0.12);
+  --adm-shadow-table: 0 0 0 1px rgba(0, 255, 136, 0.14);
+  --adm-shadow-nav: 0 0 0 1px rgba(0, 255, 136, 0.1);
+  --adm-shadow-nav-hover: 0 0 0 1px rgba(0, 255, 136, 0.28);
+  --adm-shadow-primary: 0 0 0 1px rgba(0, 255, 136, 0.4);
+  --adm-shadow-primary-hover: 0 0 0 1px rgba(0, 255, 136, 0.65);
+
+  --adm-row-super-bg: rgba(0, 255, 136, 0.08);
+  --adm-row-super-ink: #ffffff;
+
+  --el-color-primary-light-3: #66ffb8;
+  --el-color-primary-light-5: #99ffcf;
+  --el-color-primary-light-7: rgba(0, 255, 136, 0.22);
+  --el-color-primary-light-8: rgba(0, 255, 136, 0.16);
+  --el-color-primary-light-9: rgba(0, 255, 136, 0.1);
+  --el-color-primary-dark-2: #00cc6d;
+  --el-color-success: #00ff88;
+  --el-color-success-light-9: rgba(0, 255, 136, 0.1);
+  --el-color-danger: #ff6b6b;
+  --el-color-danger-light-9: rgba(255, 107, 107, 0.12);
+  --el-color-warning: #ffd166;
+  --el-color-warning-light-9: rgba(255, 209, 102, 0.12);
+  --el-text-color-primary: var(--adm-ink);
+  --el-text-color-regular: var(--adm-ink-soft);
+  --el-text-color-secondary: var(--adm-ink-faint);
+  --el-text-color-placeholder: var(--adm-ink-faint);
+  --el-border-color: rgba(0, 255, 136, 0.22);
+  --el-border-color-light: rgba(0, 255, 136, 0.18);
+  --el-border-color-lighter: rgba(0, 255, 136, 0.12);
+  --el-fill-color-blank: var(--adm-surface);
+  --el-fill-color-light: var(--adm-surface-head);
+  --el-fill-color-lighter: #2a2a2a;
+  --el-bg-color: var(--adm-surface);
+  --el-bg-color-overlay: var(--adm-surface);
+  --el-input-bg-color: #121212;
+  --el-fill-color: var(--adm-surface-head);
+  --el-disabled-bg-color: var(--adm-canvas);
+  --el-pagination-bg-color: var(--adm-surface-head);
+  --el-pagination-button-bg-color: var(--adm-surface-head);
+  --el-pagination-button-disabled-bg-color: var(--adm-canvas);
+  --el-pagination-text-color: var(--adm-ink-soft);
+  --el-pagination-hover-color: var(--adm-primary);
+  --el-mask-color: rgba(0, 0, 0, 0.72);
+  --el-box-shadow-light: 0 0 0 1px rgba(0, 255, 136, 0.18);
+}
+
+/* ---------- 深色下把 EP 的实心主色按钮降级为描边（D087） ----------
+   只改变量，不重写 EP 的 CSS；:not(.is-plain) 是为了不误伤表格里
+   操作列那三个 plain 小按钮（它们本来就是描边的）。 */
+[data-theme='dark'] .admin-shell .el-button--primary:not(.is-plain) {
+  --el-button-bg-color: rgba(0, 255, 136, 0.12);
+  --el-button-border-color: #00ff88;
+  --el-button-text-color: #ffffff;
+  --el-button-hover-bg-color: rgba(0, 255, 136, 0.2);
+  --el-button-hover-border-color: #33ff9f;
+  --el-button-hover-text-color: #ffffff;
+  --el-button-active-bg-color: rgba(0, 255, 136, 0.26);
+  --el-button-active-border-color: #00ff88;
+  --el-button-disabled-bg-color: rgba(0, 255, 136, 0.06);
+  --el-button-disabled-border-color: rgba(0, 255, 136, 0.2);
+  --el-button-disabled-text-color: #7e8683;
+}

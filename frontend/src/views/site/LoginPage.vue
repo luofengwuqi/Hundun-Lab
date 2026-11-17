@@ -6,14 +6,24 @@
  * 版式：480px 登录卡相对视口垂直水平居中，登录方式栏作为伴栏贴在卡片左侧，
  * 语言／主题固定在视口右上角，版权行固定在视口底部正中。
  *
- * 只做后端真有的能力：目前只有「用户名 + 密码」这一条接口，
- * 其余三种方式与注册／找回密码保留版式位置但禁用，不假装能点。
+ * 四种方式全部可用，对着后端 LoginController 已上线的接口做，不摆样子：
+ * 用户名+密码 / 手机号+密码 / 邮箱+验证码 / 邮箱+密码。
+ * 前端校验照抄后端 DTO 的限制（用户名 1–10、密码 6–20、手机号 ^1[3-9]\d{9}$、
+ * 邮箱 @Email、验证码 6 位），不另立一套更严的规矩。
  * 「记住我」是真的：勾选存 localStorage，不勾存 sessionStorage（utils/token）。
+ * 注册与找回密码后端虽有接口，但没有对应版式，仍保留位置并禁用。
  */
-import { computed, reactive, ref, useId } from 'vue'
+import { computed, onBeforeUnmount, reactive, ref, useId } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { loginWithPassword } from '@/api/site'
+import {
+  loginWithPassword,
+  loginWithPhone,
+  loginWithEmailPassword,
+  loginWithEmailCode,
+  sendLoginEmailCode,
+} from '@/api/site'
+import { authErrorKey } from '@/api/authError'
 import { useSessionStore } from '@/stores/session'
 import { LOCALE_LABELS, setLocale } from '@/i18n'
 import BrandMark from '@/components/BrandMark.vue'
@@ -27,39 +37,146 @@ const session = useSessionStore()
 // 同一页可能出现多个输入框，label 的 for 必须指向唯一 id
 const usernameId = useId()
 const passwordId = useId()
+const phoneId = useId()
+const emailId = useId()
+const codeId = useId()
 
-const form = reactive({ username: '', password: '' })
+// 与后端 DTO 的约束一一对应（LoginUsernamePasswordRequestDTO / LoginPhonePasswordDTO /
+// LoginEmailPassWordDTO / LoginEmailCodeDTO），前端只做同样的事，不额外加码
+const USERNAME_MAX = 10
+const PASSWORD_MIN = 6
+const PASSWORD_MAX = 20
+const PHONE_RE = /^1[3-9]\d{9}$/
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const CODE_RE = /^\d{6}$/
+
+/** 验证码重发等待：后端限流 3 次/60 秒，前端统一按 60 秒一挡 */
+const RESEND_SECONDS = 60
+
+const form = reactive({ username: '', password: '', phone: '', email: '', code: '' })
+const activeMethod = ref('username')
 const remember = ref(true)
 const showPassword = ref(false)
 const submitting = ref(false)
 const errorKey = ref('')
+const noticeKey = ref('')
+const sendingCode = ref(false)
+const cooldown = ref(0)
+let cooldownTimer = null
 
 const methods = computed(() => [
-  { id: 'username', label: t('auth.methodUsername'), enabled: true },
-  { id: 'phone', label: t('auth.methodPhone'), enabled: false },
-  { id: 'email-code', label: t('auth.methodEmailCode'), enabled: false },
-  { id: 'email-password', label: t('auth.methodEmailPassword'), enabled: false },
+  { id: 'username', label: t('auth.methodUsername') },
+  { id: 'phone', label: t('auth.methodPhone') },
+  { id: 'email-code', label: t('auth.methodEmailCode') },
+  { id: 'email-password', label: t('auth.methodEmailPassword') },
 ])
+
+const needsPassword = computed(() => activeMethod.value !== 'email-code')
+
+onBeforeUnmount(() => {
+  if (cooldownTimer) clearInterval(cooldownTimer)
+})
+
+function pickMethod(id) {
+  if (activeMethod.value === id) return
+  activeMethod.value = id
+  errorKey.value = ''
+  noticeKey.value = ''
+  showPassword.value = false
+}
+
+/** 按当前方式校验，返回 i18n 键；空串表示通过 */
+function validate() {
+  const method = activeMethod.value
+
+  if (method === 'username') {
+    const name = form.username.trim()
+    if (!name) return 'auth.required'
+    if (name.length > USERNAME_MAX) return 'auth.invalidUsername'
+  } else if (method === 'phone') {
+    if (!PHONE_RE.test(form.phone.trim())) return 'auth.invalidPhone'
+  } else if (!EMAIL_RE.test(form.email.trim())) {
+    return 'auth.invalidEmail'
+  }
+
+  if (method === 'email-code') {
+    if (!CODE_RE.test(form.code.trim())) return 'auth.invalidCode'
+    return ''
+  }
+
+  if (!form.password) return 'auth.required'
+  if (form.password.length < PASSWORD_MIN || form.password.length > PASSWORD_MAX) {
+    return 'auth.invalidPassword'
+  }
+  return ''
+}
+
+function requestLogin() {
+  switch (activeMethod.value) {
+    case 'phone':
+      return loginWithPhone(form.phone.trim(), form.password)
+    case 'email-code':
+      return loginWithEmailCode(form.email.trim(), form.code.trim())
+    case 'email-password':
+      return loginWithEmailPassword(form.email.trim(), form.password)
+    default:
+      return loginWithPassword(form.username.trim(), form.password)
+  }
+}
+
+async function sendCode() {
+  if (sendingCode.value || cooldown.value > 0) return
+  const email = form.email.trim()
+  if (!EMAIL_RE.test(email)) {
+    errorKey.value = 'auth.invalidEmail'
+    return
+  }
+  sendingCode.value = true
+  errorKey.value = ''
+  noticeKey.value = ''
+  try {
+    await sendLoginEmailCode(email)
+    noticeKey.value = 'auth.codeSent'
+    cooldown.value = RESEND_SECONDS
+    cooldownTimer = setInterval(() => {
+      cooldown.value -= 1
+      if (cooldown.value <= 0) {
+        clearInterval(cooldownTimer)
+        cooldownTimer = null
+      }
+    }, 1000)
+  } catch (error) {
+    errorKey.value = authErrorKey(error, 'code')
+  } finally {
+    sendingCode.value = false
+  }
+}
 
 async function submit() {
   if (submitting.value) return
-  if (!form.username.trim() || !form.password) {
-    errorKey.value = 'auth.failed'
+
+  const invalid = validate()
+  if (invalid) {
+    errorKey.value = invalid
     return
   }
+
   submitting.value = true
   errorKey.value = ''
+  noticeKey.value = ''
   try {
-    const data = await loginWithPassword(form.username.trim(), form.password)
+    const data = await requestLogin()
     session.setSession(data.token, data.user, remember.value)
-    // 回到来源页；直接打开登录页时回首页
-    const redirect = typeof route.query.redirect === 'string' ? route.query.redirect : '/'
-    router.replace(redirect)
+    // 落点按角色分流（D089）：管理员/超管默认进后台，普通用户回首页。
+    // 带 redirect 时尊重来源——可能是 /admin/software，也可能是 /user/info，
+    // 具体能不能进由路由守卫再判一次。
+    const redirect = typeof route.query.redirect === 'string' ? route.query.redirect : ''
+    const isAdmin = Number(data.user?.status ?? 0) >= 2
+    router.replace(redirect || (isAdmin ? '/admin' : '/'))
   } catch (error) {
-    // 后端只给错误码，这里翻成当前语言；没有对应文案时用通用登录失败
-    const code = error?.errorCode
-    errorKey.value =
-      code && t(`errors.${code}`) !== `errors.${code}` ? `errors.${code}` : 'auth.failed'
+    // 错误码 → 文案统一走 authErrorKey：后端把「密码错」「账号被禁」都收敛成
+    // AUTH_NOT_LOGGED_IN，直接翻会变成「请先登录」，而人本来就站在登录页上
+    errorKey.value = authErrorKey(error, activeMethod.value === 'email-code' ? 'code' : 'password')
   } finally {
     submitting.value = false
   }
@@ -97,9 +214,9 @@ async function submit() {
           <button
             type="button"
             class="login-tab"
-            :class="{ 'is-on': m.enabled }"
-            :disabled="!m.enabled"
-            :title="m.enabled ? m.label : t('auth.methodPending')"
+            :class="{ 'is-on': activeMethod === m.id }"
+            :aria-pressed="activeMethod === m.id"
+            @click="pickMethod(m.id)"
           >
             <svg
               v-if="m.id === 'username'"
@@ -147,7 +264,8 @@ async function submit() {
       <div class="login-card__brand">HUNDUN<em>LAB</em></div>
       <p class="login-card__tag">{{ t('auth.tagline') }}</p>
 
-      <div class="input-icon">
+      <!-- 账号输入：用户名 / 手机号 / 邮箱共用一格，随方式切换 -->
+      <div v-if="activeMethod === 'username'" class="input-icon">
         <svg
           viewBox="0 0 24 24"
           fill="none"
@@ -169,7 +287,53 @@ async function submit() {
         />
       </div>
 
-      <div class="input-icon">
+      <div v-else-if="activeMethod === 'phone'" class="input-icon">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          aria-hidden="true"
+        >
+          <rect x="7" y="3" width="10" height="18" rx="2" />
+          <path d="M11 18h2" />
+        </svg>
+        <label class="sr-only" :for="phoneId">{{ t('auth.phone') }}</label>
+        <input
+          :id="phoneId"
+          v-model="form.phone"
+          class="input"
+          type="tel"
+          inputmode="numeric"
+          autocomplete="tel"
+          :placeholder="t('auth.phonePlaceholder')"
+        />
+      </div>
+
+      <div v-else class="input-icon">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          aria-hidden="true"
+        >
+          <rect x="3" y="6" width="18" height="12" rx="2" />
+          <path d="m4 8 8 6 8-6" />
+        </svg>
+        <label class="sr-only" :for="emailId">{{ t('auth.email') }}</label>
+        <input
+          :id="emailId"
+          v-model="form.email"
+          class="input"
+          type="email"
+          autocomplete="email"
+          :placeholder="t('auth.emailPlaceholder')"
+        />
+      </div>
+
+      <!-- 密码：除邮箱验证码外的三种方式都要 -->
+      <div v-if="needsPassword" class="input-icon">
         <svg
           viewBox="0 0 24 24"
           fill="none"
@@ -209,6 +373,47 @@ async function submit() {
         </button>
       </div>
 
+      <!-- 验证码：邮箱 + 6 位数字，发送按钮自带 60 秒冷却 -->
+      <div v-else class="login-code">
+        <div class="input-icon">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            aria-hidden="true"
+          >
+            <path d="M4 7h16M4 12h16M4 17h10" />
+          </svg>
+          <label class="sr-only" :for="codeId">{{ t('auth.code') }}</label>
+          <input
+            :id="codeId"
+            v-model="form.code"
+            class="input"
+            type="text"
+            inputmode="numeric"
+            autocomplete="one-time-code"
+            maxlength="6"
+            :placeholder="t('auth.codePlaceholder')"
+          />
+        </div>
+        <button
+          type="button"
+          class="login-code__send"
+          :disabled="sendingCode || cooldown > 0"
+          @click="sendCode"
+        >
+          {{
+            cooldown > 0
+              ? t('auth.resendCode', { n: cooldown })
+              : sendingCode
+                ? t('auth.sendingCode')
+                : t('auth.sendCode')
+          }}
+        </button>
+      </div>
+
+      <p v-if="noticeKey" class="login-notice mono">{{ t(noticeKey) }}</p>
       <p v-if="errorKey" class="login-error mono" role="alert">{{ t(errorKey) }}</p>
 
       <div class="login-actions">
@@ -229,6 +434,8 @@ async function submit() {
           {{ t('auth.forgot') }}
         </button>
       </div>
+
+      <p class="login-note">{{ t('auth.idleNote') }}</p>
     </form>
 
     <p class="login-copy">{{ t('auth.copyright') }}</p>
@@ -297,6 +504,7 @@ async function submit() {
   font-weight: 700;
   line-height: 1.4;
   text-align: center;
+  cursor: pointer;
 }
 
 .login-tab svg {
@@ -310,22 +518,20 @@ async function submit() {
   color: var(--accent-text);
 }
 
-/* 当前唯一可用的方式：实心主色圆标（深色下按 D087 降级为淡绿底 + 白字） */
+/* 当前选中的方式：实心主色圆标（深色下按 D087 降级为淡绿底 + 白字） */
 .login-tab.is-on svg {
   background: var(--red);
   color: var(--paper);
   border-radius: 999px;
 }
 
-/* 未开放的方式：保留版式位置，但灰掉并说明，不假装可点 */
-.login-tab:disabled {
-  color: var(--ink-faint);
-  cursor: not-allowed;
+/* 未选中的方式描边变淡，但照样可点：四种方式后端都已上线 */
+.login-tab:not(.is-on) svg {
+  border-color: var(--line-soft);
 }
 
-.login-tab:disabled svg {
-  border-color: var(--line-soft);
-  color: var(--ink-faint);
+.login-tab:hover svg {
+  border-color: var(--red);
 }
 
 .login-side__note {
@@ -479,6 +685,46 @@ async function submit() {
   height: 22px;
 }
 
+/* 验证码一行：输入框吃掉剩余宽度，发送按钮贴右 */
+.login-code {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+}
+
+.login-code .input-icon {
+  margin-top: 0;
+}
+
+.login-code__send {
+  height: 56px;
+  padding: 0 16px;
+  border: 1.5px solid var(--red);
+  border-radius: 6px;
+  background: var(--card);
+  color: var(--accent-text);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.login-code__send:disabled {
+  border-color: var(--line-soft);
+  color: var(--ink-faint);
+  cursor: not-allowed;
+}
+
+.login-notice {
+  margin-top: 14px;
+  font-size: 12px;
+  color: var(--ink-soft);
+  text-align: left;
+}
+
 .login-error {
   margin-top: 14px;
   font-size: 12px;
@@ -587,6 +833,15 @@ async function submit() {
 .login-foot__link:disabled {
   color: var(--ink-faint);
   cursor: not-allowed;
+}
+
+/* 「记住我」不等于一直在线：后端 Redis 令牌 30 分钟滑动过期，这里如实写出来 */
+.login-note {
+  margin-top: 12px;
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--ink-faint);
+  text-align: left;
 }
 
 /* 版权行贴视口底部正中；留 44px 是为了避开本地 dev 时底部居中的 Vue DevTools 悬浮块 */
@@ -704,6 +959,10 @@ async function submit() {
   }
 
   .input-icon {
+    margin-top: 12px;
+  }
+
+  .login-code {
     margin-top: 12px;
   }
 

@@ -25,6 +25,10 @@ const navItems = computed(() => [
   { to: '/software', label: t('nav.software') },
 ])
 
+// 后台入口只给管理员看，放在用户区（不是主导航，D076 不受影响）：
+// 否则管理员从后台点「回到站点」后就再也走不回去了
+const canEnterAdmin = computed(() => Number(session.user?.status ?? 0) >= 2)
+
 function isActive(item) {
   if (item.to === '/') return route.path === '/'
   return route.path.startsWith(item.to)
@@ -124,6 +128,9 @@ async function handleLogout() {
 
         <template v-if="session.isLoggedIn">
           <span class="whoami mono">{{ session.displayName }}</span>
+          <RouterLink v-if="canEnterAdmin" to="/admin" class="btn btn--ghost btn--sm">
+            {{ t('nav.admin') }}
+          </RouterLink>
           <button type="button" class="btn btn--ghost btn--sm" @click="handleLogout">
             {{ t('nav.logout') }}
           </button>
@@ -170,6 +177,9 @@ async function handleLogout() {
           </button>
         </div>
 
+        <RouterLink v-if="canEnterAdmin" to="/admin" class="btn btn--ghost btn--sm">
+          {{ t('nav.admin') }}
+        </RouterLink>
         <button
           v-if="session.isLoggedIn"
           type="button"

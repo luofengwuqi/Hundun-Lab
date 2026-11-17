@@ -466,12 +466,29 @@ onMounted(load)
 </template>
 
 <style scoped>
-/* 一屏应用外壳：首页吃掉头部与页脚之间的全部高度，多出来的给 hero */
+/* 一屏应用外壳：首页吃掉头部与页脚之间的全部高度，多出来的给 hero。
+   下面这批尺寸令牌是「一屏」的关键：上限保持 1024 视口下的设计值（84px 标题 /
+   372px 插画 / 320px 主卡…），往下按 vh 等比收，矮屏（900、768）才不会把
+   页脚顶出视口。改版式时优先动令牌，别在具体选择器里写死像素。 */
 .home {
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
   min-height: 0;
+
+  /* 基准：每个令牌都是过两点的一次函数 —— 1024 高视口下等于设计值，768 高时收到压缩值，
+     两者之间线性过渡。所以 1024 及以上版式与设计稿逐像素一致，矮屏才向内收。 */
+  --home-title: clamp(58px, calc(10.16vh - 20px), 84px);
+  --home-title-en: clamp(50px, calc(8.59vh - 16px), 72px);
+  --home-art: clamp(190px, calc(61.33vh - 256px), 372px);
+  --home-lead-size: clamp(16px, calc(1.17vh + 7px), 19px);
+  --home-gap-lg: clamp(12px, calc(4.69vh - 24px), 24px);
+  --home-gap-md: clamp(12px, calc(3.9vh - 18px), 22px);
+  --home-gap-sm: clamp(10px, calc(2.34vh - 8px), 16px);
+  --home-hero-pad: clamp(12px, calc(4.69vh - 24px), 24px);
+  --home-heading: clamp(26px, calc(5.47vh - 12px), 44px);
+  --home-card-min: clamp(200px, calc(46.88vh - 160px), 320px);
+  --home-caption: clamp(12px, 1.56vh, 16px);
 }
 
 .hero {
@@ -480,12 +497,13 @@ onMounted(load)
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
   align-items: center;
   gap: 16px;
-  padding: 24px 0 12px;
+  padding: var(--home-hero-pad) 0 clamp(6px, 1.17vh, 12px);
+  min-height: 0;
 }
 
 .hero__title {
   margin: 0;
-  font-size: 84px;
+  font-size: var(--home-title);
   line-height: 1.03;
   font-weight: 900;
   letter-spacing: 0.01em;
@@ -498,7 +516,7 @@ onMounted(load)
 }
 
 .home--en .hero__title {
-  font-size: 72px;
+  font-size: var(--home-title-en);
 }
 
 .hero__dot {
@@ -511,9 +529,9 @@ onMounted(load)
 }
 
 .hero__lead {
-  margin: 24px 0 0;
-  font-size: 19px;
-  line-height: 2.05;
+  margin: var(--home-gap-lg) 0 0;
+  font-size: var(--home-lead-size);
+  line-height: 1.95;
   color: var(--ink-soft);
 }
 
@@ -526,7 +544,7 @@ onMounted(load)
   display: flex;
   align-items: center;
   gap: 34px;
-  margin-top: 24px;
+  margin-top: var(--home-gap-lg);
 }
 
 .hero__link {
@@ -542,7 +560,7 @@ onMounted(load)
 /* 原型 01 的按钮：52px 高、3px 圆角、主色描边，不做全站像素硬阴影 */
 .hero__actions .btn,
 .product .btn {
-  height: 52px;
+  height: clamp(44px, 5.08vh, 52px);
   padding: 0 26px;
   border-color: var(--red);
   border-radius: 3px;
@@ -571,20 +589,21 @@ onMounted(load)
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  min-height: 0;
 }
 
 .hero__art svg {
   display: block;
   width: auto;
-  height: 372px;
+  height: var(--home-art);
   max-width: 100%;
 }
 
 .hero__art figcaption {
   align-self: stretch;
-  margin-top: 8px;
+  margin-top: clamp(4px, 0.78vh, 8px);
   text-align: center;
-  font-size: 16px;
+  font-size: var(--home-caption);
   letter-spacing: 0.16em;
   color: var(--ink-soft);
 }
@@ -611,12 +630,12 @@ onMounted(load)
   align-items: flex-end;
   justify-content: space-between;
   gap: 20px;
-  padding-top: 26px;
+  padding-top: clamp(10px, 2.54vh, 26px);
 }
 
 .shelf__head h2 {
   margin: 0;
-  font-size: 44px;
+  font-size: var(--home-heading);
   line-height: 1.1;
   font-weight: 900;
   letter-spacing: 0.02em;
@@ -633,8 +652,8 @@ onMounted(load)
 .shelf__grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 0.4fr) minmax(0, 0.4fr);
-  gap: 44px;
-  margin-top: 22px;
+  gap: clamp(24px, 4.3vh, 44px);
+  margin-top: var(--home-gap-md);
   margin-bottom: 4px;
   align-items: stretch;
 }
@@ -645,8 +664,8 @@ onMounted(load)
   border: 1px solid var(--ink-a22);
   border-radius: 3px;
   box-shadow: 14px 16px 24px var(--ink-a14);
-  min-height: 320px;
-  padding: 30px 34px 28px;
+  min-height: var(--home-card-min);
+  padding: clamp(14px, 2.93vh, 30px) clamp(18px, 3.32vh, 34px) clamp(12px, 2.73vh, 28px);
 }
 
 .product__tape {
@@ -686,7 +705,7 @@ onMounted(load)
 
 .product h3 {
   margin: 8px 0 0;
-  font-size: 44px;
+  font-size: var(--home-heading);
   line-height: 1.05;
   font-weight: 900;
   letter-spacing: 0.005em;
@@ -694,8 +713,8 @@ onMounted(load)
 }
 
 .product p {
-  margin: 12px 0 0;
-  font-size: 16px;
+  margin: clamp(8px, 1.17vh, 12px) 0 0;
+  font-size: clamp(14px, 1.56vh, 16px);
   color: var(--ink-soft);
   max-width: 16em;
 }
@@ -703,12 +722,12 @@ onMounted(load)
 .product__tags {
   display: flex;
   gap: 8px;
-  margin-top: 16px;
+  margin-top: var(--home-gap-sm);
   flex-wrap: wrap;
 }
 
 .product__tags span {
-  padding: 4px 12px;
+  padding: clamp(2px, 0.39vh, 4px) 12px;
   border: 1px solid var(--ink-a30);
   border-radius: 2px;
   font-family: var(--font-mono);
@@ -719,7 +738,7 @@ onMounted(load)
 }
 
 .product .btn {
-  margin-top: 18px;
+  margin-top: clamp(12px, 1.76vh, 18px);
   padding: 13px 24px;
   font-size: 16px;
 }
@@ -728,7 +747,7 @@ onMounted(load)
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-top: 18px;
+  margin-top: clamp(12px, 1.76vh, 18px);
   min-height: 52px;
   font-size: 14px;
 }
@@ -743,7 +762,7 @@ onMounted(load)
   position: absolute;
   right: -22px;
   bottom: -10px;
-  width: 200px;
+  width: clamp(150px, 19.5vh, 200px);
   transform: rotate(-2deg);
   pointer-events: none;
   filter: drop-shadow(10px 14px 18px var(--ink-a28));
@@ -767,7 +786,7 @@ onMounted(load)
   border: 1px solid var(--ink-a22);
   border-radius: 3px;
   box-shadow: 10px 12px 20px var(--ink-a12);
-  padding: 24px 24px 22px;
+  padding: clamp(12px, 2.34vh, 24px) clamp(12px, 2.34vh, 24px) clamp(10px, 2.15vh, 22px);
 }
 
 .mini__bar {
@@ -790,8 +809,8 @@ onMounted(load)
 }
 
 .mini__icon {
-  width: 52px;
-  height: 52px;
+  width: clamp(44px, 5.08vh, 52px);
+  height: clamp(44px, 5.08vh, 52px);
   display: grid;
   place-items: center;
   border-radius: 3px;
@@ -812,7 +831,7 @@ onMounted(load)
 
 .mini__state {
   display: block;
-  margin-top: 26px;
+  margin-top: clamp(12px, 2.54vh, 26px);
   font-size: 13.5px;
   font-weight: 700;
   color: var(--accent-text);
@@ -821,16 +840,16 @@ onMounted(load)
 
 .mini h4 {
   margin: 10px 0 0;
-  font-size: 21px;
+  font-size: clamp(17px, 2.05vh, 21px);
   font-weight: 900;
   letter-spacing: 0.02em;
   color: var(--ink);
 }
 
 .mini p {
-  margin: 12px 0 0;
-  font-size: 14px;
-  line-height: 1.75;
+  margin: clamp(8px, 1.17vh, 12px) 0 0;
+  font-size: clamp(13px, 1.37vh, 14px);
+  line-height: 1.7;
   color: var(--ink-soft);
 }
 
