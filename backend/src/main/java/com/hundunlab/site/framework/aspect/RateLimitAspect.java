@@ -83,6 +83,8 @@ public class RateLimitAspect {
 
     //从入参中提取账号标识(用户名/邮箱/手机号) 只取第一个参数
     //注意:绝不使用 toString/含密码的字段做 key 密码不能进 redis
+    //公开接口想只按 IP 限流时:把 HttpServletRequest 放在第一个参数位(没有账号 getter,身份维度自然为空)
+    //参考 ExtensionController#download——slug 之类的路径变量放第一位会被当成账号标识,变成全局计数器
     private String resolveIdentity(Object[] args) {
         if (args == null || args.length == 0 || args[0] == null) {
             return null;

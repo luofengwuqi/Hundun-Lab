@@ -1,0 +1,43 @@
+# 生产环境配置。
+# 与 dev 的区别只有一点：本地默认值全部拿掉。生产不许「缺配置也能起」——
+# 每个连接项都必须由环境变量（或打进 classpath 的 application-secret.yml，
+# 该文件被 .gitignore 忽略）显式给出，缺失时由启动/连接失败把问题暴露出来，
+# 而不是带着错误默认值悄悄上线。这与 dev 侧「密码不提供默认口令」是同一哲学。
+#
+# 部署提醒：
+#   1. devtools 不用专门排除：java -jar 运行完全打包的应用时 Spring Boot 自动
+#      禁用 devtools；这里仍显式关掉 restart 做双保险（属性多写无害）。
+#   2. 同源部署（前端由同一域名下的 Nginx 直接提供）时 CORS_ALLOWED_ORIGINS
+#      留空即可——空列表等于拒绝一切跨域携带凭证请求，同源请求本就不走 CORS。
+#      只有前后端确实分域部署时才显式列出前端来源。
+#   3. 信任代理头（TRUST_PROXY_HEADERS=true）只在该服务直接暴露公网流量、
+#      前面没有任何可信反代时才保持 false；一经 Nginx 反代必须打开，否则
+#      限流会把所有用户算成同一个 IP（反代地址）。
+spring:
+  config:
+    import: optional:classpath:application-secret.yml
+  devtools:
+    restart:
+      enabled: false
+
+hundun-lab:
+  mysql:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${DB_URL:}
+    username: ${DB_USERNAME:}
+    password: ${DB_PASSWORD:}
+  alioss:
+    endpoint: ${OSS_ENDPOINT:}
+    bucket-name: ${OSS_BUCKET:}
+    domain: ${OSS_DOMAIN:}
+  redis:
+    host: ${REDIS_HOST:}
+    port: ${REDIS_PORT:}
+    password: ${REDIS_PASSWORD:}
+    database: ${REDIS_DATABASE:0}
+    timeout: ${REDIS_TIMEOUT:10}
+
+app:
+  cors:
+    # 生产默认空（拒绝一切跨域凭证请求）；dev 的 localhost 默认值不带到这里
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:}

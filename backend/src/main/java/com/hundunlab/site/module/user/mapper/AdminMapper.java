@@ -7,6 +7,7 @@ import com.hundunlab.site.module.user.pojo.DTO.GetLogsDTO;
 import com.hundunlab.site.module.user.pojo.DTO.UpdateUserDTO;
 import com.hundunlab.site.module.user.pojo.Entity.OperateLog;
 import com.hundunlab.site.module.user.pojo.Entity.User;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -30,6 +31,15 @@ public interface AdminMapper {
 
     @Select("select invite_code from users where invite_code = #{importantPassword}")
     String selectInvitePassword(String importantPassword);
+
+    /**
+     * 原子消费一枚邀请码：删除它对应的占位管理员行，返回影响行数。
+     * 1 = 这枚码归本次注册；0 = 不存在或刚被并发请求用掉。
+     * status 条件锁死 -2（占位态）：真管理员的 invite_code 恒为 NULL，不会误删。
+     */
+    @AutoLog(operateType = OperateTypeConstant.DELETE, moduleName = ModuleNameConstant.ADMIN)
+    @Delete("delete from users where invite_code = #{inviteCode} and status = -2")
+    int deleteInvitePlaceholder(String inviteCode);
 
     //我也不知道这里适不适合加自动填充注解(我觉得还是算了
     @AutoLog(operateType = OperateTypeConstant.SELECT, moduleName = ModuleNameConstant.ADMIN)

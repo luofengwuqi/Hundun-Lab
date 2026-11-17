@@ -18,6 +18,8 @@ mysql -u<user> -p hundun_lab < db/03_seed_extension.sql
 | `01_schema.sql` | 全量基础结构，只含 DDL |
 | `02_seed.sql` | 初始内容数据（软件、功能特性、平台、首个版本） |
 | `03_seed_extension.sql` | 扩展种子（D083：官方扩展预置 + 演示社区扩展，与前台 M0 假数据同一批） |
+| `10_extension_license_repo.sql` | 增量：extension 补 `license` / `repo_url` 两列 |
+| `11_invite_code_unique.sql` | 增量：`users.invite_code` 补唯一索引（邀请码原子消费的兜底防线） |
 | `1x_*.sql` | 增量变更，按序号追加，可重复执行 |
 
 ## 硬规则

@@ -137,7 +137,16 @@ public class AdminServiceImpl implements AdminService {
             throw new LoginException("你貌似没有被邀请 你干嘛啊??");
         }
         log.info("重要密码已校验通过");
-        //3 构造User并插入用户表
+        //3 原子消费邀请码：靠 DELETE 的影响行数做互斥。
+        //   原流程是「先校验、插新管理员、最后才删占位行」，两个并发请求各持一枚
+        //   有效的码能各插一个管理员（占位行只够删一次）。现在把删除提前到插入之前：
+        //   并发的第二个事务会在这一行上拿到 0，直接失败回滚。
+        //   select 步骤只为了给出「没有这枚码」的报错口径，真正的凭证是这里的行数。
+        int consumed = am.deleteInvitePlaceholder(importantPassword);
+        if (consumed == 0) {
+            throw new LoginException("邀请码已被使用，请重新获取");
+        }
+        //4 构造User并插入用户表
         User u = new User();
         u.setUsername(dto.getUsername());
         u.setPasswordHash(PasswordUtil.addMi(dto.getPassword()));
@@ -147,21 +156,11 @@ public class AdminServiceImpl implements AdminService {
         u.setAvatarUrl(dto.getAvatarUrl());
         u.setLastLoginAt(LocalDateTime.now());
         um.insertUser(u);
-        //4 移除占位管理员（优先匹配新格式，兼容历史两字符后缀格式）
-        User tempUser = um.getUserByUserName(PENDING_ADMIN_PREFIX + importantPassword);
-        if (tempUser == null) {
-            tempUser = um.getUserByUserName(PENDING_ADMIN_PREFIX
-                    + importantPassword.substring(0, Math.min(2, importantPassword.length())));
-        }
-        if(tempUser == null){
-            log.warn("没有找到占位管理员,疑似出现命名碰撞,请手动处理");
-            return;
-        }
-        um.deleteUserById(tempUser.getId());
 
-        //Last 清除用户查询缓存
+        //Last 清除用户查询缓存。
+        //占位行从「注册最后一步」挪到「消费凭证」，它的 id 不再需要回查；
+        //占位用户从未登录过，不存在用户数据缓存，无需按 id 清。
         userRedisService.clearUsersCache();
-        userRedisService.clearUserdata(tempUser.getId());
 
 
 

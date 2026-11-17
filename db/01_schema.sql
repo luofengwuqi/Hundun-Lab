@@ -30,7 +30,10 @@ CREATE TABLE IF NOT EXISTS `users` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_username` (`username`),
   UNIQUE KEY `unique_email` (`email`),
-  UNIQUE KEY `unique_phone` (`phone`)
+  UNIQUE KEY `unique_phone` (`phone`),
+  -- 邀请码唯一：占位行的码全局唯一（普通用户为 NULL，允许多行 NULL）。
+  -- 代码侧靠 DELETE 影响行数原子消费邀请码，这是兜底防线（见 AdminServiceImpl#addAdmin）
+  UNIQUE KEY `unique_invite_code` (`invite_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='用户';
 
 -- ------------------------------------------------------------

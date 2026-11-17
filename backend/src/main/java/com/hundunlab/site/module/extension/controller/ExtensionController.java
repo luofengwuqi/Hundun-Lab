@@ -1,6 +1,7 @@
 package com.hundunlab.site.module.extension.controller;
 
 import com.hundunlab.site.common.anno.PublicApi;
+import com.hundunlab.site.common.anno.RateLimit;
 import com.hundunlab.site.common.response.Result;
 import com.hundunlab.site.module.extension.pojo.VO.ExtensionVO;
 import com.hundunlab.site.module.extension.service.ExtensionService;
@@ -53,11 +54,20 @@ public class ExtensionController {
 
     /**
      * 下载短链（F10）：302 到预签名 URL，浏览器/桌面端直接从 OSS 拉取，不经过应用服务器中转
+     * <p>
+     * 限流（仅 IP 维度，60 次/分钟）：这个接口匿名可下，且每次请求都会写一条
+     * {@code extension_download} 记录并自增下载计数，不设闸的话可以被人拿脚本把表灌爆。
+     * <p>
+     * 参数顺序是有意的：限流切面用 args[0] 提取账号维度，HttpServletRequest 没有账号
+     * getter，身份维度自然为空，只走 IP。若把 slug 放到第一个参数，切面会把「软件
+     * slug」当账号标识，变成同一软件全部下载共享一个全局计数器，会误伤真实流量。
+     * 调整本方法签名前先看 {@code RateLimitAspect#resolveIdentity}。
      */
+    @RateLimit(count = 60, time = 60, key = "ext:download")
     @GetMapping("/{idOrSlug}/download")
-    public ResponseEntity<Void> download(@PathVariable String slug,
-                                         @PathVariable String idOrSlug,
-                                         HttpServletRequest request) {
+    public ResponseEntity<Void> download(HttpServletRequest request,
+                                         @PathVariable String slug,
+                                         @PathVariable String idOrSlug) {
         String url = extensionService.issueDownloadUrl(slug, idOrSlug, request);
         return ResponseEntity.status(HttpStatus.FOUND)
                 .location(URI.create(url))
