@@ -1,8 +1,10 @@
-<img src="frontend/src/assets/img/common/biglogo.png" alt="Hundun Lab" width="320">
+<img src="docs/design/logo/png/lockup@2x.png" alt="Hundun Lab" width="320">
 
 # Hundun Lab
 
-The official site for the Hundun software family — project introductions, installer downloads, and a plugin community.
+The official site for the Hundun software family — project introductions, installer downloads, and extensions for each product.
+
+> **Stay curious, keep creating.** — the core idea behind Hundun Lab (D090, D091).
 
 [![JDK](https://img.shields.io/badge/JDK-17-blue?style=flat-square)](https://openjdk.org/projects/jdk/17/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5-6DB33F?style=flat-square)](https://spring.io/projects/spring-boot)

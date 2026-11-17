@@ -1,8 +1,10 @@
-<img src="frontend/src/assets/img/common/biglogo.png" alt="Hundun Lab" width="320">
+<img src="docs/design/logo/png/lockup@2x.png" alt="Hundun Lab" width="320">
 
 # Hundun Lab 官网
 
 馄饨系列软件的官方站点 —— 介绍每个项目、提供安装包下载、承载**各软件自己的扩展**。
+
+> **保持好奇，继续创造。**（`Stay curious, keep making.`）—— Hundun Lab 的核心理念（D090）。
 
 > **只 HundunDesktop 有插件。** 插件不是馄饨系列的通用能力，而是 Desktop 这一台机器特有的功能；
 > 数据层统一叫**扩展**（`extension`），挂在软件下，没有站点级的扩展市场页（D071–D076）。
