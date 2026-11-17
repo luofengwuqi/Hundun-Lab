@@ -33,7 +33,8 @@ public class UserController {
     public Result<RegisterVO> register(@Valid @RequestBody RegisterDTO dto)
     {
         log.info("用户注册");
-        log.info("已经接收到请求:RegisterDTO信息为{}",dto.toString());
+        // 只记用户名：RegisterDTO 里有 password 明文，整个 toString 打进日志等于明文落盘
+        log.info("收到注册请求，username={}", dto.getUsername());
         RegisterVO r = userService.register(dto);
         return Result.success(r);
     }

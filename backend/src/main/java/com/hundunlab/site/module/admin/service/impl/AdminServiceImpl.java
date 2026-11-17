@@ -130,8 +130,9 @@ public class AdminServiceImpl implements AdminService {
             throw new UserExistedException("注册信息不可用，请更换后重试");
         }
         //2 检查邀请码
+        //   不要把这枚码打进日志：日志一泄漏，等于把「注册管理员」的钥匙公开，
+        //   因为 /user/register/admin 本身就是公开接口
         String importantPassword = am.selectInvitePassword(dto.getImportantPassword());
-        log.info("检索到的邀请码#{}",importantPassword);
         if(importantPassword==null){
             throw new LoginException("你貌似没有被邀请 你干嘛啊??");
         }
@@ -291,9 +292,10 @@ public class AdminServiceImpl implements AdminService {
         if (!canManage(currentUser.getStatus(), target.getStatus())) {
             throw new InsufficientPermissionsException("权限不足，不能修改该用户");
         }
-        if(dto.getPassword() != null && !dto.getPassword().isBlank()){
-            String password_hash = PasswordUtil.addMi(dto.getPassword());
-            dto.setPassword(password_hash);
+        // 密码为空表示「这一列不动」，非空才重新哈希
+        boolean passwordChanged = dto.getPassword() != null && !dto.getPassword().isBlank();
+        if (passwordChanged) {
+            dto.setPassword(PasswordUtil.addMi(dto.getPassword()));
         }
         dto.setUpdatedAt(LocalDateTime.now());
         try{
@@ -304,6 +306,11 @@ public class AdminServiceImpl implements AdminService {
         //删除缓存
         userRedisService.clearUsersCache();
         userRedisService.clearUserdata(dto.getOldId());
+        // 改过密码就吊销这个人的令牌：管理员重置密码的场景通常是
+        // 「账号出事了」，不踢掉旧会话等于密码重置没生效
+        if (passwordChanged) {
+            userRedisService.clearUserToken(dto.getOldId());
+        }
     }
 
     @Override

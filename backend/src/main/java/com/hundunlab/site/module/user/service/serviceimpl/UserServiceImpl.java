@@ -311,6 +311,10 @@ public class UserServiceImpl implements UserService {
         stringRedisTemplate.delete(key);
         //5 删除缓存
         userRedisService.clearUserdata(BaseContext.getCurrentId());
+        //6 改密码等于「所有旧会话立即作废」。少了这一步，账号被盗后
+        //  用户改密码也赶不走对方——旧令牌仍然有效，且只要对方持续发请求
+        //  就会一直被滑动续期，能一直用下去。改完必须重新登录。
+        userRedisService.clearUserToken(BaseContext.getCurrentId());
 
     }
 

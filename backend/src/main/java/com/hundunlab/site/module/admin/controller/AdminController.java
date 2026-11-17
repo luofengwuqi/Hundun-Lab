@@ -58,7 +58,8 @@ public class AdminController {
     @PutMapping("/admin/user")
     public Result<Void> updateUser(@Valid @RequestBody UpdateUserDTO dto)
     {
-        log.info("修改用户信息{}",dto);
+        // 只记定位用的 oldId：整个 dto 打出来会把 password 明文写进日志
+        log.info("修改用户信息，oldId={}", dto.getOldId());
         adminService.updateUser(dto);
         return Result.success();
     }
