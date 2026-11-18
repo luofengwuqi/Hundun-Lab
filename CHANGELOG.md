@@ -45,6 +45,7 @@
 
 ### 修复
 
+- 2026-11-18 修复「后端刚启动后第一次登录必定失败、前端显示『服务器开小差了』」：`hundun-lab.redis.timeout` 原先写成 `${REDIS_TIMEOUT:10}`，Spring 按毫秒解析，首次建连（DNS + TCP + Netty 初始化）必然超过 10ms，登录限流切面 `RateLimitAspect#checkLimit` 的第一个 `INCR` 直接抛 `RedisConnectionFailureException` → 全局异常处理器返 500 / `INTERNAL_ERROR`。连接建立后走共享连接，所以表现为「刚启动必挂、再点一次就好」。dev / prod 的默认值均改为 2000ms，并显式补 `connect-timeout: 2000`（`application.yml` 同步映射），不让命令超时兼职建连超时
 - 2026-11-06 修复扩展二级页路由没配 `props: true`，`slug`/`id` 传不进页面组件、详情页恒 404 的问题（`extension-detail` 与 `extension-submit` 两条路由）
 - 2026-11-06 修复 `ExtensionSubmitPage` 漏 `import FormField`——未注册组件被渲染成空的自定义元素，提交表单整体不可见（Playwright 实测暴露）
 - 2026-11-05 修复深色下卡片内平台标签/角标不可读：`.hd-cart__tags .hd-tag` 与 `.hd-cart__badge` 收回卡带自己的色（白字压米纸的问题与原型 `.cart` 是同一个坑）

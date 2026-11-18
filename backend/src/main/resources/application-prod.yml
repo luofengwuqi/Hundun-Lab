@@ -35,7 +35,9 @@ hundun-lab:
     port: ${REDIS_PORT:}
     password: ${REDIS_PASSWORD:}
     database: ${REDIS_DATABASE:0}
-    timeout: ${REDIS_TIMEOUT:10}
+    # 10ms 会让首次建连必然超时（见 dev 侧注释），生产同样要有余量
+    timeout: ${REDIS_TIMEOUT:2000}
+    connect-timeout: ${REDIS_CONNECT_TIMEOUT:2000}
 
 app:
   cors:

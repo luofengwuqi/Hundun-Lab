@@ -21,6 +21,7 @@ spring:
       password: ${hundun-lab.redis.password}
       database: ${hundun-lab.redis.database}
       timeout: ${hundun-lab.redis.timeout}
+      connect-timeout: ${hundun-lab.redis.connect-timeout:2000}
 
   # SMTP：账号密码缺失时应用照常启动，仅跳过邮件发送（见 SendMsgUtil）
   mail:

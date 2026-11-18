@@ -20,4 +20,9 @@ hundun-lab:
     port: ${REDIS_PORT:6379}
     password: ${REDIS_PASSWORD:}
     database: ${REDIS_DATABASE:0}
-    timeout: ${REDIS_TIMEOUT:10}
+    # 单位毫秒。原来写 10 就是 10ms——首次建连要 DNS + TCP + Netty 初始化，
+    # 必然超过 10ms，于是启动后第一个碰 Redis 的请求（登录限流 INCR）一定失败，
+    # 之后复用共享连接才正常，表现为「刚启动必登录不上，再试就好」。
+    timeout: ${REDIS_TIMEOUT:2000}
+    # 单独给建连超时，别让命令超时兼职；两条链路都留够握手时间
+    connect-timeout: ${REDIS_CONNECT_TIMEOUT:2000}
