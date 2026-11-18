@@ -136,7 +136,9 @@ onMounted(load)
 
 <template>
   <div class="invites">
-    <!-- 非超管（直敲地址进来的）：说清楚为什么用不了，不摆空表 -->
+    <!-- 兜底：路由守卫已按 meta.minStatus=3 把普通管理员送回概览，
+         这里只覆盖「本地 status 被改过、但后端仍会拒绝」的情况——不摆空表，
+         也不假装能点（D036）。 -->
     <el-card v-if="!isSuper" class="notice" shadow="never">
       <p class="notice__title">{{ t('admin.invites.restrictedTitle') }}</p>
       <p class="notice__body">{{ t('admin.invites.restrictedBody') }}</p>

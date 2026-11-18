@@ -314,10 +314,21 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public User getUserInfoById(Long id) {
+        if (id == null) {
+            throw new UserNotFoundException("用户不存在");
+        }
         User u =  um.selectUserById(id);
         if(u == null || u.getStatus() == null )
         {
             throw new UserNotFoundException("用户不存在");
+        }
+        // 详情同样是「读」，必须和改／删共用一套层级：
+        // 不加这一步，普通管理员能把超管的邮箱、手机号翻出来（横向越权读取）。
+        // 看自己永远允许——后台展示「当前账号」不该被层级规则挡住。
+        User currentUser = getCurrentActor();
+        if (!u.getId().equals(currentUser.getId())
+                && !canManage(currentUser.getStatus(), u.getStatus())) {
+            throw new InsufficientPermissionsException("权限不足，不能查看该用户");
         }
         return u;
     }

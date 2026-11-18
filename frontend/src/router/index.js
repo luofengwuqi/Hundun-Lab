@@ -77,13 +77,12 @@ const router = createRouter({
           meta: { adminTitle: 'admin.navUsers' },
         },
         {
-          // 仅超管可用：侧栏对 2 不显示，后端两个接口也是 @RequireRole(3)。
-          // 路由不额外拦（守卫只区分 ≥2），页面内自己给「无权限」说明，
-          // 真正的拒绝仍在 AccessControlInterceptor。
+          // 仅超管：侧栏对 status=2 不显示，守卫按 meta.minStatus 送回概览，
+          // 后端两个接口也是 @RequireRole(3)。页面内还留了一份「无权限」文案兜底。
           path: 'invites',
           name: 'admin-invites',
           component: () => import('@/views/admin/AdminInvitePage.vue'),
-          meta: { adminTitle: 'admin.navInvite' },
+          meta: { adminTitle: 'admin.navInvite', minStatus: 3 },
         },
       ],
     },
@@ -122,6 +121,13 @@ router.beforeEach((to) => {
     const status = Number(session.user?.status ?? 0)
     if (status < ADMIN_MIN_STATUS) {
       return { name: 'home' }
+    }
+    // 单页可再要求更高角色（如邀请管理只给超管）：meta.minStatus。
+    // 不满足就回后台概览——他本来就是管理员，弹回站点太粗暴。
+    // 这只是「别让他看到空壳」，数据层的拒绝仍然在后端。
+    const minStatus = Number(to.meta?.minStatus ?? 0)
+    if (minStatus && status < minStatus) {
+      return { name: 'admin-overview' }
     }
     return true
   }
