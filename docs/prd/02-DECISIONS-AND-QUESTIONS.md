@@ -1155,6 +1155,37 @@
 
 ---
 
+### D098 注册的入参与落库口径：归一化、产物由服务端决定、并发冲突收敛成 409
+- 触发：2026-11-18 落地注册页前按要求先审 `/user/register` 与 `/user/register/admin`，查出四处会在真实使用中咬人的问题（均为实现缺陷，不改需求）。
+- **问题 ①（空串占唯一索引）**：`@Email` 放行空串，`email=""` 时 `insertUser` 的 `<if test="email != null">` 成立，空串被写进 `unique_email`；第二个「没填邮箱」的注册直接 `DuplicateKeyException` → 500。`phone` 同理（`@Pattern` 挡住空串，但 `"   "` 之类仍可能走到 service）。
+  **口径**：service 层统一 `trimToNull()`（去首尾空白、空串→`NULL`）后再查重与写入；`email` 补 `@Size(max=100)`、`phone` 补 `@Size(max=20)`，与列宽对齐，超长在参数校验阶段就 400。
+- **问题 ②（客户端可自带头像）**：`BeanUtils.copyProperties(dto, u)` 把 `RegisterDTO.avatarUrl` 原样写进 `users.avatar_url`，等于公开接口允许任意 URL 落库。
+  **口径**：注册改为逐字段赋值，`avatarUrl` 一律不采纳（头像只能走 `PUT /user/avatar`，见 D084 的 UUID 重命名 + 白名单 + 魔数）。字段保留在 DTO 上只为兼容旧客户端，注释已写明「服务端忽略」。
+- **问题 ③（角色依赖数据库默认值）**：原先 `u.status` 为 `null`，靠 `users.status DEFAULT 1` 兜底。今天安全，但只要有人给 DTO 加一个 `status` 字段，`copyProperties` 就会把请求体里的角色原样写进去——提权通道。
+  **口径**：`register` 显式 `setStatus(STATUS_USER)`、`nickname = username`；不再使用 `copyProperties`。PRD §F05「注册一律产出 `status = 1`」从「DB 默认值保证」变成「代码显式保证」。
+- **问题 ④（并发注册返回 500）**：`checkUserNotExists` 与 `INSERT` 之间有窗口，唯一索引兜住数据但抛出的是 `DuplicateKeyException` → `INTERNAL_ERROR`。
+  **口径**：两处注册都捕获 `DuplicateKeyException` 并转成 `USER_ALREADY_EXISTS`(409)，文案与「已存在」同一句，不给枚举留口径。
+- 状态：已实现
+- 确认人：作者（授权「先排查漏洞，确认无误后再做前端」）
+- 确认方式：采纳建议
+- 确认日期：2026-11-18
+- 影响：`UserServiceImpl#register`、`AdminServiceImpl#addAdmin`、`RegisterDTO`、`AddAdminDTO`；回归测试 `RegisterSecurityTest`（8 例）
+- 备注：`trimToNull` 无法拦「密码首尾空格」——那是用户意图，不擅自改。
+
+---
+
+### D099 邀请码注册失败用独立错误码 `INVITE_CODE_INVALID`
+- 内容：`AdminServiceImpl#addAdmin` 原先两处失败（码不存在 / 码已被并发消费）都抛 `LoginException`，被 `GlobalExceptionHandler` 映射成 `AUTH_NOT_LOGGED_IN`(401)，前端只能显示「请先登录」——而人正站在注册页上填写邀请码。
+- 口径：`ErrorCode` 新增 `INVITE_CODE_INVALID(400)`；两条失败路径统一这一条文案，**不区分**「码不存在」与「已被用掉」，避免用接口试探某枚码是否真实存在过。
+- 状态：已实现
+- 确认人：作者
+- 确认方式：采纳建议（含在 D098 的同次排查里）
+- 确认日期：2026-11-18
+- 影响：`ErrorCode`、`AdminServiceImpl`、`i18n/zh.js`・`en.js`（`errors.INVITE_CODE_INVALID`）
+- 备注：`LoginException` 在登录场景的收敛（密码错/被封都变 401）保持原样，不在本条范围内（见 `docs/04` §3.3 实测补充）。
+
+---
+
 ## Q · 待答问题（要问用户的）
 
 口径：只数 Q 的条数。`待甲方确认` 本项目为空（无甲方），`明确延期` 不计入待答但须在 §O 可见。
@@ -1253,6 +1284,7 @@
 | O12 | 桌面端 `COMMUNITY_URL` 同步 | 跨仓库 | F16 真机可用 | 作者 | **时机已定（Q009，2026-11-05）：站点就绪后桌面端下个版本再切，`/plugins` 301 兜底；执行仍挂账** |
 | O13 | 浅色主题弱化文字对比度 2.96:1 | 实现层待裁 | F01 可读性（页脚小字、`--ink-faint` 系） | 作者 | **2026-11-05 M0c③ 实测发现**：`--ink-faint #8a7d6e` 压在纸底 `#f3ebdc` 上是 2.96:1，低于 WCAG AA 小字 4.5:1；深色下同令牌为 4.93:1，无问题。要么把 `--ink-faint` 压到 `#756959`（≈4.5:1），要么明确接受「弱化文字就是弱」——改它会整体加深次级文字，属视觉决策，留作者裁 |
 | O14 | Vue 前台版式向 M0b 原型迁移 | 实现层待办 | M0 完成定义（O08 的 Vue 侧余量） | 作者 | **2026-11-06 M0c④ 发现**：Vue 的 `HomePage` 仍是旧版式（776e158 时代，早于原型 01 的 5c829ee 重设计），与 M0b 收口原型 01 不一致；02/03/05 各页版式同样需逐页对照原型校准。M0c 四步只保证「结构对齐 PRD + 主题/令牌/无障碍」，像素级版式迁移挂本项 |
+| O15 | 注册时的邮箱/手机号**不做归属验证** | 安全待裁 | 上线前的风险接受或改流程 | 作者 | **2026-11-18 排查注册接口时确认**：`/user/register` 只要格式合法就收下 `email`/`phone`，不发码、不发短信。后果是**可预注册他人邮箱**——真实主人之后用「邮箱 + 验证码」登录，验证码发到他自己信箱，但 `selectUserByEmail` 命中的是别人建的那行，等于进入攻击者预设密码的账号（攻击者随时可用邮箱+密码登录同一账号）。三个候选：① 注册填邮箱就必须先过验证码（要新增「注册发码」接口，`sendEmailCode` 现在只服务已注册邮箱）；② 注册不接收 `email`/`phone`，绑定挪到用户中心并验证；③ 明确接受（站点只存下载记录，敏感度低）。**未改，等作者裁。** |
 
 > 注意：O04–O07 是"明确延期"，不等于"忘了"。它们不进入待答计数，但每次升版都要在本表出现，
 > 否则范围会悄悄缩水（或悄悄膨胀）。

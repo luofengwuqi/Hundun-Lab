@@ -26,14 +26,21 @@ public class RegisterDTO {
 //    @Size(min = 6, max = 20, message = "密码长度在6-20之间")
 //    private String checkPassword;
 
+    /**
+     * 注册时不采纳：头像只能通过 PUT /user/avatar 上传。
+     * 保留字段只为兼容旧客户端，服务端一律忽略（见 UserServiceImpl#register）。
+     */
     private String avatarUrl;
 
   // 手机号（可选）
 @Pattern(regexp = "^1[3-9]\\d{9}$", message = "手机号格式错误")
+@Size(max = 20, message = "手机号过长")
 private String phone;
 
-// 邮箱（可选，唯一）
+// 邮箱（可选，唯一）。上限对齐 users.email 的 varchar(100)：
+// @Email 放行超长地址，不拦就会在 INSERT 时变成 500 而不是 400
 @Email(message = "邮箱格式错误")
+@Size(max = 100, message = "邮箱过长")
 private String email;
 
 

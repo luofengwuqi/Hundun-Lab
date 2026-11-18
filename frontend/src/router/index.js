@@ -58,6 +58,12 @@ const router = createRouter({
     },
     // 登录页：独立满屏布局，不套 SiteLayout（无全站页头页脚）
     { path: '/login', name: 'login', component: () => import('@/views/site/LoginPage.vue') },
+    // 注册页：与登录页同一族版式（F05）；公开访问，不需要守卫
+    {
+      path: '/register',
+      name: 'register',
+      component: () => import('@/views/site/RegisterPage.vue'),
+    },
     // 管理端（D089）：独立布局、不进 SiteLayout；子路由按 F12–F15 逐个挂，接口到了再加
     {
       path: '/admin',

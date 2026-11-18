@@ -11,7 +11,8 @@
  * 前端校验照抄后端 DTO 的限制（用户名 1–10、密码 6–20、手机号 ^1[3-9]\d{9}$、
  * 邮箱 @Email、验证码 6 位），不另立一套更严的规矩。
  * 「记住我」是真的：勾选存 localStorage，不勾存 sessionStorage（utils/token）。
- * 注册与找回密码后端虽有接口，但没有对应版式，仍保留位置并禁用。
+ * 注册已接通（/register），注册成功会带 ?username=&registered=1 回到这里：
+ * 用户名预填，并提示「账号已创建」。找回密码仍无接口，保留位置并禁用。
  */
 import { computed, onBeforeUnmount, reactive, ref, useId } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
@@ -53,13 +54,20 @@ const CODE_RE = /^\d{6}$/
 /** 验证码重发等待：后端限流 3 次/60 秒，前端统一按 60 秒一挡 */
 const RESEND_SECONDS = 60
 
-const form = reactive({ username: '', password: '', phone: '', email: '', code: '' })
+const form = reactive({
+  // 从注册页回来时用户名已经知道，预填省一次输入
+  username: typeof route.query.username === 'string' ? route.query.username : '',
+  password: '',
+  phone: '',
+  email: '',
+  code: '',
+})
 const activeMethod = ref('username')
 const remember = ref(true)
 const showPassword = ref(false)
 const submitting = ref(false)
 const errorKey = ref('')
-const noticeKey = ref('')
+const noticeKey = ref(route.query.registered === '1' ? 'auth.loginNoticeRegistered' : '')
 const sendingCode = ref(false)
 const cooldown = ref(0)
 let cooldownTimer = null
@@ -72,6 +80,11 @@ const methods = computed(() => [
 ])
 
 const needsPassword = computed(() => activeMethod.value !== 'email-code')
+
+// 去注册页时只带来源页，别把已经用掉的一次性 query 一路传下去
+const registerQuery = computed(() =>
+  typeof route.query.redirect === 'string' ? { redirect: route.query.redirect } : {},
+)
 
 onBeforeUnmount(() => {
   if (cooldownTimer) clearInterval(cooldownTimer)
@@ -420,9 +433,9 @@ async function submit() {
         <button type="submit" class="btn btn--primary" :disabled="submitting">
           {{ submitting ? t('auth.submitting') : t('auth.submit') }}
         </button>
-        <button type="button" class="btn btn--ghost" disabled :title="t('auth.registerPending')">
+        <RouterLink class="btn btn--ghost" :to="{ name: 'register', query: registerQuery }">
           {{ t('auth.register') }}
-        </button>
+        </RouterLink>
       </div>
 
       <div class="login-foot">

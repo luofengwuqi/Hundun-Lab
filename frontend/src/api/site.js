@@ -46,6 +46,24 @@ export function sendLoginEmailCode(email) {
   return http.post('/user/login/email-code/send', { email })
 }
 
+/**
+ * 注册（F05）。入参与 RegisterDTO 一致：username / password 必填，email / phone 可选。
+ * 可选字段没填时前端直接不发这个键——后端虽然会把空串归一化成 NULL，
+ * 但少一层「空串算不算填了」的歧义更稳。
+ * 返回 { username }，不带令牌：注册完要回登录页自己登一次。
+ */
+export function registerUser(payload) {
+  return http.post('/user/register', payload)
+}
+
+/**
+ * 管理员邀请码注册。与普通注册是两个接口，邀请码只走请求体，不进 URL、不进日志。
+ * 成功同样只返回 { username }。
+ */
+export function registerAdminByInvite(payload) {
+  return http.post('/user/register/admin', payload)
+}
+
 export function logout() {
   return http.post('/user/login/logout')
 }

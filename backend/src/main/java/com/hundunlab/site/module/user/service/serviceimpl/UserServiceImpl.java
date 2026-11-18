@@ -15,8 +15,8 @@ import com.hundunlab.site.module.user.pojo.Entity.User;
 import com.hundunlab.site.module.user.pojo.VO.RegisterVO;
 import com.hundunlab.site.module.user.service.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,17 +47,51 @@ public class UserServiceImpl implements UserService {
 
     @Transactional(rollbackFor = Exception.class)
     public RegisterVO register(RegisterDTO dto) {
-        //1检验用户是否已经存在
-        checkUserNotExists(dto.getUsername(),dto.getPhone(),dto.getEmail());
-        //2 不存在 插入
+        //1 入参归一化：@Email 放行空串，客户端把「没填」发成 "" 时一旦入库，
+        //  就占掉 unique_email / unique_phone 的空值坑位，第二个这样的请求直接撞唯一索引 500。
+        //  顺带 trim：带首尾空格的用户名能注册成功，但登录时前端会 trim，人自己登不进来。
+        String username = trimToNull(dto.getUsername());
+        String email = trimToNull(dto.getEmail());
+        String phone = trimToNull(dto.getPhone());
+        if (username == null) {
+            throw new IllegalArgumentException("用户名不能为空");
+        }
+        //2 检验用户是否已经存在（统一文案，不透露具体字段被占）
+        checkUserNotExists(username, phone, email);
+        //3 逐个字段赋值，不用 BeanUtils.copyProperties：
+        //  注册产物必须由服务端决定，不能让请求体里任何新增字段顺势落库。
+        //  历史隐患：copyProperties 曾把客户端传来的 avatarUrl 直接写进 users.avatar_url。
         User u = new User();
-        BeanUtils.copyProperties(dto,u);
+        u.setUsername(username);
         u.setPasswordHash(PasswordUtil.addMi(dto.getPassword()));
-        um.insertUser(u);
-        //3 删除管理端用户查询的分页缓存
+        u.setEmail(email);
+        u.setPhone(phone);
+        u.setNickname(username);
+        //  头像只能走 PUT /user/avatar 上传，注册时一律不采纳；status 显式置普通用户，不依赖 DB 默认值
+        u.setStatus(STATUS_USER);
+        try {
+            um.insertUser(u);
+        } catch (DuplicateKeyException e) {
+            //checkUserNotExists 与 INSERT 之间仍有并发窗口，唯一索引兜住数据，
+            //这里把 500 收敛成与「已存在」一致的 409，避免并发注册看到服务器错误
+            throw new UserExistedException("注册信息不可用，请更换后重试");
+        }
+        //4 删除管理端用户查询的分页缓存
         userRedisService.clearUsersCache();
-        //4 返回
+        //5 返回
         return new RegisterVO(u.getUsername());
+    }
+
+    /**
+     * 去除首尾空白，空串归一为 null。
+     * users 的 email / phone / invite_code 都有唯一索引，空串会被当成一个真实值占位。
+     */
+    private static String trimToNull(String value) {
+        if (value == null) {
+            return null;
+        }
+        String trimmed = value.trim();
+        return trimmed.isEmpty() ? null : trimmed;
     }
 
     @Transactional

@@ -9,6 +9,7 @@ import lombok.Data;
 @Data
 public class AddAdminDTO {
     @NotBlank(message = "重要密码不能为空")
+    @Size(max = 64, message = "邀请码过长")
     private String importantPassword;
     @NotBlank(message = "用户名不能为空")
     @Size(min = 1, max = 10, message = "用户名长度在1-10之间")
@@ -25,19 +26,25 @@ public class AddAdminDTO {
 //    @Size(min = 6, max = 20, message = "密码长度在6-20之间")
 //    private String checkPassword;
 
-    private String avatarUrl;
-
     /**
      * 手机号（可选，唯一）
      */
     @Pattern(regexp = "^1[3-9]\\d{9}$", message = "手机号格式错误")
+    @Size(max = 20, message = "手机号过长")
     private String phone;
 
     /**
-     * 邮箱（可选，唯一）
+     * 邮箱（可选，唯一）。上限对齐 users.email 的 varchar(100)
      */
     @Email(message = "邮箱格式错误")
+    @Size(max = 100, message = "邮箱过长")
     private String email;
+
+    /**
+     * 注册时不采纳：头像只能通过 PUT /user/avatar 上传。
+     * 保留字段只为兼容旧客户端，服务端一律忽略（见 AdminServiceImpl#addAdmin）。
+     */
+    private String avatarUrl;
 
     //重写toString方法
     @Override

@@ -3,6 +3,7 @@ package com.hundunlab.site.module.admin.service.impl;
 //import com.hundunlab.site.common.constant.ImportantConstant;
 import com.hundunlab.site.common.context.BaseContext;
 import com.hundunlab.site.common.exception.MyException.*;
+import com.hundunlab.site.common.response.ErrorCode;
 import com.hundunlab.site.common.util.PasswordUtil;
 import com.hundunlab.site.common.util.RandomCodeUtil;
 import com.hundunlab.site.module.user.cache.UserRedisService;
@@ -22,6 +23,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -124,9 +126,16 @@ public class AdminServiceImpl implements AdminService {
     @Override
     @Transactional
     public void addAdmin(AddAdminDTO dto) {
-        //1 检查是否已有用户（统一报错文案，避免接口被用于枚举已注册用户名）
-        User existUser = um.getUserByUserName(dto.getUsername());
-        if(existUser != null){
+        //1 用户名 / 邮箱 / 手机号一次性查重（统一文案，避免接口被用于枚举已注册账号）
+        //  空串必须先归一化为 null：users 上的三列都有唯一索引，"" 会占一个真实坑位
+        String username = trimToNull(dto.getUsername());
+        String email = trimToNull(dto.getEmail());
+        String phone = trimToNull(dto.getPhone());
+        if (username == null) {
+            throw new IllegalArgumentException("用户名不能为空");
+        }
+        Integer existed = um.checkUserNotExists(username, phone, email);
+        if (existed != null && existed > 0) {
             throw new UserExistedException("注册信息不可用，请更换后重试");
         }
         //2 检查邀请码
@@ -134,7 +143,9 @@ public class AdminServiceImpl implements AdminService {
         //   因为 /user/register/admin 本身就是公开接口
         String importantPassword = am.selectInvitePassword(dto.getImportantPassword());
         if(importantPassword==null){
-            throw new LoginException("你貌似没有被邀请 你干嘛啊??");
+            // 不用 LoginException：它会被映射成 AUTH_NOT_LOGGED_IN，前端只能显示「请先登录」，
+            // 而人正站在注册页上，真正要说的是「码不对」
+            throw new BizException(ErrorCode.INVITE_CODE_INVALID);
         }
         log.info("重要密码已校验通过");
         //3 原子消费邀请码：靠 DELETE 的影响行数做互斥。
@@ -144,18 +155,26 @@ public class AdminServiceImpl implements AdminService {
         //   select 步骤只为了给出「没有这枚码」的报错口径，真正的凭证是这里的行数。
         int consumed = am.deleteInvitePlaceholder(importantPassword);
         if (consumed == 0) {
-            throw new LoginException("邀请码已被使用，请重新获取");
+            // 与「码不存在」同一条文案：不告诉调用方这枚码是存在过还是纯属瞎猜
+            throw new BizException(ErrorCode.INVITE_CODE_INVALID);
         }
         //4 构造User并插入用户表
+        //  与 /user/register 同口径：只接收服务端认可的字段，avatarUrl 由上传接口决定，
+        //  角色由这里显式指定，不从请求体透传
         User u = new User();
-        u.setUsername(dto.getUsername());
+        u.setUsername(username);
         u.setPasswordHash(PasswordUtil.addMi(dto.getPassword()));
         u.setStatus(STATUS_ADMIN);
-        u.setEmail(dto.getEmail());
-        u.setPhone(dto.getPhone());
-        u.setAvatarUrl(dto.getAvatarUrl());
+        u.setEmail(email);
+        u.setPhone(phone);
+        u.setNickname(username);
         u.setLastLoginAt(LocalDateTime.now());
-        um.insertUser(u);
+        try {
+            um.insertUser(u);
+        } catch (DuplicateKeyException e) {
+            //第 1 步与 INSERT 之间的并发窗口由唯一索引兜底，转成与「已存在」一致的 409
+            throw new UserExistedException("注册信息不可用，请更换后重试");
+        }
 
         //Last 清除用户查询缓存。
         //占位行从「注册最后一步」挪到「消费凭证」，它的 id 不再需要回查；
@@ -164,6 +183,15 @@ public class AdminServiceImpl implements AdminService {
 
 
 
+    }
+
+    /** 去除首尾空白，空串归一为 null（唯一索引会把 "" 当成一个真实的占用值） */
+    private static String trimToNull(String value) {
+        if (value == null) {
+            return null;
+        }
+        String trimmed = value.trim();
+        return trimmed.isEmpty() ? null : trimmed;
     }
 
     @Override

@@ -37,6 +37,8 @@ public enum ErrorCode {
     USER_EMAIL_CODE_EXPIRED(400, "验证码已过期"),
     USER_EMAIL_CODE_WRONG(400, "验证码不正确"),
     USER_EMAIL_SEND_FAILED(500, "验证码发送失败，请稍后再试"),
+    /** 管理员邀请码注册失败：码不存在、已被用掉都归这一条，不区分 */
+    INVITE_CODE_INVALID(400, "邀请码无效或已被使用"),
 
     // ==================== 软件与版本 ====================
     SOFTWARE_NOT_FOUND(404, "软件不存在或尚未发布"),
