@@ -322,14 +322,9 @@ public class AdminServiceImpl implements AdminService {
         {
             throw new UserNotFoundException("用户不存在");
         }
-        // 详情同样是「读」，必须和改／删共用一套层级：
-        // 不加这一步，普通管理员能把超管的邮箱、手机号翻出来（横向越权读取）。
-        // 看自己永远允许——后台展示「当前账号」不该被层级规则挡住。
-        User currentUser = getCurrentActor();
-        if (!u.getId().equals(currentUser.getId())
-                && !canManage(currentUser.getStatus(), u.getStatus())) {
-            throw new InsufficientPermissionsException("权限不足，不能查看该用户");
-        }
+        // 作者裁决（2026-11-18）：读不设层级——后台按 id 查任意账号的资料是允许的，
+        // 真正的边界在「写」（见 updateUser / changeStatus / deleteUserById 的 canManage）。
+        // 响应里本来就没有 passwordHash 和 inviteCode（@JsonIgnore），读到的只有资料字段。
         return u;
     }
 
@@ -394,7 +389,13 @@ public class AdminServiceImpl implements AdminService {
     /**
      * 角色层级：普通管理员只能管理普通用户，超级管理员可管理除超级管理员外的所有用户
      */
-    private boolean canManage(Integer actorStatus, Integer targetStatus) {
+    /**
+     * 角色层级：普通管理员只能管理普通用户，超级管理员可管理除超级管理员外的所有用户。
+     * <p>
+     * 这是「不能越权修改高位权限人的信息」的唯一实现点，改／删／改状态三处都调它。
+     * 包内可见是为了让 {@code AdminPermissionTest} 直接验这张真值表，别再改成 private。
+     */
+    boolean canManage(Integer actorStatus, Integer targetStatus) {
         if (actorStatus == null || targetStatus == null) {
             return false;
         }

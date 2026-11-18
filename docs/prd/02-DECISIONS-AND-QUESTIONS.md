@@ -1150,6 +1150,8 @@
   ① `GET /admin/user/info` 原先**只校验登录与 2/3，不校验目标角色**——普通管理员能把超管的邮箱、手机号翻出来（横向越权读取）。现与改／删共用 `canManage`，看自己始终放行（后台展示「当前账号」不该被层级挡住）。
   ② 前端路由守卫新增 `meta.minStatus`：`/admin/invites` 声明为 `3`，`status = 2` 直敲地址**送回 `/admin` 概览**（不再停在空壳页）；页面内的「仅超管」文案保留，作为本地 status 被篡改时的兜底。
   ③ 至此「邀请管理」有三道闸：侧栏不显示 → 守卫送回概览 → 后端 `@RequireRole(3)` 403。
+- **同日更注（作者裁决「读没关系，主要是不能越权修改高位权限人的信息」）**：追记 ① 已**回退**——`GET /admin/user/info` 恢复为「`status ≥ 2` 可读任意账号」，不套 `canManage`；响应本身不含 `passwordHash` / `inviteCode`（`@JsonIgnore`）。
+  边界只在**写**：`updateUser` / `changeStatus` / `deleteUserById` 三处均先过 `canManage`，且 `UpdateUserDTO` 无 `status` 字段、更新 SQL 不含 `status` 列，故「改资料」这条路无法用于提权或降级。实测 `status = 2` 对超管执行改昵称／改密码／塞 `status`／禁用／删除，五项全部 403，库内超管行未被改动。
 
 ---
 
