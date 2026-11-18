@@ -25,14 +25,21 @@ const session = useSessionStore()
 const myStatus = computed(() => Number(session.user?.status ?? 0))
 
 /**
- * 邀请管理是超管专属（后端 /admin/invite-code 只放 status=3），
- * 普通管理员在这里看不到入口，和原项目的 userStatus !== 3 判断一致。
+ * 邀请管理是超管专属：后端的 /admin/invite-code 与 /admin/invites 都是
+ * @RequireRole(status=3)，普通管理员在这里看不到入口，
+ * 和原项目的 userStatus !== 3 判断一致。
  */
 const items = computed(() =>
   [
     { key: 'overview', to: '/admin', label: t('admin.navOverview'), ready: true },
     { key: 'users', to: '/admin/users', label: t('admin.navUsers'), ready: true },
-    { key: 'invite', label: t('admin.navInvite'), ready: false, superOnly: true },
+    {
+      key: 'invite',
+      to: '/admin/invites',
+      label: t('admin.navInvite'),
+      ready: true,
+      superOnly: true,
+    },
     { key: 'feedback', label: t('admin.navFeedback'), ready: false },
     { key: 'panel', label: t('admin.navPanel'), ready: false },
   ].filter((item) => !item.superOnly || myStatus.value >= 3),

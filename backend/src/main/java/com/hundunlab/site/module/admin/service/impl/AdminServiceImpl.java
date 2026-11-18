@@ -6,14 +6,14 @@ import com.hundunlab.site.common.exception.MyException.*;
 import com.hundunlab.site.common.util.PasswordUtil;
 import com.hundunlab.site.common.util.RandomCodeUtil;
 import com.hundunlab.site.module.user.cache.UserRedisService;
-import com.hundunlab.site.module.user.mapper.AdminMapper;
-import com.hundunlab.site.module.user.mapper.UserMapper;
+import com.hundunlab.site.module.user.mapper.AdminMapper;import com.hundunlab.site.module.user.mapper.UserMapper;
 import com.hundunlab.site.module.user.pojo.DTO.GetLogsDTO;
 import com.hundunlab.site.module.user.pojo.DTO.UpdateUserDTO;
 import com.hundunlab.site.module.user.pojo.Entity.OperateLog;
 import com.hundunlab.site.module.user.pojo.VO.PageVO;
 import com.hundunlab.site.module.admin.pojo.DTO.AddAdminDTO;
 import com.hundunlab.site.module.admin.pojo.DTO.GetUsersDTO;
+import com.hundunlab.site.module.admin.pojo.VO.InviteCodeVO;
 import com.hundunlab.site.module.user.pojo.Entity.User;
 import com.hundunlab.site.module.admin.service.AdminService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -320,6 +320,13 @@ public class AdminServiceImpl implements AdminService {
             throw new UserNotFoundException("用户不存在");
         }
         return u;
+    }
+
+    @Override
+    public List<InviteCodeVO> listInvites() {
+        // 刻意不走 Redis：邀请码撤销后必须立刻从列表消失，
+        // 为一张读得很少、写一次就失效的表加缓存只会制造「码还在」的错觉
+        return am.listPendingInvites();
     }
 
     /**

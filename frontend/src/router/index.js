@@ -76,6 +76,15 @@ const router = createRouter({
           component: () => import('@/views/admin/AdminUsersPage.vue'),
           meta: { adminTitle: 'admin.navUsers' },
         },
+        {
+          // 仅超管可用：侧栏对 2 不显示，后端两个接口也是 @RequireRole(3)。
+          // 路由不额外拦（守卫只区分 ≥2），页面内自己给「无权限」说明，
+          // 真正的拒绝仍在 AccessControlInterceptor。
+          path: 'invites',
+          name: 'admin-invites',
+          component: () => import('@/views/admin/AdminInvitePage.vue'),
+          meta: { adminTitle: 'admin.navInvite' },
+        },
       ],
     },
     // 「插件」页已被 D074 废弃、并进软件详情的扩展分区；

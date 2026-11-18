@@ -35,3 +35,22 @@ export function toggleUserStatus(username) {
 export function deleteUser(id) {
   return http.delete(`/admin/user/${id}`)
 }
+
+/**
+ * 邀请管理（仅超管，后端两个接口都 @RequireRole(3)）。
+ * 生成走 GET 而非 POST：这是底座遗留语义，它会**插入**一行占位用户，
+ * 不是幂等查询，别当只读接口随手重试。
+ */
+export function makeInviteCode() {
+  return http.get('/admin/invite-code')
+}
+
+/** 待用邀请码：只返回占位行的 id / code / createdAt（User.inviteCode 是 @JsonIgnore） */
+export function fetchInvites() {
+  return http.get('/admin/invites')
+}
+
+/** 撤销邀请码 = 删掉它对应的占位用户行 */
+export function revokeInvite(id) {
+  return deleteUser(id)
+}

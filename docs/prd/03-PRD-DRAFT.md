@@ -81,6 +81,7 @@
 | F15 | 后台：扩展审核 | S02 §9.3 | P1 | F09、F12 |
 | F16 | 桌面端对接 | S02 §10 | P2 | F10 |
 | F17 | 后台：用户管理 | D095 | P1 | F12 |
+| F18 | 后台：邀请管理（仅超管） | S02 §12.1；D089 | P1 | F05、F17 |
 
 ### 1.4 本期不做（含理由与复活条件）
 
@@ -154,6 +155,8 @@
 | `/admin/software/:id` | 软件编辑 | F12 | M1 新接口 |
 | `/admin/software/:id/releases/:rid` | 版本与安装包 | F13 | M1 新接口 |
 | `/admin/extensions`、`/admin/extensions/:id` | 审核台 | F15 | M2 新接口 |
+| `/admin/users` | 用户管理 | F17 | 已有接口（D095） |
+| `/admin/invites` | 邀请管理（侧栏仅超管可见；`status=2` 直敲地址给「无权限」说明） | F18 | 新增 `GET /admin/invites`；生成/撤销复用 `GET /admin/invite-code` 与 `DELETE /admin/user/{id}` |
 
 ### 3.2 导航与落点
 

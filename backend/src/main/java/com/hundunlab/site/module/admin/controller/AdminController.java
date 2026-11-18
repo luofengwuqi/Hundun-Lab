@@ -4,6 +4,7 @@ import com.hundunlab.site.common.anno.RequireRole;
 import com.hundunlab.site.common.response.Result;
 import com.hundunlab.site.module.admin.pojo.DTO.AddAdminDTO;
 import com.hundunlab.site.module.admin.pojo.DTO.GetUsersDTO;
+import com.hundunlab.site.module.admin.pojo.VO.InviteCodeVO;
 import com.hundunlab.site.module.user.pojo.DTO.GetLogsDTO;
 import com.hundunlab.site.module.user.pojo.DTO.UpdateUserDTO;
 import com.hundunlab.site.module.user.pojo.Entity.User;
@@ -12,6 +13,8 @@ import com.hundunlab.site.module.admin.service.AdminService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 import static com.hundunlab.site.common.constant.status.UserStatusConstant.STATUS_ADMIN;
 import static com.hundunlab.site.common.constant.status.UserStatusConstant.STATUS_SUPER_ADMIN;
@@ -46,13 +49,26 @@ public class AdminController {
         Integer num = adminService.getUserNumber();
         return Result.success(num);
     }
-    //生成邀请码
+    //生成邀请码（仅超管：类级只要求 2/3，这里必须再收紧——否则普通管理员
+    //能自造一枚码去注册新管理员，等于给了他们「扩容同级」的提权途径）
     @GetMapping("/admin/invite-code")
+    @RequireRole(STATUS_SUPER_ADMIN)
     public Result<String> makeInviteCode()
     {
         log.info("生成邀请码");
         String code = adminService.makeInviteCode();
         return Result.success(code);
+    }
+
+    /**
+     * 待用邀请码列表（邀请管理页）。
+     * 只给超管：码本身就是注册管理员的凭证，普通管理员看到等于拿到提权途径。
+     */
+    @GetMapping("/admin/invites")
+    @RequireRole(STATUS_SUPER_ADMIN)
+    public Result<List<InviteCodeVO>> listInvites()
+    {
+        return Result.success(adminService.listInvites());
     }
     //修改用户信息
     @PutMapping("/admin/user")
