@@ -3,6 +3,18 @@
 spring:
   config:
     import: optional:classpath:application-secret.yml
+  devtools:
+    restart:
+      # 开发环境关掉热重启：本项目的 devtools 重启是「一触即死」，不是偶发。
+      # 触发重启后新上下文里 MyBatis 解析 mapper-locations（classpath:com/hundunlab/site/module/*/mapper/*.xml）
+      # 会命中已 stop 的旧 WebApplicationContext，抛
+      #   IllegalStateException: Illegal access: this web application instance has been stopped already.
+      #   Could not load [com/hundunlab/site/module/]
+      # 于是 Application run failed：进程还在、5757 端口消失，Vite 代理把 ECONNREFUSED 映射成 500，
+      # 浏览器只看到「服务器开小差了，请稍后再试」。
+      # 曾尝试用 trigger-file 收窄重启信号，结论是「不误触发」能解决，但「主动触发」照样挂，故直接禁用。
+      # 改完后端代码请整体重启（mvn spring-boot:run）；它本来就只有几秒，比修挂掉的进程快。
+      enabled: false
 
 hundun-lab:
   mysql:

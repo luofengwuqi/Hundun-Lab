@@ -1186,6 +1186,24 @@
 
 ---
 
+## T. 本地开发环境（2026-11-18 补登）
+
+### D100 开发环境关闭 devtools 热重启（一触即死的故障源）
+- 触发：作者报「登录点了没反应，页面写服务器开小差了」，浏览器 Network 里 `POST /api/user/login/username-password` 是 `500`。
+- 实测链路：`5757` 已无监听（`curl` 返回 `000`）→ `5577` 的 Vite 代理拿 `ECONNREFUSED` → 统一映射成 `500 text/plain`。后端进程还在，但只余 `DestroyJavaVM` 与若干 `File Watcher` 线程，Tomcat 已死。
+- 根因：devtools 触发重启后，新上下文里 MyBatis 解析 `mybatis.mapper-locations`（`classpath:com/hundunlab/site/module/*/mapper/*.xml`）会命中已 `stop()` 的旧 `WebApplicationContext`，抛 `IllegalStateException: Illegal access: this web application instance has been stopped already. Could not load [com/hundunlab/site/module/]`。日志里连续 12 次 `Application run failed`，进程不退、端口消失。
+- **不是偶发**：`trigger-file` 收窄重启信号后，「class 文件变动」确实不再误触发（已验证 0 次重启），但手动 `touch` 触发器主动重启**照样挂**。结论是这套组合下热重启根本不可用。
+- 口径：`application-dev.yml` 设 `spring.devtools.restart.enabled: false`；改后端代码一律整体重启 `mvn spring-boot:run`（4～8 秒），比修一个僵死进程快。`application-prod.yml` 原本就 `enabled: false`，两端一致。
+- 排障口诀（下次再见 500 先跑这一串）：`ss -lntp | grep 5757` → 没监听就是后端死了，与业务代码无关；`tail ~/.cache/hundun-lab/backend.log` 找 `Application run failed`。
+- 状态：已实现并验证（关掉后 touch any `.class`：日志 0 行新增、端口保持 200、登录链路返回 `AUTH_NOT_LOGGED_IN` 而非 500）
+- 确认人：作者（授权排查该 500）
+- 确认方式：采纳建议
+- 确认日期：2026-11-18
+- 影响：`backend/src/main/resources/application-dev.yml`
+- 备注：别把它和 D087/限流那些业务问题混为一谈——本次 500 全程没有业务代码参与。
+
+---
+
 ## Q · 待答问题（要问用户的）
 
 口径：只数 Q 的条数。`待甲方确认` 本项目为空（无甲方），`明确延期` 不计入待答但须在 §O 可见。
