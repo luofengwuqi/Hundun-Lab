@@ -31,10 +31,8 @@ const profile = computed(() => [
   { label: t('admin.fieldLastLogin'), value: lastLogin.value },
 ])
 
-/** 尚未接线的后台模块：阶段与依赖按 PRD §5 的 F12–F15 写死，接口到位再改 */
+/** 尚未接线的后台模块：F12 / F13 已接通，剩下按 PRD §5 写死，接口到位再改 */
 const backlog = computed(() => [
-  { id: 'F12', name: t('admin.f12'), stage: 'M1' },
-  { id: 'F13', name: t('admin.f13'), stage: 'M1' },
   { id: 'F14', name: t('admin.f14'), stage: 'M1' },
   { id: 'F15', name: t('admin.f15'), stage: 'M2' },
 ])
