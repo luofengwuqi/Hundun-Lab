@@ -100,6 +100,26 @@ function errorMessage(error, fallback = 'admin.software.opFailed') {
   return error?.errorCode && te(key) ? t(key) : t(fallback)
 }
 
+/**
+ * 字段级错误。校验不过就写在那一格输入框下面 —— 弹 toast 的话
+ * 连点几次保存会叠一摞同样的气泡，还指不出是哪一格错了。
+ */
+const formErrors = reactive({ slug: '', nameZh: '', nameEn: '', version: '' })
+
+function clearError(field) {
+  if (formErrors[field]) formErrors[field] = ''
+}
+
+/** 滚到第一个出错的字段并聚焦，长表单里光给红字容易看不见 */
+function focusFirstInvalid() {
+  requestAnimationFrame(() => {
+    const box = document.querySelector('.field.is-invalid')
+    if (!box) return
+    box.scrollIntoView({ block: 'center', behavior: 'smooth' })
+    box.querySelector('input, textarea')?.focus()
+  })
+}
+
 function fillForm(data) {
   form.slug = data.slug || ''
   form.nameZh = data.nameZh || ''
@@ -179,15 +199,31 @@ function buildPayload() {
 }
 
 function validateBasics() {
-  if (!form.slug.trim() || !form.nameZh.trim() || !form.nameEn.trim()) {
-    ElMessage.error(t('admin.software.required'))
-    return false
+  formErrors.slug = ''
+  formErrors.nameZh = ''
+  formErrors.nameEn = ''
+
+  const slug = form.slug.trim()
+  if (!slug) formErrors.slug = t('admin.software.required')
+  else if (!/^[a-z0-9][a-z0-9-]{0,63}$/.test(slug))
+    formErrors.slug = t('admin.software.invalidSlug')
+
+  if (!form.nameZh.trim()) formErrors.nameZh = t('admin.software.required')
+  if (!form.nameEn.trim()) formErrors.nameEn = t('admin.software.required')
+
+  const ok = !formErrors.slug && !formErrors.nameZh && !formErrors.nameEn
+  if (!ok) focusFirstInvalid()
+  return ok
+}
+
+/** 后端把哪一格写错了就还给哪一格，其余错误才走弹窗 */
+function applyServerError(error) {
+  if (error?.errorCode === 'SOFTWARE_SLUG_EXISTS') {
+    formErrors.slug = t('errors.SOFTWARE_SLUG_EXISTS')
+    focusFirstInvalid()
+    return
   }
-  if (!/^[a-z0-9][a-z0-9-]{0,63}$/.test(form.slug.trim())) {
-    ElMessage.error(t('admin.software.invalidSlug'))
-    return false
-  }
-  return true
+  ElMessage.error(errorMessage(error))
 }
 
 async function save() {
@@ -208,7 +244,7 @@ async function save() {
       await loadDetail()
     }
   } catch (error) {
-    ElMessage.error(errorMessage(error))
+    applyServerError(error)
   } finally {
     saving.value = false
   }
@@ -294,6 +330,7 @@ function emptyRelease() {
 
 function openReleaseDialog(release) {
   Object.assign(releaseForm, emptyRelease())
+  formErrors.version = ''
   releaseEditingId.value = release?.id ?? null
   if (release) {
     releaseForm.version = release.version || ''
@@ -308,8 +345,10 @@ function openReleaseDialog(release) {
 
 async function saveRelease() {
   if (releaseSaving.value) return
+  formErrors.version = ''
   if (!releaseForm.version.trim()) {
-    ElMessage.error(t('admin.software.required'))
+    formErrors.version = t('admin.software.required')
+    focusFirstInvalid()
     return
   }
   releaseSaving.value = true
@@ -331,7 +370,12 @@ async function saveRelease() {
     releaseDialog.value = false
     await loadDetail()
   } catch (error) {
-    ElMessage.error(errorMessage(error))
+    if (error?.errorCode === 'RELEASE_VERSION_EXISTS') {
+      formErrors.version = t('errors.RELEASE_VERSION_EXISTS')
+      focusFirstInvalid()
+    } else {
+      ElMessage.error(errorMessage(error))
+    }
   } finally {
     releaseSaving.value = false
   }
@@ -460,23 +504,26 @@ onMounted(() => loadDetail())
       <p class="panel__lead">{{ t('admin.software.basicLead') }}</p>
 
       <div class="grid">
-        <label class="field">
+        <label class="field" :class="{ 'is-invalid': formErrors.slug }">
           <span class="field__label">{{ t('admin.software.fieldSlug') }}</span>
-          <el-input v-model="form.slug" :disabled="!isNew" />
-          <span class="field__hint">{{ t('admin.software.fieldSlugHint') }}</span>
+          <el-input v-model="form.slug" :disabled="!isNew" @input="clearError('slug')" />
+          <span v-if="formErrors.slug" class="field__error">{{ formErrors.slug }}</span>
+          <span v-else class="field__hint">{{ t('admin.software.fieldSlugHint') }}</span>
         </label>
         <label class="field">
           <span class="field__label">{{ t('admin.software.fieldSortOrder') }}</span>
           <el-input v-model.number="form.sortOrder" />
           <span class="field__hint">{{ t('admin.software.fieldSortOrderHint') }}</span>
         </label>
-        <label class="field">
+        <label class="field" :class="{ 'is-invalid': formErrors.nameZh }">
           <span class="field__label">{{ t('admin.software.fieldNameZh') }}</span>
-          <el-input v-model="form.nameZh" />
+          <el-input v-model="form.nameZh" @input="clearError('nameZh')" />
+          <span v-if="formErrors.nameZh" class="field__error">{{ formErrors.nameZh }}</span>
         </label>
-        <label class="field">
+        <label class="field" :class="{ 'is-invalid': formErrors.nameEn }">
           <span class="field__label">{{ t('admin.software.fieldNameEn') }}</span>
-          <el-input v-model="form.nameEn" />
+          <el-input v-model="form.nameEn" @input="clearError('nameEn')" />
+          <span v-if="formErrors.nameEn" class="field__error">{{ formErrors.nameEn }}</span>
         </label>
         <label class="field">
           <span class="field__label">{{ t('admin.software.fieldTaglineZh') }}</span>
@@ -812,9 +859,14 @@ onMounted(() => loadDetail())
       :title="releaseEditingId ? t('admin.software.editRelease') : t('admin.software.addRelease')"
     >
       <div class="dialog">
-        <label class="field">
+        <label class="field" :class="{ 'is-invalid': formErrors.version }">
           <span class="field__label">{{ t('admin.software.releaseVersion') }}</span>
-          <el-input v-model="releaseForm.version" placeholder="26.2.1024" />
+          <el-input
+            v-model="releaseForm.version"
+            placeholder="26.2.1024"
+            @input="clearError('version')"
+          />
+          <span v-if="formErrors.version" class="field__error">{{ formErrors.version }}</span>
         </label>
         <label class="field">
           <span class="field__label">{{ t('admin.software.releaseChannel') }}</span>
@@ -938,6 +990,23 @@ onMounted(() => loadDetail())
 .field__hint {
   font-size: 12px;
   color: var(--adm-ink-faint);
+}
+
+/* 字段级报错：写在那一格输入框下面。红只出现在这一格，
+   不弹 toast —— 连点保存会叠一摞同样的气泡，还指不出是哪格错了。 */
+.field__error {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--el-color-danger);
+}
+
+.field.is-invalid .field__label {
+  color: var(--el-color-danger);
+}
+
+.field.is-invalid :deep(.el-input__wrapper),
+.field.is-invalid :deep(.el-textarea__inner) {
+  box-shadow: 0 0 0 1px var(--el-color-danger) inset;
 }
 
 .cover {
