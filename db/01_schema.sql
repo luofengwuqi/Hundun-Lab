@@ -104,6 +104,22 @@ CREATE TABLE IF NOT EXISTS `software_platform` (
   CONSTRAINT `fk_platform_software` FOREIGN KEY (`software_id`) REFERENCES `software` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='软件平台支持';
 
+-- 仓库地址（0..n 条，D101）：同一仓库可挂多条镜像、也可挂多个不同仓库，各带标签与类型
+-- software.repo_url 自 D101 起停止写入，旧值由 db/12 搬入本表
+CREATE TABLE IF NOT EXISTS `software_repo` (
+  `id`          bigint       NOT NULL AUTO_INCREMENT,
+  `software_id` bigint       NOT NULL,
+  `label_zh`    varchar(32)  NOT NULL COMMENT '展示标签中文，如「源码仓库」「Gitee 镜像」',
+  `label_en`    varchar(32)  NOT NULL COMMENT '展示标签英文',
+  `url`         varchar(500) NOT NULL COMMENT '完整地址，含协议',
+  `repo_type`   varchar(16)  NOT NULL DEFAULT 'source' COMMENT 'source / mirror / release / docs',
+  `sort_order`  int          NOT NULL DEFAULT '0' COMMENT '升序展示',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_repo_software_url` (`software_id`, `url`),
+  KEY `idx_repo_software` (`software_id`, `sort_order`),
+  CONSTRAINT `fk_repo_software` FOREIGN KEY (`software_id`) REFERENCES `software` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='软件仓库地址';
+
 -- ------------------------------------------------------------
 -- 版本与安装包
 -- 「最新版本」不落冗余标记，按 (software_id, channel) 内 published_at 倒序推导
@@ -254,6 +270,22 @@ CREATE TABLE IF NOT EXISTS `extension` (
   CONSTRAINT `extension_author_fk` FOREIGN KEY (`author_user_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='扩展（挂在软件下）';
 
+-- 扩展仓库地址（0..n 条，D101）：与 software_repo 完全同构，父键为 extension_id
+-- extension.repo_url 自 D101 起停止写入，旧值由 db/12 搬入本表
+CREATE TABLE IF NOT EXISTS `extension_repo` (
+  `id`           bigint       NOT NULL AUTO_INCREMENT,
+  `extension_id` bigint       NOT NULL,
+  `label_zh`     varchar(32)  NOT NULL,
+  `label_en`     varchar(32)  NOT NULL,
+  `url`          varchar(500) NOT NULL,
+  `repo_type`    varchar(16)  NOT NULL DEFAULT 'source',
+  `sort_order`   int          NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_repo_extension_url` (`extension_id`, `url`),
+  KEY `idx_repo_extension` (`extension_id`, `sort_order`),
+  CONSTRAINT `fk_repo_extension` FOREIGN KEY (`extension_id`) REFERENCES `extension` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='扩展仓库地址';
+
 -- ------------------------------------------------------------
 -- 扩展版本：新版本 = 新记录重新进审，不覆盖旧记录（D054）
 -- 稳定下载地址由 (extension.slug, version) 解析到公共桶对象，URL 不随换包变化
@@ -276,7 +308,7 @@ CREATE TABLE IF NOT EXISTS `extension_release` (
   UNIQUE KEY `uk_extension_release_ver` (`extension_id`, `version`),
   KEY `idx_extension_release_status` (`extension_id`, `status`),
   KEY `release_extension_fk` (`extension_id`),
-  CONSTRAINT `release_extension_fk` FOREIGN KEY (`extension_id`) REFERENCES `extension` (`id`)
+  CONSTRAINT `release_extension_fk` FOREIGN KEY (`extension_id`) REFERENCES `extension` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='扩展版本';
 
 -- ------------------------------------------------------------

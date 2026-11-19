@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hundunlab.site.module.software.mapper.SoftwareAdminMapper">
+
+    <!-- ==================== 主表 ==================== -->
+
+    <sql id="softwareColumns">
+        id, slug, name_zh, name_en, tagline_zh, tagline_en, intro_zh, intro_en,
+        tech_stack, repo_url, license, cover_url, theme_color, status, sort_order,
+        created_at, updated_at
+    </sql>
+
+    <select id="selectSummaries" resultType="com.hundunlab.site.module.software.pojo.VO.SoftwareAdminSummaryVO">
+        SELECT s.id, s.slug, s.name_zh, s.name_en, s.status, s.sort_order, s.updated_at,
+               (SELECT COUNT(*) FROM software_release r WHERE r.software_id = s.id) AS release_count,
+               (SELECT r2.version FROM software_release r2
+                 WHERE r2.software_id = s.id AND r2.status = 1
+                 ORDER BY r2.published_at IS NULL, r2.published_at DESC, r2.id DESC
+                 LIMIT 1) AS latest_version
+        FROM software s
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (s.slug LIKE CONCAT('%', #{keyword}, '%')
+                     OR s.name_zh LIKE CONCAT('%', #{keyword}, '%')
+                     OR s.name_en LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+            <if test="status != null">
+                AND s.status = #{status}
+            </if>
+        </where>
+        ORDER BY s.sort_order ASC, s.id ASC
+    </select>
+
+    <select id="selectById" resultType="com.hundunlab.site.module.software.pojo.Entity.Software">
+        SELECT <include refid="softwareColumns"/>
+        FROM software
+        WHERE id = #{id}
+    </select>
+
+    <select id="countBySlug" resultType="int">
+        SELECT COUNT(*) FROM software
+        WHERE slug = #{slug}
+        <if test="excludeId != null">
+            AND id &lt;&gt; #{excludeId}
+        </if>
+    </select>
+
+    <insert id="insertSoftware" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO software (slug, name_zh, name_en, tagline_zh, tagline_en, intro_zh, intro_en,
+                              tech_stack, license, cover_url, theme_color, status, sort_order)
+        VALUES (#{slug}, #{nameZh}, #{nameEn}, #{taglineZh}, #{taglineEn}, #{introZh}, #{introEn},
+                #{techStack}, #{license}, #{coverUrl}, #{themeColor}, #{status}, #{sortOrder})
+    </insert>
+
+    <!-- 刻意不更新 status：上下线走 updateStatus，避免「改资料顺手改可见性」 -->
+    <update id="updateSoftware">
+        UPDATE software
+        SET slug       = #{slug},
+            name_zh    = #{nameZh},
+            name_en    = #{nameEn},
+            tagline_zh = #{taglineZh},
+            tagline_en = #{taglineEn},
+            intro_zh   = #{introZh},
+            intro_en   = #{introEn},
+            tech_stack = #{techStack},
+            license    = #{license},
+            cover_url  = #{coverUrl},
+            theme_color = #{themeColor},
+            sort_order = #{sortOrder}
+        WHERE id = #{id}
+    </update>
+
+    <update id="updateStatus">
+        UPDATE software SET status = #{status} WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM software WHERE id = #{id}
+    </delete>
+
+    <select id="countExtensions" resultType="int">
+        SELECT COUNT(*) FROM extension WHERE software_id = #{softwareId}
+    </select>
+
+    <!-- ==================== 子块：查询 ==================== -->
+
+    <select id="selectRepos" resultType="com.hundunlab.site.module.software.pojo.Entity.SoftwareRepo">
+        SELECT id, software_id, label_zh, label_en, url, repo_type, sort_order
+        FROM software_repo
+        WHERE software_id = #{softwareId}
+        ORDER BY sort_order ASC, id ASC
+    </select>
+
+    <!-- ==================== 子块：整块替换（先删后插） ==================== -->
+
+    <delete id="deleteFeatures">
+        DELETE FROM software_feature WHERE software_id = #{softwareId}
+    </delete>
+
+    <insert id="insertFeatures">
+        INSERT INTO software_feature (software_id, icon, title_zh, title_en, desc_zh, desc_en, sort_order)
+        VALUES
+        <foreach collection="list" item="it" separator=",">
+            (#{it.softwareId}, #{it.icon}, #{it.titleZh}, #{it.titleEn}, #{it.descZh}, #{it.descEn}, #{it.sortOrder})
+        </foreach>
+    </insert>
+
+    <delete id="deleteScreenshots">
+        DELETE FROM software_screenshot WHERE software_id = #{softwareId}
+    </delete>
+
+    <insert id="insertScreenshots">
+        INSERT INTO software_screenshot (software_id, image_url, caption_zh, caption_en, sort_order)
+        VALUES
+        <foreach collection="list" item="it" separator=",">
+            (#{it.softwareId}, #{it.imageUrl}, #{it.captionZh}, #{it.captionEn}, #{it.sortOrder})
+        </foreach>
+    </insert>
+
+    <delete id="deletePlatforms">
+        DELETE FROM software_platform WHERE software_id = #{softwareId}
+    </delete>
+
+    <insert id="insertPlatforms">
+        INSERT INTO software_platform (software_id, platform, note_zh, note_en, sort_order)
+        VALUES
+        <foreach collection="list" item="it" separator=",">
+            (#{it.softwareId}, #{it.platform}, #{it.noteZh}, #{it.noteEn}, #{it.sortOrder})
+        </foreach>
+    </insert>
+
+    <delete id="deleteRepos">
+        DELETE FROM software_repo WHERE software_id = #{softwareId}
+    </delete>
+
+    <insert id="insertRepos">
+        INSERT INTO software_repo (software_id, label_zh, label_en, url, repo_type, sort_order)
+        VALUES
+        <foreach collection="list" item="it" separator=",">
+            (#{it.softwareId}, #{it.labelZh}, #{it.labelEn}, #{it.url}, #{it.repoType}, #{it.sortOrder})
+        </foreach>
+    </insert>
+
+    <!-- ==================== 版本 ==================== -->
+
+    <select id="selectAllReleases" resultType="com.hundunlab.site.module.software.pojo.Entity.SoftwareRelease">
+        SELECT id, software_id, version, channel, notes_zh, notes_en, published_at, status, created_at
+        FROM software_release
+        WHERE software_id = #{softwareId}
+        ORDER BY published_at IS NULL, published_at DESC, id DESC
+    </select>
+
+    <select id="selectReleaseById" resultType="com.hundunlab.site.module.software.pojo.Entity.SoftwareRelease">
+        SELECT id, software_id, version, channel, notes_zh, notes_en, published_at, status, created_at
+        FROM software_release
+        WHERE id = #{id}
+    </select>
+
+    <select id="countReleaseVersion" resultType="int">
+        SELECT COUNT(*) FROM software_release
+        WHERE software_id = #{softwareId} AND version = #{version} AND channel = #{channel}
+        <if test="excludeId != null">
+            AND id &lt;&gt; #{excludeId}
+        </if>
+    </select>
+
+    <insert id="insertRelease" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO software_release (software_id, version, channel, notes_zh, notes_en, published_at, status)
+        VALUES (#{softwareId}, #{version}, #{channel}, #{notesZh}, #{notesEn}, #{publishedAt}, #{status})
+    </insert>
+
+    <update id="updateRelease">
+        UPDATE software_release
+        SET version      = #{version},
+            channel      = #{channel},
+            notes_zh     = #{notesZh},
+            notes_en     = #{notesEn},
+            published_at = #{publishedAt},
+            status       = #{status}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteRelease">
+        DELETE FROM software_release WHERE id = #{id}
+    </delete>
+
+    <!-- ==================== 安装包资产 ==================== -->
+
+    <select id="selectAssets" resultType="com.hundunlab.site.module.software.pojo.Entity.ReleaseAsset">
+        SELECT id, release_id, platform, arch, package_type, file_name, object_key,
+               file_size, sha256, download_count, created_at
+        FROM release_asset
+        WHERE release_id = #{releaseId}
+        ORDER BY id ASC
+    </select>
+
+    <select id="selectAssetById" resultType="com.hundunlab.site.module.software.pojo.Entity.ReleaseAsset">
+        SELECT id, release_id, platform, arch, package_type, file_name, object_key,
+               file_size, sha256, download_count, created_at
+        FROM release_asset
+        WHERE id = #{id}
+    </select>
+
+    <select id="countAssetVariant" resultType="int">
+        SELECT COUNT(*) FROM release_asset
+        WHERE release_id = #{releaseId}
+          AND platform = #{platform}
+          AND arch = #{arch}
+          AND package_type = #{packageType}
+    </select>
+
+    <insert id="insertAsset" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO release_asset (release_id, platform, arch, package_type, file_name, object_key,
+                                   file_size, sha256)
+        VALUES (#{releaseId}, #{platform}, #{arch}, #{packageType}, #{fileName}, #{objectKey},
+                #{fileSize}, #{sha256})
+    </insert>
+
+    <delete id="deleteAssetById">
+        DELETE FROM release_asset WHERE id = #{id}
+    </delete>
+
+    <select id="selectObjectKeysBySoftwareId" resultType="string">
+        SELECT a.object_key
+        FROM release_asset a
+        JOIN software_release r ON r.id = a.release_id
+        WHERE r.software_id = #{softwareId}
+          AND a.object_key IS NOT NULL AND a.object_key &lt;&gt; ''
+    </select>
+
+    <select id="selectObjectKeysByReleaseId" resultType="string">
+        SELECT object_key
+        FROM release_asset
+        WHERE release_id = #{releaseId}
+          AND object_key IS NOT NULL AND object_key &lt;&gt; ''
+    </select>
+
+</mapper>

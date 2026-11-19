@@ -50,6 +50,13 @@
         ORDER BY sort_order ASC, id ASC
     </select>
 
+    <select id="selectRepos" resultType="com.hundunlab.site.module.software.pojo.Entity.SoftwareRepo">
+        SELECT id, software_id, label_zh, label_en, url, repo_type, sort_order
+        FROM software_repo
+        WHERE software_id = #{softwareId}
+        ORDER BY sort_order ASC, id ASC
+    </select>
+
     <select id="selectPlatformsBySoftwareIds"
             resultType="com.hundunlab.site.module.software.pojo.Entity.SoftwarePlatform">
         SELECT id, software_id, platform, note_zh, note_en, sort_order

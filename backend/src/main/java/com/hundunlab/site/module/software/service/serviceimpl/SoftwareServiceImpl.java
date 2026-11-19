@@ -8,6 +8,7 @@ import com.hundunlab.site.module.software.pojo.Entity.ReleaseAsset;
 import com.hundunlab.site.module.software.pojo.Entity.Software;
 import com.hundunlab.site.module.software.pojo.Entity.SoftwarePlatform;
 import com.hundunlab.site.module.software.pojo.Entity.SoftwareRelease;
+import com.hundunlab.site.module.software.pojo.Entity.SoftwareRepo;
 import com.hundunlab.site.module.software.pojo.VO.SoftwareDetailVO;
 import com.hundunlab.site.module.software.pojo.VO.SoftwareDownloadStat;
 import com.hundunlab.site.module.software.pojo.VO.SoftwareSummaryVO;
@@ -93,10 +94,21 @@ public class SoftwareServiceImpl implements SoftwareService {
         vo.setIntroZh(software.getIntroZh());
         vo.setIntroEn(software.getIntroEn());
         vo.setTechStack(splitTechStack(software.getTechStack()));
-        vo.setRepoUrl(software.getRepoUrl());
         vo.setLicense(software.getLicense());
         vo.setCoverUrl(software.getCoverUrl());
         vo.setThemeColor(software.getThemeColor());
+
+        // 仓库地址（D101）：子表为准；`repo_url` 列已停写，仅在存量未迁移时兜底
+        List<SoftwareRepo> repos = softwareMapper.selectRepos(software.getId());
+        vo.setRepos(repos.stream().map(r -> {
+            SoftwareDetailVO.RepoVO rv = new SoftwareDetailVO.RepoVO();
+            rv.setLabelZh(r.getLabelZh());
+            rv.setLabelEn(r.getLabelEn());
+            rv.setUrl(r.getUrl());
+            rv.setRepoType(r.getRepoType());
+            return rv;
+        }).toList());
+        vo.setRepoUrl(pickPrimaryRepoUrl(repos, software.getRepoUrl()));
 
         vo.setFeatures(softwareMapper.selectFeatures(software.getId()).stream().map(f -> {
             SoftwareDetailVO.FeatureVO fv = new SoftwareDetailVO.FeatureVO();
@@ -158,8 +170,20 @@ public class SoftwareServiceImpl implements SoftwareService {
         return vo;
     }
 
-    private List<String> splitTechStack(String techStack) {
-        if (!StringUtils.hasText(techStack)) {
+    /**
+     * 旧字段 `repoUrl` 的取值口径（D101）：取 {@code repo_type = source} 里排最前的一条。
+     * 没有 source 就退回库里那列旧值——存量库还没跑 `db/12` 时前台不至于突然没有源码链接。
+     */
+    private String pickPrimaryRepoUrl(List<SoftwareRepo> repos, String legacyRepoUrl) {
+        return repos.stream()
+                .filter(r -> "source".equalsIgnoreCase(r.getRepoType()))
+                .map(SoftwareRepo::getUrl)
+                .filter(StringUtils::hasText)
+                .findFirst()
+                .orElse(legacyRepoUrl);
+    }
+
+    private List<String> splitTechStack(String techStack) {        if (!StringUtils.hasText(techStack)) {
             return Collections.emptyList();
         }
         return Arrays.stream(techStack.split(","))

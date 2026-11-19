@@ -77,6 +77,25 @@ const router = createRouter({
           meta: { adminTitle: 'admin.navOverview' },
         },
         {
+          // 静态段要写在 :id 前面：`/admin/software/new` 不能被当成 id=new
+          path: 'software',
+          name: 'admin-software',
+          component: () => import('@/views/admin/AdminSoftwarePage.vue'),
+          meta: { adminTitle: 'admin.navSoftware' },
+        },
+        {
+          path: 'software/new',
+          name: 'admin-software-new',
+          component: () => import('@/views/admin/AdminSoftwareEditPage.vue'),
+          meta: { adminTitle: 'admin.navSoftware' },
+        },
+        {
+          path: 'software/:id',
+          name: 'admin-software-edit',
+          component: () => import('@/views/admin/AdminSoftwareEditPage.vue'),
+          meta: { adminTitle: 'admin.navSoftware' },
+        },
+        {
           path: 'users',
           name: 'admin-users',
           component: () => import('@/views/admin/AdminUsersPage.vue'),

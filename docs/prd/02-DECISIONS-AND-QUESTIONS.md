@@ -1204,6 +1204,72 @@
 
 ---
 
+## U. 后台软件管理（F12/F13，2026-11-18）
+
+### D101 仓库地址改为子表 `software_repo` / `extension_repo`，`repo_url` 列停写
+- 触发：作者要求「软件字段应包含 0 到多个项目仓库地址」，且明确「同仓多镜像」与「多不同仓库」两种语义**都要**，软件与扩展共用同一套子表模式。
+- 内容：`software.repo_url`（varchar 255，单值）表达不了上述语义，新增两张**同构**子表：
+  - `software_repo(id, software_id, label_zh, label_en, url, repo_type, sort_order)`
+  - `extension_repo(id, extension_id, label_zh, label_en, url, repo_type, sort_order)`
+- 口径：
+  1. `repo_type ∈ {source, mirror, release, docs}`，应用层枚举校验，DB 存 `varchar(16)`。「同仓多镜像」= 同一个仓库的多条不同 `url`（如 GitHub / Gitee）各带自己的 label 与 `repo_type`；「多不同仓库」= 不同 `url` 的多条。
+  2. `UNIQUE(owner_id, url)`：同一主体下同一地址只允许一条，挡住后台重复提交；不同 label 不能重复挂同一地址。
+  3. `ON DELETE CASCADE` 指向主表，`sort_order` 升序展示。
+  4. `software.repo_url` / `extension.repo_url` **保留列、停止写入**：迁移脚本 `db/12` 把非空值搬成一条 `label=源码仓库 / Source repository`、`repo_type=source` 的行。不删列（D093：没有必要时不动既有结构）。新代码一律读子表。
+  5. 详情接口兼容：`SoftwareDetailVO.repoUrl` 保留，由服务端从 `repos` 中取 `source` 类型 `sort_order` 最小的一条回填，旧字段语义不破。
+  6. 前台渲染：软件详情页 `dl` 内仍是**一个** `<dd>`，内部从单条链接变为 `<ul>` 多行（label 小字 + `class="mono"` 地址）；扩展详情页**维持单按钮**，取 `source` 类型 `sort_order` 最小那条。两端不一致是有意的——产品页一个主按钮更清楚。
+- 状态：已实现
+- 确认人：作者
+- 确认方式：采纳建议（grilling 第二轮 Q1/Q2）
+- 确认日期：2026-11-18
+- 影响：`db/01_schema.sql`、`db/12_repo_tables.sql`、`SoftwareRepo`/`ExtensionRepo` 实体与 Mapper、`SoftwareDetailVO`、`SoftwarePage.vue`
+- 关联：D073（禁 `has_extension` 布尔，同属「由数据推断，不加冗余标记」）、F12
+
+### D102 安装包走后台专用上传通道，图片与安装包分桶
+- 触发：PRD F13 早写「流式转存私有桶」，但代码侧没有任何一条路径能传安装包——`FileUploadValidator` 白名单只有图片与文档（无 exe/msi/dmg/zip/AppImage/deb）、`app.upload.max-size-bytes` 默认 10MiB、Spring multipart 20/25MB，三层限制互相不认账；且 `AliOSSUtil` 只有一个桶，而截图/封面要公有读、安装包要私有读，两类对象要求相反。
+- 内容：
+  1. **新接口** `POST /admin/software/releases/{releaseId}/assets`（multipart：`platform`/`arch`/`packageType`/`file`），**不复用 `POST /files`**——后者是登录用户都能调的公共口。
+  2. **双桶**：`aliyun.bucket-name`（公有读，图片/头像）+ `aliyun.private-bucket-name`（私有读，安装包与扩展 zip）。私有桶名为空时回退公有桶，兼容旧单桶部署。`presignedDownloadUrl` 走私有桶，现有软件下载与扩展下载自动跟随。
+  3. 体积：`app.upload.asset-max-size-bytes` 默认 2GiB；Spring multipart `max-file-size`/`max-request-size` 同步抬到 2GiB(+64MB 余量)。`FileUploadValidator` 对图片/文档仍是 10MiB，两条限额互不影响。
+  4. **传输层先拦**：新增 `UploadSizeGuardFilter`，在 multipart 解析**之前**按 `Content-Length` 判超限，返回 413 `FILE_TOO_LARGE`。理由：`DispatcherServlet` 的 multipart 解析发生在拦截器与 Controller 之前，只靠业务校验会把 2GiB 落到磁盘才拒绝。
+  5. 扩展名按 `package_type` 反查：`nsis→exe`、`msi→msi`、`appimage→AppImage`、`dmg→dmg`、`deb→deb`、`zip→zip`；声明值与真实扩展名不符即拒。
+  6. 边传边算：`DigestInputStream` 包一层喂给 OSS `putObject`，成功后回填 `file_size`（取 `MultipartFile#getSize()`）与 `sha256`（小写 hex，与 `sha256sum` 一致）。
+  7. **不做**分片/断点续传。管理员低频操作，失败重传成本低于引入 `uploadId`+合并+临时对象清理。
+  8. OSS 未配置 → 上传接口 503 `OSS_NOT_CONFIGURED`；不依赖 OSS 的资料/子表/仓库照常可用。
+  9. `FileUploadValidator` 由 `validate(file, boolean imageOnly)` 改 `validate(file, FileKind)`（`IMAGE`/`DOCUMENT`/`EXTENSION_PACKAGE`）。zip 只对 `EXTENSION_PACKAGE` 开；`POST /files` 仍禁 zip，并收紧为 `status ≥ 2`。
+- 状态：已实现
+- 确认人：作者
+- 确认方式：采纳建议（grilling 第二轮 Q3/Q4、第三轮 Q6/Q8）
+- 确认日期：2026-11-18
+- 影响：`FileUploadValidator`、`AliOSSUtil`、`UploadSizeGuardFilter`、`ErrorCode`、`AdminSoftwareController`、`AdminSoftwareService`、`application*.yml`
+- 关联：D048（不建独立 release 模块）、F13、O02（双桶真正建成后本条私有桶才生效）
+
+### D103 删软件/删资产：先删 OSS 再删 DB，数据库级联只当兜底
+- 触发：`software_release`（124 行）与 `release_asset`（143 行）都是 `ON DELETE CASCADE`。直接 `DELETE FROM software` 会静默删掉资产行，`object_key` 随行消失，OSS 对象成**永久孤儿**；而 F13-03 要求「删除资产后 OSS 对象同时消失」。
+- 内容：
+  1. 业务路径**不依赖** DB 级联：`deleteSoftware` / `deleteAsset` 先查出全部 `object_key`，再逐个删 OSS（**幂等**：对象不存在视为成功），最后才删 DB 行。
+  2. 顺序理由（可恢复性）：先 OSS 后 DB，若 OSS 失败则事务未提交、行还在、可重试；若 DB 失败则对象已删、行还在、重试第二次仍走通。反过来先 DB 后 OSS，一旦 OSS 失败，key 随行消失，**永久孤儿且无从清理**。
+  3. `ON DELETE CASCADE` 保留作兜底（防人手工删库留悬垂行），但代码路径不走它。
+  4. 不做「异步补偿任务 + 定时扫描孤儿」：单人项目，删除是一次性请求，失败重试成本低于长期养一个扫描任务。
+- 状态：已实现
+- 确认人：作者
+- 确认方式：采纳建议（grilling 第三轮 Q7）
+- 确认日期：2026-11-18
+- 影响：`AdminSoftwareService`、`AliOSSUtil#deletePrivate`
+- 关联：F12 异常流程、F13-03
+
+### D104 `extension_release` 外键补 `ON DELETE CASCADE`，与 `software_release` 对齐
+- 内容：`01_schema.sql:279` 是裸 `FOREIGN KEY (extension_id) REFERENCES extension(id)`，**没有** `ON DELETE CASCADE`；而 `software_release:124` 有。两侧不对称：删有版本的软件能过，删有版本的扩展会直接 FK 报错。
+- 口径：补 `ON DELETE CASCADE`。增量脚本 `db/13_extension_release_fk.sql` 用 `information_schema` 判存在后 `DROP FOREIGN KEY` + `ADD CONSTRAINT`，可重复执行；新装环境直接走 `01_schema.sql`。
+- 备注：CASCADE 只作兜底，扩展侧的 OSS 清理仍按 D103 的顺序处理（扩展 zip 在私有桶）。
+- 状态：已实现
+- 确认人：作者
+- 确认方式：采纳建议（grilling 第三轮 Q7 附带项）
+- 确认日期：2026-11-18
+- 影响：`db/01_schema.sql`、`db/13_extension_release_fk.sql`
+
+---
+
 ## Q · 待答问题（要问用户的）
 
 口径：只数 Q 的条数。`待甲方确认` 本项目为空（无甲方），`明确延期` 不计入待答但须在 §O 可见。

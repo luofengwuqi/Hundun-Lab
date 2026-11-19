@@ -37,11 +37,13 @@ spring:
       mail.smtp.timeout: 8000
       mail.smtp.writetimeout: 8000
 
-  # 插件包体积远大于默认 1MB，必须显式放开；安装包下载走 OSS 直链，不占用这里的配额
+  # 传输层上限按「最大的一类」设：安装包要 2GiB（D102），multipart 解析在拦截器之前，
+  # 只能先放到最宽再靠 UploadSizeGuardFilter 按路径收紧（图片/文档仍是 10MiB）。
+  # 不这么做的话，2GiB 安装包会被 Spring 直接拒在 max-file-size 上。
   servlet:
     multipart:
-      max-file-size: ${UPLOAD_MAX_FILE_SIZE:20MB}
-      max-request-size: ${UPLOAD_MAX_REQUEST_SIZE:25MB}
+      max-file-size: ${UPLOAD_MAX_FILE_SIZE:2048MB}
+      max-request-size: ${UPLOAD_MAX_REQUEST_SIZE:2112MB}
 
 app:
   jwt:
@@ -52,7 +54,10 @@ app:
     # 允许携带凭证的跨域来源，多个用英文逗号分隔；生产同源部署时可留空
     allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5577,http://127.0.0.1:5577}
   upload:
+    # 图片 / 文档（头像、封面、截图、附件）
     max-size-bytes: ${UPLOAD_MAX_SIZE_BYTES:10485760}
+    # 安装包（D102）。2GiB 够装 Electron 全量包 + 余量；OSS 单次 putObject 上限是 5GiB
+    asset-max-size-bytes: ${UPLOAD_ASSET_MAX_SIZE_BYTES:2147483648}
   security:
     # 只有部署在可信反向代理（Nginx）后面时才设为 true，否则 X-Forwarded-For 可被伪造
     trust-proxy-headers: ${TRUST_PROXY_HEADERS:false}
@@ -62,7 +67,10 @@ aliyun:
   endpoint: ${OSS_ENDPOINT:}
   access-key-id: ${ALIYUN_ACCESS_KEY_ID:${hundun-lab.alioss.access-key-id:}}
   access-key-secret: ${ALIYUN_ACCESS_KEY_SECRET:${hundun-lab.alioss.access-key-secret:}}
+  # 公有读桶：头像、封面、截图（<img> 要能直显）
   bucket-name: ${hundun-lab.alioss.bucket-name}
+  # 私有读桶：安装包、扩展 zip（D102）。留空则回退公有桶，兼容旧单桶部署
+  private-bucket-name: ${hundun-lab.alioss.private-bucket-name:}
   domain: ${hundun-lab.alioss.domain}
 
 mybatis:

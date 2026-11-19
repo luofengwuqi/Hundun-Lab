@@ -28,6 +28,28 @@ const name = computed(() =>
 const tagline = computed(() =>
   detail.value ? localized(detail.value.taglineZh, detail.value.taglineEn) : '',
 )
+
+/**
+ * 仓库地址（D101）：以子表 `repos` 为准，0..n 条 —— 同一个仓库的多个镜像
+ * （GitHub / Gitee）与多个不同仓库都在这里，各带自己的标签。
+ *
+ * 兜底那条不是凑数：`software.repo_url` 列在存量库还没跑 `db/12` 时仍可能有值，
+ * 没有它，升级的瞬间详情页会突然少一个源码链接。
+ */
+const repoLinks = computed(() => {
+  const list = detail.value?.repos
+  if (Array.isArray(list) && list.length) {
+    return list.map((item) => ({
+      url: item.url,
+      label: localized(item.labelZh, item.labelEn),
+      type: item.repoType,
+    }))
+  }
+  if (detail.value?.repoUrl) {
+    return [{ url: detail.value.repoUrl, label: t('software.repo'), type: 'source' }]
+  }
+  return []
+})
 const introParagraphs = computed(() => {
   if (!detail.value) return []
   const text = localized(detail.value.introZh, detail.value.introEn) || ''
@@ -212,12 +234,17 @@ watch(
                 <dt class="kicker">{{ t('software.license') }}</dt>
                 <dd class="mono">{{ detail.license }}</dd>
               </div>
-              <div v-if="detail.repoUrl">
+              <div v-if="repoLinks.length">
                 <dt class="kicker">{{ t('software.repo') }}</dt>
                 <dd>
-                  <a :href="detail.repoUrl" target="_blank" rel="noopener noreferrer" class="mono">
-                    {{ detail.repoUrl.replace('https://', '') }}
-                  </a>
+                  <ul class="repo-list">
+                    <li v-for="link in repoLinks" :key="link.url" class="repo-list__item">
+                      <span class="repo-list__label">{{ link.label }}</span>
+                      <a :href="link.url" target="_blank" rel="noopener noreferrer" class="mono">
+                        {{ link.url.replace(/^https?:\/\//, '') }}
+                      </a>
+                    </li>
+                  </ul>
                 </dd>
               </div>
               <div v-if="detail.techStack.length">
@@ -405,6 +432,25 @@ watch(
   flex-wrap: wrap;
   gap: 6px;
   margin-top: 6px;
+}
+
+/* 仓库地址（D101）：0..n 条，一条一行；标签在前，地址在后，地址可折行 */
+.repo-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 6px;
+  list-style: none;
+}
+
+.repo-list__item {
+  display: grid;
+  gap: 2px;
+}
+
+.repo-list__label {
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--ink-faint);
 }
 
 .notice {

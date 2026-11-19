@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import java.util.Objects;
 
@@ -119,6 +120,14 @@ public class GlobalExceptionHandler {
     public Result<Void> handleIllegalArgumentException(IllegalArgumentException e) {
         log.warn("参数异常: {}", e.getMessage());
         return Result.fail(ErrorCode.BAD_REQUEST, e.getMessage());
+    }
+
+    //上传超限：Spring 解析 multipart 时先抛，属于 NestedRuntimeException，
+    //不单独接就会被下面的 RuntimeException 兜成 500「服务器开小差了」
+    @ExceptionHandler
+    public Result<Void> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException e) {
+        log.warn("上传文件超过传输上限: {}", e.getMessage());
+        return Result.fail(ErrorCode.FILE_TOO_LARGE);
     }
 
     //验证码相关的异常

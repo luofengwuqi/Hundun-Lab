@@ -32,6 +32,8 @@ const myStatus = computed(() => Number(session.user?.status ?? 0))
 const items = computed(() =>
   [
     { key: 'overview', to: '/admin', label: t('admin.navOverview'), ready: true },
+    // 软件与内容块（F12/F13）：列表 + 新建 + 编辑，安装包在编辑页第二段
+    { key: 'software', to: '/admin/software', label: t('admin.navSoftware'), ready: true },
     { key: 'users', to: '/admin/users', label: t('admin.navUsers'), ready: true },
     {
       key: 'invite',

@@ -29,6 +29,8 @@ hundun-lab:
   alioss:
     endpoint: ${OSS_ENDPOINT:}
     bucket-name: ${OSS_BUCKET:}
+    # 私有读桶（D102）；生产建议真的分开两个桶，避免安装包跟着图片一起公有读
+    private-bucket-name: ${OSS_PRIVATE_BUCKET:}
     domain: ${OSS_DOMAIN:}
   redis:
     host: ${REDIS_HOST:}

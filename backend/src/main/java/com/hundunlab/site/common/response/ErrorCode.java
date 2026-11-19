@@ -42,6 +42,20 @@ public enum ErrorCode {
 
     // ==================== 软件与版本 ====================
     SOFTWARE_NOT_FOUND(404, "软件不存在或尚未发布"),
+    /** 后台新建/改 slug 时撞上已有行（uk_software_slug） */
+    SOFTWARE_SLUG_EXISTS(409, "该 slug 已被占用"),
+    /** 软件下还挂着扩展：扩展有自己的 OSS 对象，静默级联会留孤儿，所以拒绝并要求先处理扩展 */
+    SOFTWARE_HAS_EXTENSIONS(409, "该软件下还有扩展，请先删除扩展再删软件"),
+    RELEASE_NOT_FOUND(404, "版本不存在"),
+    RELEASE_VERSION_EXISTS(409, "该版本号已存在"),
+    ASSET_NOT_FOUND(404, "安装包不存在"),
+    ASSET_VARIANT_EXISTS(409, "该平台/架构/格式的安装包已存在"),
+    ASSET_PACKAGE_TYPE_INVALID(400, "不支持的安装包格式"),
+    /** 扩展名与 packageType 声明的格式不一致，如选了 dmg 却传 .exe */
+    FILE_TYPE_NOT_ALLOWED(400, "文件类型与所选安装包格式不匹配"),
+    FILE_TOO_LARGE(413, "文件超过大小上限"),
+    /** 装安装包的桶没配好：上传/删除都做不了，但软件资料本身仍可编辑（D102） */
+    OSS_NOT_CONFIGURED(503, "对象存储未配置，文件相关操作不可用"),
 
     // ==================== 扩展（M2 站点侧） ====================
     EXTENSION_NOT_FOUND(404, "扩展不存在或尚未发布"),

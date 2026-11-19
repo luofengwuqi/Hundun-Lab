@@ -10,17 +10,38 @@ import java.util.Locale;
 import java.util.Set;
 
 /**
- * 上传文件校验：类型白名单 + 大小限制 + 图片魔数校验
+ * 上传文件校验：类型白名单 + 大小限制 + 图片魔数校验。
+ * <p>
+ * 只服务「图片 / 文档」两类通用文件（头像、封面、截图、反馈附件）。
+ * <b>安装包不走这里</b>：它的合法后缀由 {@code PackageType} 决定（nsis→exe、dmg→dmg…），
+ * 上限也是另一套配置（D102），两条通道刻意分开，避免互相放宽。
  */
 @Component
 public class FileUploadValidator {
 
+    /**
+     * 文件用途。用枚举而不是 {@code boolean imageOnly}：调用点 {@code validate(file, true)}
+     * 读不出语义，也挡不住把两个布尔参数写反。
+     */
+    public enum FileKind {
+        /** 只允许图片，额外校验魔数 */
+        IMAGE,
+        /** 只允许文档类（pdf/txt/md/office），不含图片 */
+        DOCUMENT,
+        /** 图片与文档都收（通用附件上传口 `/files`）；图片仍校验魔数 */
+        ANY
+    }
+
     private static final Set<String> IMAGE_EXTENSIONS = Set.of("jpg", "jpeg", "png", "gif", "webp", "bmp");
     private static final Set<String> DOCUMENT_EXTENSIONS = Set.of(
             "pdf", "txt", "md", "doc", "docx", "xls", "xlsx", "ppt", "pptx");
-    private static final Set<String> ALLOWED_EXTENSIONS = Set.of(
-            "jpg", "jpeg", "png", "gif", "webp", "bmp",
-            "pdf", "txt", "md", "doc", "docx", "xls", "xlsx", "ppt", "pptx");
+    private static final Set<String> ANY_EXTENSIONS = union(IMAGE_EXTENSIONS, DOCUMENT_EXTENSIONS);
+
+    private static Set<String> union(Set<String> a, Set<String> b) {
+        Set<String> merged = new java.util.HashSet<>(a);
+        merged.addAll(b);
+        return Set.copyOf(merged);
+    }
 
     private final long maxSizeBytes;
 
@@ -31,10 +52,10 @@ public class FileUploadValidator {
     /**
      * 校验上传文件，不合法时抛出 IllegalArgumentException（由全局异常处理器返回 400）
      *
-     * @param file      上传文件
-     * @param imageOnly 是否只允许图片
+     * @param file 上传文件
+     * @param kind 用途，决定可用后缀
      */
-    public void validate(MultipartFile file, boolean imageOnly) {
+    public void validate(MultipartFile file, FileKind kind) {
         if (file == null || file.isEmpty()) {
             throw new IllegalArgumentException("上传文件不能为空");
         }
@@ -52,7 +73,11 @@ public class FileUploadValidator {
         }
 
         String extension = originalFilename.substring(dotIndex + 1).toLowerCase(Locale.ROOT);
-        Set<String> allowed = imageOnly ? IMAGE_EXTENSIONS : ALLOWED_EXTENSIONS;
+        Set<String> allowed = switch (kind) {
+            case IMAGE -> IMAGE_EXTENSIONS;
+            case DOCUMENT -> DOCUMENT_EXTENSIONS;
+            case ANY -> ANY_EXTENSIONS;
+        };
         if (!allowed.contains(extension)) {
             throw new IllegalArgumentException("不支持的文件类型：" + extension);
         }

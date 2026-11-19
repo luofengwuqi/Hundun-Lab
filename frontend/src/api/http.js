@@ -51,6 +51,11 @@ http.interceptors.request.use((config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }
+  // 传文件时必须让浏览器自己写 Content-Type，否则 boundary 会丢，
+  // 后端只会看到「当前请求不是 multipart」。实例上固定了 JSON 头，这里显式摘掉。
+  if (typeof FormData !== 'undefined' && config.data instanceof FormData) {
+    delete config.headers['Content-Type']
+  }
   return config
 })
 

@@ -20,6 +20,8 @@ mysql -u<user> -p hundun_lab < db/03_seed_extension.sql
 | `03_seed_extension.sql` | 扩展种子（D083：官方扩展预置 + 演示社区扩展，与前台 M0 假数据同一批） |
 | `10_extension_license_repo.sql` | 增量：extension 补 `license` / `repo_url` 两列 |
 | `11_invite_code_unique.sql` | 增量：`users.invite_code` 补唯一索引（邀请码原子消费的兜底防线） |
+| `12_repo_tables.sql` | 增量：新增 `software_repo` / `extension_repo` 子表，并把主表单值 `repo_url` 搬进去（D101） |
+| `13_extension_release_fk.sql` | 增量：`extension_release` 外键补 `ON DELETE CASCADE`，与 `software_release` 对齐（D104） |
 | `1x_*.sql` | 增量变更，按序号追加，可重复执行 |
 
 ## 硬规则

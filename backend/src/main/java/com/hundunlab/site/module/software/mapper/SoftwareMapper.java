@@ -3,6 +3,7 @@ package com.hundunlab.site.module.software.mapper;
 import com.hundunlab.site.module.software.pojo.Entity.Software;
 import com.hundunlab.site.module.software.pojo.Entity.SoftwareFeature;
 import com.hundunlab.site.module.software.pojo.Entity.SoftwarePlatform;
+import com.hundunlab.site.module.software.pojo.Entity.SoftwareRepo;
 import com.hundunlab.site.module.software.pojo.Entity.SoftwareScreenshot;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -28,6 +29,9 @@ public interface SoftwareMapper {
     List<SoftwareScreenshot> selectScreenshots(@Param("softwareId") Long softwareId);
 
     List<SoftwarePlatform> selectPlatforms(@Param("softwareId") Long softwareId);
+
+    /** 仓库地址（0..n，D101），按 sort_order 升序 */
+    List<SoftwareRepo> selectRepos(@Param("softwareId") Long softwareId);
 
     /**
      * 批量取平台，用于首页卡片，避免 N+1 查询

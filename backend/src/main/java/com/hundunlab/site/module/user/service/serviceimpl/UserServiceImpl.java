@@ -153,7 +153,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateAvatar(MultipartFile file) {
         //头像只允许图片，并限制大小与内容类型
-        fileUploadValidator.validate(file, true);
+        fileUploadValidator.validate(file, FileUploadValidator.FileKind.IMAGE);
         //构建文件路径
         Long currentId = BaseContext.getCurrentId();
         String currentUsername = BaseContext.getCurrentUsername();

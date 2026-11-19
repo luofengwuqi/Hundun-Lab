@@ -30,7 +30,18 @@ public class SoftwareDetailVO {
     /** 技术栈，已按逗号拆好 */
     private List<String> techStack;
 
+    /**
+     * 旧字段，保留是为了不破坏已上线的契约。
+     * 自 D101 起由服务端从 {@link #repos} 里取 `repo_type = source` 中 `sort_order` 最小的一条回填，
+     * 数据库上的 `software.repo_url` 已停止写入。
+     */
     private String repoUrl;
+
+    /**
+     * 仓库地址（0..n 条，D101）：同仓多镜像 + 多不同仓库，各带标签与类型。
+     * 详情页按 `sort_order` 顺序展示。
+     */
+    private List<RepoVO> repos;
 
     private String license;
 
@@ -68,6 +79,15 @@ public class SoftwareDetailVO {
         private String platform;
         private String noteZh;
         private String noteEn;
+    }
+
+    @Data
+    public static class RepoVO {
+        private String labelZh;
+        private String labelEn;
+        private String url;
+        /** source / mirror / release / docs */
+        private String repoType;
     }
 
     @Data

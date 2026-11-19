@@ -29,6 +29,8 @@ import java.util.UUID;
 public class AliOSSUtil {
 
     private final String bucketName;
+    /** 私有读桶，装安装包与扩展 zip（D102）；为空时回退公有桶，兼容旧单桶部署 */
+    private final String privateBucketName;
     private final String domain;
     private final OSS ossClient;
 
@@ -36,8 +38,10 @@ public class AliOSSUtil {
                       @Value("${aliyun.access-key-id}") String accessKeyId,
                       @Value("${aliyun.access-key-secret}") String accessKeySecret,
                       @Value("${aliyun.bucket-name}") String bucketName,
+                      @Value("${aliyun.private-bucket-name:}") String privateBucketName,
                       @Value("${aliyun.domain}") String domain) {
         this.bucketName = bucketName;
+        this.privateBucketName = StringUtils.hasText(privateBucketName) ? privateBucketName : bucketName;
         this.domain = domain;
         boolean configured = StringUtils.hasText(endpoint)
                 && StringUtils.hasText(accessKeyId)
@@ -102,6 +106,47 @@ public class AliOSSUtil {
     }
 
     /**
+     * 流式写入私有桶（安装包 / 扩展 zip，D102）。
+     * <p>
+     * 刻意收 InputStream 而不是 MultipartFile：调用方要在同一遍读里算 sha256，
+     * 所以把流包进 DigestInputStream 后交进来即可，本方法不关心摘要。
+     * 不用先落临时文件——OSS putObject 本身就是流式上传，中断不会留下半截对象。
+     *
+     * @param objectKey 对象键（不含域名）
+     * @param in        文件流，由调用方负责关闭
+     */
+    public void uploadToPrivate(String objectKey, InputStream in) {
+        requireEnabled();
+        try {
+            ossClient.putObject(new PutObjectRequest(privateBucketName, objectKey, in));
+            log.info("私有桶上传成功：{}", objectKey);
+        } catch (Exception e) {
+            log.error("私有桶上传失败：{}", objectKey, e);
+            throw new OSSException("文件上传失败");
+        }
+    }
+
+    /**
+     * 删除私有桶对象。
+     * <p>
+     * <b>幂等</b>：对象不存在时 OSS 的 DeleteObject 也返回成功，调用方不用先查存在性。
+     * 删除顺序按 D103——先删这里再删库，否则 key 随行消失就成了永久孤儿。
+     */
+    public void deletePrivate(String objectKey) {
+        requireEnabled();
+        if (!StringUtils.hasText(objectKey)) {
+            return;
+        }
+        try {
+            ossClient.deleteObject(privateBucketName, objectKey);
+            log.info("私有桶删除成功：{}", objectKey);
+        } catch (Exception e) {
+            log.error("私有桶删除失败：{}", objectKey, e);
+            throw new OSSException("文件删除失败");
+        }
+    }
+
+    /**
      * 删除OSS文件
      * @param fileUrl 文件访问URL或objectName
      */
@@ -141,7 +186,7 @@ public class AliOSSUtil {
         requireEnabled();
         try {
             GeneratePresignedUrlRequest request =
-                    new GeneratePresignedUrlRequest(bucketName, objectKey, HttpMethod.GET);
+                    new GeneratePresignedUrlRequest(privateBucketName, objectKey, HttpMethod.GET);
             request.setExpiration(new Date(System.currentTimeMillis() + seconds * 1000L));
             String dispositionName = StringUtils.hasText(fileName) ? fileName : objectKey;
             ResponseHeaderOverrides headers = new ResponseHeaderOverrides();
